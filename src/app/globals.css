@@ -151,7 +151,7 @@ button, select { cursor: pointer; }
   position: absolute;
   top: 35px;
   right: 3%;
-  bottom: 28px;
+  bottom: 48px;
   width: 83%;
   overflow: hidden;
   border-radius: 42% 42% 4px 4px;
@@ -349,7 +349,7 @@ button, select { cursor: pointer; }
   .brand-mark { width: 28px; height: 28px; border-radius: 8px; }
   .brand-mark svg { width: 21px; }
   .main-nav { gap: clamp(6px, 2vw, 12px); }
-  .main-nav a { font-size: 9px; }
+  .main-nav a { font-size: 11px; }
   .header-link { display: none; }
   .hero { display: flex; flex-direction: column; padding: 35px 10px 25px; }
   .hero-copy { padding: 0; }
@@ -358,11 +358,11 @@ button, select { cursor: pointer; }
   .hero-actions { gap: 17px; margin-top: 18px; }
   .hero-proof { margin-top: 19px; font-size: 11px; }
   .hero-art { min-height: 290px; margin-top: 10px; }
-  .hero-image-frame { top: 27px; right: 6%; bottom: 30px; width: 83%; }
+  .hero-image-frame { top: 27px; right: 6%; bottom: 48px; width: 83%; }
   .hero-sun { top: 13px; width: 65px; height: 65px; }
   .hero-sticker { top: 29px; right: 1%; padding: 10px 12px; }
   .hero-sticker strong { font-size: 14px; }
-  .hero-caption { right: 7%; bottom: 2px; }
+  .hero-caption { right: auto; bottom: 2px; left: 7%; max-width: calc(100% - 150px); text-align: left; }
   .leaf-one { left: 2%; bottom: 25px; }
   .trust-strip { flex-wrap: wrap; justify-content: space-around; gap: 14px 16px; padding: 19px 10px; }
   .trust-strip > div { gap: 5px; }
@@ -399,16 +399,34 @@ button, select { cursor: pointer; }
   .footer-grid { grid-template-columns: 1fr 1fr; gap: 25px 18px; }
   .site-footer { padding: 28px 16px 16px; }
   .footer-bottom { flex-direction: column; gap: 7px; margin-top: 22px; }
-  .floating-contact { right: 9px; gap: 8px; }
-  .floating-contact-link { width: 45px; height: 45px; }
+  body { padding-bottom: 70px; }
+  .floating-contact {
+    top: auto;
+    right: 12px;
+    bottom: 12px;
+    flex-direction: row;
+    gap: 8px;
+    padding: 5px;
+    border: 1px solid #ffffff;
+    border-radius: 999px;
+    background: #fcfbf7e8;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 5px 16px #15251c38;
+    transform: none;
+  }
+  .floating-contact-link { width: 42px; height: 42px; }
 }
 
 @media (max-width: 520px) {
   .form-grid { grid-template-columns: minmax(0, 1fr); }
   .inquiry-product { align-items: flex-start; flex-direction: column; gap: 4px; }
   .brand { font-size: 17px; }
-  .main-nav { gap: 7px; }
-  .main-nav a { font-size: 10px; }
+  .main-nav { gap: 6px; }
+  .main-nav a { font-size: 11px; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .content-note { padding: 18px 16px; }
+}
+
+@media (max-width: 360px) {
+  .main-nav a:first-child { display: none; }
 }
