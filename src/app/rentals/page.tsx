@@ -1,11 +1,12 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { contactEmail, whatsappHref } from "@/lib/contact";
+import { createPageMetadata } from "@/lib/site-seo";
 
-export const metadata: Metadata = {
-  title: "Golf Cart Rental Enquiries",
-  description: "Request golf cart rental availability from CartScout.",
-};
+export const metadata = createPageMetadata({
+  title: "Golf Cart Rentals",
+  description: "Request golf cart rental availability from CartScout. Share your dates, passenger count, and rental location for confirmation.",
+  path: "/rentals",
+});
 
 const rentalMessage = encodeURIComponent(
   "Hi CartScout, I would like to ask about golf cart rental availability. My preferred dates are __ and my location is __. We are __ passengers.",

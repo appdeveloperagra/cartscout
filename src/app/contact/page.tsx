@@ -1,15 +1,16 @@
-import type { Metadata } from "next";
 import {
   contactEmail,
   contactPhoneDisplay,
   contactPhoneHref,
   whatsappHref,
 } from "@/lib/contact";
+import { createPageMetadata } from "@/lib/site-seo";
 
-export const metadata: Metadata = {
-  title: "Contact CartScout",
-  description: "Contact CartScout by phone, WhatsApp, or email about golf cart purchases and rentals.",
-};
+export const metadata = createPageMetadata({
+  title: "Contact",
+  description: "Contact CartScout by phone, WhatsApp, or email about golf cart purchases and rental enquiries.",
+  path: "/contact",
+});
 
 export default function ContactPage() {
   return (

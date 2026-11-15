@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
 import Link from "next/link";
+import { createPageMetadata } from "@/lib/site-seo";
 
-export const metadata: Metadata = {
-  title: "About CartScout",
-  description: "Learn how CartScout helps you explore golf carts and make purchase or rental enquiries.",
-};
+export const metadata = createPageMetadata({
+  title: "About",
+  description: "Learn how CartScout helps you explore golf cart listings and ask about rental availability.",
+  path: "/about",
+});
 
 export default function AboutPage() {
   return (

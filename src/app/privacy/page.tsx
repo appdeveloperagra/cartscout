@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
 import { contactEmail } from "@/lib/contact";
+import { createPageMetadata } from "@/lib/site-seo";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "Privacy Policy",
-  description: "How CartScout handles information when you browse listings or contact us.",
-};
+  description: "How CartScout handles information when you browse golf cart listings or contact the business.",
+  path: "/privacy",
+});
 
 export default function PrivacyPage() {
   return (

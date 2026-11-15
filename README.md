@@ -23,4 +23,6 @@ The purchase and rental forms prepare an email in the customer's default email a
 
 The site includes About, Rentals, Contact, Privacy, and Terms pages. The privacy and terms pages describe the current website behavior and should be reviewed against the business's legal identity, location, and applicable laws before launch. The catalog is imported from public Mullens Golf Carts listings; price and stock should be confirmed before purchase.
 
+Set `NEXT_PUBLIC_SITE_URL` to the permanent HTTPS domain before launch. Canonical URLs, crawlable sitemap entries, and search indexing are intentionally disabled until that domain is configured; the temporary Hostinger URL should not be indexed as the final site.
+
 The provided rental sources do not expose bookable availability, so rental requests are sent for manual confirmation. Fast Eddie's inventory page currently exposes a gallery rather than individual product details. Apex Golf Carts' `robots.txt` disallows crawling, so its product listings are not imported. Product prices and stock should be confirmed before purchase.

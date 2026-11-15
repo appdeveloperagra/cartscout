@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
 import { contactEmail } from "@/lib/contact";
+import { createPageMetadata } from "@/lib/site-seo";
 
-export const metadata: Metadata = {
+export const metadata = createPageMetadata({
   title: "Terms of Use",
-  description: "Terms for browsing CartScout listings and sending purchase or rental enquiries.",
-};
+  description: "Terms for browsing CartScout golf cart listings and sending purchase or rental enquiries.",
+  path: "/terms",
+});
 
 export default function TermsPage() {
   return (
