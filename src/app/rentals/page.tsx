@@ -22,12 +22,12 @@ const rentalQuestions = [
   {
     question: "How much does golf cart hire cost?",
     answer:
-      "There are no fixed rental rates published on this page. Request a quote with your dates, location, passenger count, and number of carts so availability and applicable costs can be confirmed.",
+      "The rental rates table on this page lists daily, weekly, and monthly rates for 2-seater, 4-seater, 6-seater, and utility carts. The listed rates include delivery and collection. Confirm your location, availability, and any request-specific terms with CartScout.",
   },
   {
     question: "Can I hire for a day, a week, or longer?",
     answer:
-      "Include your preferred dates and rental duration in the request. Available periods, rates, and terms are confirmed individually before you decide.",
+      "The rate guide includes daily, weekly, and monthly periods. For a different duration or multiple carts, include your dates and requirements in a request for custom pricing.",
   },
   {
     question: "Is the cart booked when I send a request?",
@@ -42,7 +42,7 @@ const rentalQuestions = [
   {
     question: "What is included in the rental price?",
     answer:
-      "Inclusions, delivery or collection arrangements, any additional costs, and rental conditions must be confirmed in your quote before you accept it.",
+      "The listed daily, weekly, and monthly rates include delivery and collection. Confirm your service area, any additional costs, vehicle inclusions, and rental conditions for your request before accepting a quote.",
   },
 ];
 
@@ -146,15 +146,44 @@ export default function RentalsPage() {
         </div>
       </section>
 
+      <section className="rental-rates" aria-labelledby="rental-rates-title">
+        <div className="rental-section-heading rental-rates-heading">
+          <div className="eyebrow"><span /> PRICING</div>
+          <h2 id="rental-rates-title">Golf cart rental rates.</h2>
+          <p>
+            Rates below include delivery and collection. Confirm your location
+            and availability with us. Contact us for custom multi-cart pricing.
+          </p>
+        </div>
+        <div className="rental-rates-table-wrap">
+          <table className="rental-rates-table">
+            <caption className="sr-only">Golf cart rental rates by vehicle type and rental period</caption>
+            <thead>
+              <tr>
+                <th scope="col">Model</th>
+                <th scope="col">Daily</th>
+                <th scope="col">Weekly</th>
+                <th scope="col">Monthly</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">2-Seater Golf Cart</th><td>R 850</td><td>R 5,100</td><td>R 25,000</td></tr>
+              <tr><th scope="row">4-Seater Golf Cart</th><td>R 1,100</td><td>R 6,800</td><td>R 30,000</td></tr>
+              <tr><th scope="row">6-Seater Golf Cart</th><td>R 1,400</td><td>R 8,000</td><td>R 38,000</td></tr>
+              <tr><th scope="row">Utility Golf Cart</th><td>R 1,500</td><td>R 9,200</td><td>R 41,000</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
       <section className="rental-quote-band" aria-labelledby="rental-pricing-title">
         <div>
-          <div className="eyebrow"><span /> PRICING</div>
-          <h2 id="rental-pricing-title">Get a quote for your dates and location.</h2>
+          <div className="eyebrow"><span /> CUSTOM REQUESTS</div>
+          <h2 id="rental-pricing-title">Need a tailored rental quote?</h2>
           <p>
-            Rental prices are not published as fixed rates. Ask for a quote
-            based on your preferred dates, rental duration, location, and
-            number of carts. Request the quote in ZAR and confirm delivery or
-            collection costs and rental terms before accepting.
+            For multiple carts, a different rental period, or a specific
+            location, send us your dates and requirements. We&apos;ll check
+            availability and confirm the details before you decide.
           </p>
         </div>
         <a className="button button-light" href="#rental-quote">
@@ -180,7 +209,7 @@ export default function RentalsPage() {
           <article>
             <span>02</span>
             <h3>Transport arrangements</h3>
-            <p>Check whether delivery and collection can be arranged for your exact address and what they cost.</p>
+            <p>The listed rates include delivery and collection. Confirm service coverage and arrangements for your exact address.</p>
           </article>
           <article>
             <span>03</span>

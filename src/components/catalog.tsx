@@ -113,10 +113,6 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
     const phone = String(formData.get("phone") ?? "").trim();
     const location = String(formData.get("location") ?? "").trim();
     const message = String(formData.get("message") ?? "").trim();
-    if (!contactEmail) {
-      setInquiryError("Enquiry email is not configured yet. Set NEXT_PUBLIC_CONTACT_EMAIL before launch.");
-      return;
-    }
 
     const subject = `Golf cart purchase enquiry: ${inquiry.product.name}`;
     const body = [

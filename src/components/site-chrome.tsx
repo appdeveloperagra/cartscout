@@ -112,7 +112,7 @@ export function SiteFooter() {
       </div>
       <div className="footer-bottom">
         <span>© CartScout</span>
-        <span>Prices and availability are confirmed before any purchase or rental is agreed.</span>
+        <span>Here&apos;s to finding the right ride for your next adventure.</span>
       </div>
     </footer>
   );
