@@ -19,6 +19,8 @@ npm run import:inventory
 
 The importer reads the public Mullens Golf Carts product API and writes the cart listing fields to `src/data/products.json`. It imports names, prices, stock status, product links, and the dealer's image URL; it does not copy the full product descriptions.
 
-The purchase and rental forms prepare an email in the customer's default email app. Copy `.env.example` to `.env.local`, set `NEXT_PUBLIC_CONTACT_EMAIL`, and restart the app to enable enquiries. No enquiry is stored or sent automatically, and a request is not a confirmed sale or booking.
+The purchase and rental forms prepare an email in the customer's default email app. The public contact email defaults to `golfcartsrentals@gmail.com`; copy `.env.example` to `.env.local` if you need to override it, then restart the app. No enquiry is stored or sent automatically, and a request is not a confirmed sale or booking.
+
+The site includes About, Rentals, Contact, Privacy, and Terms pages. The privacy and terms pages describe the current website behavior and should be reviewed against the business's legal identity, location, and applicable laws before launch. The catalog is imported from public Mullens Golf Carts listings; price and stock should be confirmed before purchase.
 
 The provided rental sources do not expose bookable availability, so rental requests are sent for manual confirmation. Fast Eddie's inventory page currently exposes a gallery rather than individual product details. Apex Golf Carts' `robots.txt` disallows crawling, so its product listings are not imported. Product prices and stock should be confirmed before purchase.

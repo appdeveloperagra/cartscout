@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { contactEmail } from "@/lib/contact";
 
 export type CatalogProduct = {
   id: number;
@@ -72,7 +73,12 @@ export default function Catalog({ products }: CatalogProps) {
   const [inquiry, setInquiry] = useState<Inquiry | null>(null);
   const [inquiryError, setInquiryError] = useState("");
   const inquiryTrigger = useRef<HTMLButtonElement | null>(null);
-  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim();
+
+  function closeInquiry() {
+    const trigger = inquiryTrigger.current;
+    setInquiry(null);
+    requestAnimationFrame(() => trigger?.focus());
+  }
 
   useEffect(() => {
     if (!inquiry) return;
@@ -111,12 +117,6 @@ export default function Catalog({ products }: CatalogProps) {
     setInquiryError("");
     inquiryTrigger.current = trigger;
     setInquiry(nextInquiry);
-  }
-
-  function closeInquiry() {
-    const trigger = inquiryTrigger.current;
-    setInquiry(null);
-    requestAnimationFrame(() => trigger?.focus());
   }
 
   function submitInquiry(event: FormEvent<HTMLFormElement>) {
@@ -181,18 +181,6 @@ export default function Catalog({ products }: CatalogProps) {
         Shop a cart or ask about a rental
         <a href="#inventory">Explore inventory <span aria-hidden="true">→</span></a>
       </div>
-
-      <header className="site-header">
-        <a className="brand" href="#" aria-label="CartScout home">
-          <span className="brand-mark"><CartIcon /></span>
-          <span>cart<span className="brand-accent">scout</span></span>
-        </a>
-        <nav className="main-nav" aria-label="Main navigation">
-          <a className={mode === "sale" ? "nav-active" : ""} href="#inventory" onClick={() => setMode("sale")}>Buy</a>
-          <a className={mode === "rent" ? "nav-active" : ""} href="#inventory" onClick={() => setMode("rent")}>Rentals</a>
-        </nav>
-        <button className="header-link" type="button" onClick={(event) => openInquiry({ kind: "rental" }, event.currentTarget)}>Ask about renting</button>
-      </header>
 
       <section className="hero">
         <div className="hero-copy">
@@ -342,6 +330,7 @@ export default function Catalog({ products }: CatalogProps) {
                       <div className="product-info">
                         <div className="product-meta"><span>{getMake(product.name)}</span><span>{getSeats(product.name) ? `${getSeats(product.name)} PASSENGER` : "GOLF CART"}</span></div>
                         <h3>{product.name}</h3>
+                        <a className="listing-link" href={product.url} target="_blank" rel="noreferrer">View dealer listing <span aria-hidden="true">↗</span></a>
                         <div className="product-footer">
                           <div><span className="price-label">CURRENT LISTED PRICE</span><strong>{formatPrice(product.price, product.currency)}</strong></div>
                           <button type="button" onClick={(event) => openInquiry({ kind: "purchase", product }, event.currentTarget)} aria-label={`Enquire to buy ${product.name}`}>Enquire to buy <span aria-hidden="true">→</span></button>
@@ -381,15 +370,6 @@ export default function Catalog({ products }: CatalogProps) {
           <article><span>03</span><h3>Confirm the details</h3><p>We&apos;ll verify availability, answer your questions, and arrange the next steps together.</p></article>
         </div>
       </section>
-
-      <footer className="site-footer">
-        <a className="brand footer-brand" href="#" aria-label="CartScout home">
-          <span className="brand-mark"><CartIcon /></span>
-          <span>cart<span className="brand-accent">scout</span></span>
-        </a>
-        <span>Find a ride for wherever the day takes you.</span>
-        <span>Purchase and rental requests are confirmed by our team.</span>
-      </footer>
 
       {inquiry && (
         <div className="modal-backdrop" onMouseDown={(event) => {
