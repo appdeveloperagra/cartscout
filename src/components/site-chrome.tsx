@@ -5,6 +5,7 @@ import {
   contactPhoneHref,
   whatsappHref,
 } from "@/lib/contact";
+import { provinces } from "@/lib/provinces";
 
 function CartIcon() {
   return (
@@ -55,6 +56,15 @@ export function SiteHeader() {
           <Link href="/">Home</Link>
           <Link href="/inventory">Buy</Link>
           <Link href="/rentals">Rentals</Link>
+          <details className="locations-nav">
+            <summary>Locations</summary>
+            <div className="locations-menu">
+              <Link className="locations-menu-index" href="/locations">All locations</Link>
+              {provinces.map(({ slug, name }) => (
+                <Link href={`/locations/${slug}`} key={slug}>{name}</Link>
+              ))}
+            </div>
+          </details>
           <Link href="/about">About</Link>
           <Link href="/contact">Contact</Link>
         </nav>
@@ -82,6 +92,7 @@ export function SiteFooter() {
           <h2>Explore</h2>
           <Link href="/inventory">Shop carts</Link>
           <Link href="/rentals">Rental requests</Link>
+          <Link href="/locations">Locations by province</Link>
           <Link href="/about">About CartScout</Link>
           <Link href="/contact">Contact</Link>
         </nav>
