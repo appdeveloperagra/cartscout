@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { formatPrice, type CatalogProduct } from "@/lib/products";
+import { HomeFaq } from "@/components/home-faq";
+import { HomeHighlights } from "@/components/home-highlights";
 
 type HomePageProps = {
   products: CatalogProduct[];
@@ -148,6 +150,8 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
           <article><span>03</span><h3>Confirm the details</h3><p>We&apos;ll verify availability, answer your questions, and arrange the next steps together.</p></article>
         </div>
       </section>
+      <HomeHighlights />
+      <HomeFaq />
     </main>
   );
 }
