@@ -4,7 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { contactEmail } from "@/lib/contact";
-import { formatPrice, parseSeatFilter, type CatalogProduct, type SeatFilter } from "@/lib/products";
+import { PriceGuide } from "@/components/price-guide";
+import { parseSeatFilter, type CatalogProduct, type SeatFilter } from "@/lib/products";
+import { formatZar, getSampleCatalogPrice } from "@/lib/pricing";
 
 type CatalogProps = {
   products: CatalogProduct[];
@@ -91,8 +93,7 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
       return matchesQuery && matchesMake && matchesSeats;
     });
 
-    if (sort === "price-low") filtered.sort((a, b) => a.price - b.price);
-    if (sort === "price-high") filtered.sort((a, b) => b.price - a.price);
+    if (sort === "name") filtered.sort((a, b) => a.name.localeCompare(b.name));
     return filtered;
   }, [make, products, query, seats, sort]);
 
@@ -110,6 +111,7 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
     const name = String(formData.get("name") ?? "").trim();
     const email = String(formData.get("email") ?? "").trim();
     const phone = String(formData.get("phone") ?? "").trim();
+    const location = String(formData.get("location") ?? "").trim();
     const message = String(formData.get("message") ?? "").trim();
     if (!contactEmail) {
       setInquiryError("Enquiry email is not configured yet. Set NEXT_PUBLIC_CONTACT_EMAIL before launch.");
@@ -121,9 +123,10 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
       `Name: ${name}`,
       `Email: ${email}`,
       `Phone: ${phone || "Not provided"}`,
+      `Town or province: ${location || "Not provided"}`,
       `Cart: ${inquiry.product.name}`,
       "",
-      message || "Please contact me with availability and next steps.",
+      message || "Please provide the current price in ZAR, confirm availability, and advise whether delivery can be arranged.",
     ].join("\n");
 
     window.location.href = `mailto:${contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -135,11 +138,12 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
       <section className="inventory-section">
         <div className="inventory-page-heading">
           <div className="eyebrow"><span /> FULL CART INVENTORY</div>
-          <h1>Explore all golf carts.</h1>
+          <h1>Golf carts for sale.</h1>
           <p>
-            Browse the full set of dealer listings. Prices are shown in the listed currency (USD); current price, availability, and purchase arrangements must be confirmed before proceeding.
+            Browse dealer listings with sample ZAR prices. These amounts are random placeholders, not confirmed offers or Merchant Center prices; confirm local stock, delivery, and the actual price before proceeding.
           </p>
         </div>
+        <PriceGuide compact />
         <div className="section-heading">
           <div>
             <div className="eyebrow"><span /> THE CART COLLECTION</div>
@@ -180,8 +184,7 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
                 <span className="sr-only">Sort listings</span>
                 <select value={sort} onChange={(event) => setSort(event.target.value)}>
                   <option value="featured">Featured</option>
-                  <option value="price-low">Price: low to high</option>
-                  <option value="price-high">Price: high to low</option>
+                  <option value="name">Name: A to Z</option>
                 </select>
               </label>
           </div>
@@ -191,7 +194,7 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
           <>
             <div className="results-line">
               <span><strong>{filteredProducts.length}</strong> carts found</span>
-              <span>Final price and availability confirmed by enquiry</span>
+              <span>Local price and availability confirmed by enquiry</span>
             </div>
             <div className="product-grid">
                   {filteredProducts.map((product, index) => (
@@ -211,9 +214,13 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
                       <div className="product-info">
                         <div className="product-meta"><span>{getMake(product.name)}</span><span>{getSeats(product.name) ? `${getSeats(product.name)} PASSENGER` : "GOLF CART"}</span></div>
                         <h3>{product.name}</h3>
-                        <a className="listing-link" href={product.url} target="_blank" rel="noreferrer">View dealer listing <span aria-hidden="true">↗</span></a>
+                        <a className="listing-link" href={product.url} target="_blank" rel="noreferrer">View source listing <span aria-hidden="true">↗</span></a>
                         <div className="product-footer">
-                          <div><span className="price-label">CURRENT LISTED PRICE</span><strong>{formatPrice(product.price, product.currency)}</strong></div>
+                          <div>
+                            <span className="price-label">SAMPLE ZAR PRICE</span>
+                            <strong>{formatZar(getSampleCatalogPrice(product.id, product.name))}</strong>
+                            <small className="price-disclaimer">Random placeholder; not a confirmed offer.</small>
+                          </div>
                           <button type="button" onClick={(event) => openInquiry(product, event.currentTarget)} aria-label={`Enquire to buy ${product.name}`}>Enquire to buy <span aria-hidden="true">→</span></button>
                         </div>
                       </div>
@@ -254,15 +261,17 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
             <button className="modal-close" type="button" onClick={closeInquiry} aria-label="Close enquiry form" autoFocus>×</button>
             <div className="eyebrow"><span /> PURCHASE REQUEST</div>
             <h2 id="inquiry-title">Enquire about this cart.</h2>
-            <p className="inquiry-product">{inquiry.product.name} <strong>{formatPrice(inquiry.product.price, inquiry.product.currency)}</strong></p>
+            <p className="inquiry-product">{inquiry.product.name}</p>
+            <p className="form-footnote">Include your town so the current ZAR price and any delivery arrangements can be checked.</p>
             <form onSubmit={submitInquiry}>
               <div className="form-grid">
                 <label>Name<input name="name" autoComplete="name" required /></label>
                 <label>Email<input name="email" type="email" autoComplete="email" required /></label>
                 <label>Phone (optional)<input name="phone" type="tel" autoComplete="tel" /></label>
+                <label>Town or province (optional)<input name="location" autoComplete="address-level2" placeholder="e.g. Pretoria, Gauteng" /></label>
               </div>
               <label className="message-field">Anything else we should know?
-                <textarea name="message" rows={3} />
+                <textarea name="message" rows={3} placeholder="Ask for a price in ZAR and include any delivery questions." />
               </label>
               {inquiryError && <p className="form-notice" role="status">{inquiryError}</p>}
               <button className="button button-dark submit-inquiry" type="submit">

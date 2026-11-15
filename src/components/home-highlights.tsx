@@ -4,8 +4,8 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 
 const highlights = [
   {
-    title: "Browse third-party cart listings.",
-    description: "The catalog is sourced from a dealer, and displayed prices are in USD.",
+    title: "ZAR ranges are for planning.",
+    description: "Ask for a current South African price and confirm local availability and delivery before proceeding.",
   },
   {
     title: "Confirm the details before you decide.",

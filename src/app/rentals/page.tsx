@@ -6,17 +6,11 @@ import { createPageMetadata, siteOrigin } from "@/lib/site-seo";
 
 export const metadata: Metadata = {
   ...createPageMetadata({
-    title: "Golf Cart Hire & Rental Enquiries",
+    title: "Golf Cart Hire in South Africa",
     description:
-      "Request golf cart hire in South Africa. Share your dates, location, passenger count, and number of carts to ask CartScout about availability and a quote.",
+      "Request a golf cart hire quote in South Africa. Share your dates and location to check rental availability, price, and delivery arrangements.",
     path: "/rentals",
   }),
-  keywords: [
-    "golf cart hire South Africa",
-    "golf cart rental enquiry",
-    "golf cart hire quote",
-    "golf cart rentals",
-  ],
 };
 
 const rentalQuestions = [
@@ -91,7 +85,7 @@ export default function RentalsPage() {
       <section className="rental-hero" aria-labelledby="rental-title">
         <div className="rental-hero-copy">
           <div className="eyebrow"><span /> RENTAL ENQUIRIES</div>
-          <h1 id="rental-title">Golf cart hire, shaped around your plans.</h1>
+          <h1 id="rental-title">Request golf cart hire in South Africa.</h1>
           <p>
             Tell us when and where you need a cart, how many people will ride,
             and how many carts you are looking for. We&apos;ll check the request
@@ -159,8 +153,8 @@ export default function RentalsPage() {
           <p>
             Rental prices are not published as fixed rates. Ask for a quote
             based on your preferred dates, rental duration, location, and
-            number of carts. Confirm the full price, currency, delivery or
-            collection costs, and rental terms before accepting.
+            number of carts. Request the quote in ZAR and confirm delivery or
+            collection costs and rental terms before accepting.
           </p>
         </div>
         <a className="button button-light" href="#rental-quote">
@@ -230,15 +224,14 @@ export default function RentalsPage() {
           <div className="eyebrow"><span /> START AN ENQUIRY</div>
           <h2 id="rental-form-title">Tell us what you need.</h2>
           <p>
-            Complete the details and we&apos;ll prepare a WhatsApp message for
-            you to review and send. Nothing is submitted until you send it in
-            WhatsApp.
+            Complete the details and choose email or WhatsApp. Review the
+            prepared message and send it to contact CartScout.
           </p>
           <p className="rental-request-alternative">
             Prefer email? <a href={`mailto:${contactEmail}?subject=Golf%20cart%20rental%20enquiry`}>{contactEmail}</a>
           </p>
         </div>
-        <RentalQuoteForm whatsappHref={whatsappHref} />
+        <RentalQuoteForm contactEmail={contactEmail} whatsappHref={whatsappHref} />
       </section>
 
       <section className="rental-faq" aria-labelledby="rental-faq-title">

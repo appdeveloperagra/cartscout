@@ -7,22 +7,15 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: siteOrigin ? new URL(siteOrigin) : undefined,
   title: {
-    default: "Golf Carts for Sale & Rental Enquiries",
+    default: "Golf Cart Prices in South Africa | CartScout",
     template: "%s | CartScout",
   },
   description:
-    "Browse golf cart listings, enquire about a purchase, or ask CartScout about rental availability. Contact us by phone, WhatsApp, or email.",
+    "Explore golf cart listings, indicative budget ranges in ZAR, and purchase or rental enquiries. Confirm local pricing and availability before deciding.",
   applicationName: "CartScout",
   authors: [{ name: "CartScout" }],
   publisher: "CartScout",
   category: "shopping",
-  keywords: [
-    "golf carts for sale",
-    "golf cart rentals",
-    "golf cart rental enquiries",
-    "golf cart sales",
-    "CartScout",
-  ],
   referrer: "origin-when-cross-origin",
   robots: {
     index: Boolean(siteOrigin),
@@ -32,9 +25,9 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_ZA",
     siteName: "CartScout",
-    title: "Golf Carts for Sale & Rental Enquiries | CartScout",
+    title: "Golf Cart Prices in South Africa | CartScout",
     description:
-      "Browse golf cart listings, enquire about a purchase, or ask CartScout about rental availability.",
+      "Explore golf cart listings, indicative budget ranges in ZAR, and purchase or rental enquiries.",
     ...(siteOrigin
       ? {
           url: siteOrigin,
@@ -51,9 +44,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: siteOrigin ? "summary_large_image" : "summary",
-    title: "Golf Carts for Sale & Rental Enquiries | CartScout",
+    title: "Golf Cart Prices in South Africa | CartScout",
     description:
-      "Browse golf cart listings, enquire about a purchase, or ask CartScout about rental availability.",
+      "Explore golf cart listings, indicative budget ranges in ZAR, and purchase or rental enquiries.",
     ...(siteOrigin
       ? { images: [new URL("/api/social-image", siteOrigin).toString()] }
       : {}),

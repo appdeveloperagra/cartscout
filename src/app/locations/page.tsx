@@ -4,9 +4,9 @@ import { provinces } from "@/lib/provinces";
 import { createPageMetadata } from "@/lib/site-seo";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Golf Cart Locations in South Africa",
+  title: "Golf Cart Sales & Hire by Province",
   description:
-    "Explore golf cart information for all nine South African provinces. Browse current listings or ask CartScout to confirm purchase and rental availability for your location.",
+    "Explore golf cart sales and hire guides for all nine South African provinces. Choose your area and confirm local stock, delivery, and rental availability.",
   path: "/locations",
 });
 

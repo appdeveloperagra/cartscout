@@ -1,8 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import { formatPrice, type CatalogProduct } from "@/lib/products";
+import { type CatalogProduct } from "@/lib/products";
 import { HomeFaq } from "@/components/home-faq";
 import { HomeHighlights } from "@/components/home-highlights";
+import { PriceGuide } from "@/components/price-guide";
+import { formatZar, getSampleCatalogPrice } from "@/lib/pricing";
 
 type HomePageProps = {
   products: CatalogProduct[];
@@ -35,8 +37,8 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
       <section className="hero">
         <div className="hero-copy">
           <div className="eyebrow"><span /> BUY OR RENT A GOLF CART</div>
-          <h1>Find your cart.<br /><em>Take the scenic route.</em></h1>
-          <p>Explore golf cart listings, enquire about a purchase, or tell us when you need a rental. We&apos;ll help confirm the details before you decide.</p>
+          <h1>Golf carts for sale<br /><em>in South Africa.</em></h1>
+          <p>Compare dealer listings with sample ZAR prices, view passenger-size budget ranges, or request a golf cart hire quote. Local stock, actual pricing, delivery, and rental availability must be confirmed.</p>
           <div className="hero-actions">
             <Link className="button button-dark" href="/inventory">Browse carts <span aria-hidden="true">→</span></Link>
             <Link className="text-link" href="/rentals">Need a rental? <span aria-hidden="true">↗</span></Link>
@@ -69,9 +71,9 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
 
       <section className="trust-strip" aria-label="Catalog information">
         <div><strong>{totalProductCount}</strong><span>dealer listings</span></div>
-        <div><strong>Buy or rent</strong><span>separate request pages</span></div>
-        <div><strong>Confirm first</strong><span>price and availability</span></div>
-        <p>Listings come from a third-party dealer and prices are shown in USD.</p>
+        <div><strong>ZAR guide</strong><span>budget ranges by seats</span></div>
+        <div><strong>Confirm first</strong><span>local price and availability</span></div>
+        <p>Sample listing prices are placeholders, not confirmed offers. Dealer listings do not confirm South African stock or delivery.</p>
       </section>
 
       <section className="seat-categories" aria-labelledby="seat-categories-title">
@@ -95,6 +97,8 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
           </Link>
         </div>
       </section>
+
+      <PriceGuide />
 
       <section className="home-featured">
         <div className="section-heading">
@@ -125,7 +129,11 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
                   View dealer listing <span aria-hidden="true">↗</span>
                 </a>
                 <div className="product-footer">
-                  <div><span className="price-label">LISTED PRICE (USD)</span><strong>{formatPrice(product.price, product.currency)}</strong></div>
+                  <div>
+                    <span className="price-label">SAMPLE ZAR PRICE</span>
+                    <strong>{formatZar(getSampleCatalogPrice(product.id, product.name))}</strong>
+                    <small className="price-disclaimer">Random placeholder; not a confirmed offer.</small>
+                  </div>
                   <Link className="featured-enquire-link" href="/inventory">Enquire <span aria-hidden="true">→</span></Link>
                 </div>
               </div>

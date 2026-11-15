@@ -105,6 +105,7 @@ export function SiteFooter() {
         </div>
         <nav className="footer-group" aria-label="Policies">
           <h2>Information</h2>
+          <Link href="/faq">Golf cart FAQs</Link>
           <Link href="/privacy">Privacy policy</Link>
           <Link href="/terms">Terms of use</Link>
         </nav>

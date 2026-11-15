@@ -2,7 +2,13 @@
 
 import { useRef, useState, type ChangeEvent } from "react";
 
-export default function RentalQuoteForm({ whatsappHref }: { whatsappHref: string }) {
+export default function RentalQuoteForm({
+  contactEmail,
+  whatsappHref,
+}: {
+  contactEmail: string;
+  whatsappHref: string;
+}) {
   const formRef = useRef<HTMLFormElement>(null);
   const [request, setRequest] = useState({
     location: "",
@@ -19,6 +25,7 @@ export default function RentalQuoteForm({ whatsappHref }: { whatsappHref: string
       `Number of carts: ${request.cartCount}`,
       `Intended use or other details: ${request.details || "Not specified"}`,
     ].join("\n");
+  const emailHref = `mailto:${contactEmail}?subject=${encodeURIComponent("Golf cart rental quote request")}&body=${encodeURIComponent(message)}`;
 
   function handleChange(event: ChangeEvent<HTMLFormElement>) {
     const target = event.target;
@@ -74,6 +81,15 @@ export default function RentalQuoteForm({ whatsappHref }: { whatsappHref: string
       </label>
       <a
         className="button button-dark"
+        href={emailHref}
+        onClick={(event) => {
+          if (!formRef.current?.reportValidity()) event.preventDefault();
+        }}
+      >
+        Prepare email enquiry <span aria-hidden="true">→</span>
+      </a>
+      <a
+        className="text-link rental-whatsapp-link"
         href={`${whatsappHref}?text=${encodeURIComponent(message)}`}
         onClick={(event) => {
           if (!formRef.current?.reportValidity()) event.preventDefault();
@@ -81,11 +97,11 @@ export default function RentalQuoteForm({ whatsappHref }: { whatsappHref: string
         rel="noreferrer"
         target="_blank"
       >
-        Continue to WhatsApp <span aria-hidden="true">↗</span>
+        Or continue to WhatsApp <span aria-hidden="true">↗</span>
       </a>
       <p className="rental-form-note">
-        WhatsApp opens in a new tab with a draft message. Review it and press Send to contact
-        CartScout. Availability and booking are confirmed separately.
+        The email button opens a draft addressed to {contactEmail}; you must send it from your
+        email app. WhatsApp is an alternative. Availability and booking are confirmed separately.
       </p>
     </form>
   );

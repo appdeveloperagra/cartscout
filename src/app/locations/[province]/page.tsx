@@ -22,8 +22,8 @@ export async function generateMetadata({
   if (!province) return {};
 
   return createPageMetadata({
-    title: `Golf Carts in ${province.name}`,
-    description: `Golf cart listings and purchase or rental enquiries for ${province.name}. Ask CartScout to confirm availability, suitability, and delivery arrangements.`,
+    title: `Golf Carts in ${province.name} | Sales & Hire`,
+    description: `Golf cart enquiries in ${province.name}, including ${province.towns[0]}. Browse listings or request hire; confirm stock, delivery, and rental availability.`,
     path: `/locations/${province.slug}`,
   });
 }

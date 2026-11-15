@@ -15,11 +15,3 @@ export function parseSeatFilter(value: string | string[] | undefined): SeatFilte
   if (value === "6plus") return "6+ seats";
   return "Any seats";
 }
-
-export function formatPrice(price: number, currency: string) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-    maximumFractionDigits: 0,
-  }).format(price);
-}

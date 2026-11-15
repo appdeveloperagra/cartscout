@@ -4,9 +4,9 @@ import inventory from "@/data/products.json";
 import type { CatalogProduct } from "@/lib/products";
 
 export const metadata = createPageMetadata({
-  title: "Golf Cart Listings & Rental Enquiries",
+  title: "Golf Cart Prices in South Africa",
   description:
-    "Explore selected golf cart listings, browse the full inventory, enquire about a purchase, or ask CartScout about rental availability.",
+    "Browse golf cart listings with sample ZAR placeholders and passenger-size budget ranges. Confirm actual local prices, stock, and delivery before purchase.",
   path: "/",
 });
 
