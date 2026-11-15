@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 
-const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
-export const siteOrigin = configuredSiteUrl ? new URL(configuredSiteUrl).origin : null;
+const configuredSiteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://cartscout.co.za";
+export const siteOrigin = new URL(configuredSiteUrl).origin;
 
 type PageMetadataInput = {
   title: string;
