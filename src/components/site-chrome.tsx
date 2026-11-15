@@ -5,7 +5,7 @@ import {
   contactPhoneHref,
   whatsappHref,
 } from "@/lib/contact";
-import { provinces } from "@/lib/provinces";
+import LocationsMenu from "@/components/locations-menu";
 
 function CartIcon() {
   return (
@@ -56,15 +56,7 @@ export function SiteHeader() {
           <Link href="/">Home</Link>
           <Link href="/inventory">Buy</Link>
           <Link href="/rentals">Rentals</Link>
-          <details className="locations-nav">
-            <summary>Locations</summary>
-            <div className="locations-menu">
-              <Link className="locations-menu-index" href="/locations">All locations</Link>
-              {provinces.map(({ slug, name }) => (
-                <Link href={`/locations/${slug}`} key={slug}>{name}</Link>
-              ))}
-            </div>
-          </details>
+          <LocationsMenu />
           <Link href="/about">About</Link>
           <Link href="/contact">Contact</Link>
         </nav>

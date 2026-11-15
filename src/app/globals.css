@@ -109,17 +109,16 @@ button, select { cursor: pointer; }
 .main-nav a:hover, .main-nav .nav-active { color: var(--forest); }
 .main-nav .nav-active { position: relative; }
 .locations-nav { position: relative; }
-.locations-nav summary { display: flex; align-items: center; gap: 5px; cursor: pointer; list-style: none; }
-.locations-nav summary::-webkit-details-marker { display: none; }
-.locations-nav summary::after { content: ""; width: 6px; height: 6px; margin-top: -3px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(45deg); }
-.locations-nav[open] summary::after { margin-top: 3px; transform: rotate(225deg); }
-.locations-nav summary a { color: inherit; }
-.locations-nav summary a:hover { color: var(--forest); }
-.locations-menu { position: absolute; z-index: 20; top: calc(100% + 15px); left: -18px; display: grid; grid-template-columns: repeat(2, minmax(140px, 1fr)); gap: 2px; width: 360px; padding: 10px; border: 1px solid var(--line); border-radius: 5px; background: var(--paper); box-shadow: 0 12px 28px #20362e1c; }
-.locations-menu a { padding: 10px; border-radius: 3px; color: #58675d; font-size: 13px; }
+.main-nav .locations-nav-toggle { display: inline-flex; align-items: center; gap: 7px; padding: 0; border: 0; background: transparent; color: #67766c; cursor: pointer; font-size: 13px; font-weight: 600; line-height: 1.5; }
+.main-nav .locations-nav-toggle:hover, .main-nav .locations-nav-toggle[aria-expanded="true"] { color: var(--forest); }
+.locations-nav-toggle::after { width: 6px; height: 6px; margin-top: -3px; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; content: ""; transform: rotate(45deg); transition: transform .16s ease, margin .16s ease; }
+.locations-nav-toggle[aria-expanded="true"]::after { margin-top: 3px; transform: rotate(225deg); }
+.locations-menu { position: absolute; z-index: 20; top: calc(100% + 28px); left: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2px; width: min(360px, calc(100vw - 32px)); padding: 9px; border: 1px solid var(--line); border-radius: 5px; background: var(--paper); box-shadow: 0 12px 28px #20362e1c; }
+.locations-menu[hidden] { display: none; }
+.locations-menu a { display: flex; min-height: 40px; align-items: center; padding: 9px 10px; border-radius: 3px; color: #58675d; font-size: 13px; font-weight: 500; }
 .locations-menu .locations-menu-index { grid-column: 1 / -1; border-bottom: 1px solid var(--line); border-radius: 0; color: var(--forest); font-weight: 700; }
 .locations-menu a:hover, .locations-menu a:focus-visible { background: #f0f2eb; color: var(--forest); }
-.locations-nav summary:focus-visible, .locations-menu a:focus-visible { outline: 2px solid #66836b; outline-offset: 3px; }
+.locations-nav-toggle:focus-visible, .locations-menu a:focus-visible { outline: 2px solid #66836b; outline-offset: 3px; }
 .header-link { display: inline-flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid #dfe3d8; border-radius: 5px; background: transparent; color: var(--forest); white-space: nowrap; }
 .header-link svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; }
 
@@ -516,7 +515,7 @@ button, select { cursor: pointer; }
   .brand-mark { width: 28px; height: 28px; border-radius: 8px; }
   .brand-mark svg { width: 21px; }
   .main-nav { gap: clamp(6px, 2vw, 12px); }
-  .main-nav a, .locations-nav summary { font-size: 11px; }
+  .main-nav a, .main-nav .locations-nav-toggle { font-size: 11px; }
   .main-nav > a[href="/about"] { display: none; }
   .locations-nav { position: static; }
   .locations-menu { top: calc(100% - 1px); right: 10px; left: auto; width: min(340px, calc(100vw - 20px)); }
@@ -631,7 +630,7 @@ button, select { cursor: pointer; }
   .inquiry-product { align-items: flex-start; flex-direction: column; gap: 4px; }
   .brand { font-size: 17px; }
   .main-nav { gap: 6px; }
-  .main-nav a, .locations-nav summary { font-size: 11px; }
+  .main-nav a, .main-nav .locations-nav-toggle { font-size: 11px; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
   .content-note { padding: 18px 16px; }
 }
