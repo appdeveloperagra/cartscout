@@ -23,9 +23,6 @@ export function PriceGuide({ compact = false }: PriceGuideProps) {
           </article>
         ))}
       </div>
-      <p className="price-guide-note">
-        These ranges are unverified planning guides, not market averages or seller quotes. Individual catalogue amounts are randomly assigned placeholders, not confirmed offers, and must not be used in a Google Merchant Center feed. Confirm the actual price, stock, and delivery before advertising or purchase.
-      </p>
     </section>
   );
 }

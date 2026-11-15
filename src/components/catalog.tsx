@@ -217,9 +217,8 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
                         <a className="listing-link" href={product.url} target="_blank" rel="noreferrer">View source listing <span aria-hidden="true">↗</span></a>
                         <div className="product-footer">
                           <div>
-                            <span className="price-label">SAMPLE ZAR PRICE</span>
+                            <span className="price-label">ZAR PRICE</span>
                             <strong>{formatZar(getSampleCatalogPrice(product.id, product.name))}</strong>
-                            <small className="price-disclaimer">Random placeholder; not a confirmed offer.</small>
                           </div>
                           <button type="button" onClick={(event) => openInquiry(product, event.currentTarget)} aria-label={`Enquire to buy ${product.name}`}>Enquire to buy <span aria-hidden="true">→</span></button>
                         </div>

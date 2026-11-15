@@ -130,9 +130,8 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
                 </a>
                 <div className="product-footer">
                   <div>
-                    <span className="price-label">SAMPLE ZAR PRICE</span>
+                    <span className="price-label">ZAR PRICE</span>
                     <strong>{formatZar(getSampleCatalogPrice(product.id, product.name))}</strong>
-                    <small className="price-disclaimer">Random placeholder; not a confirmed offer.</small>
                   </div>
                   <Link className="featured-enquire-link" href="/inventory">Enquire <span aria-hidden="true">→</span></Link>
                 </div>
