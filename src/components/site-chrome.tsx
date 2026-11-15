@@ -34,6 +34,15 @@ function WhatsAppIcon() {
   );
 }
 
+function EmailIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 6h16v12H4z" />
+      <path d="m4 7 8 6 8-6" />
+    </svg>
+  );
+}
+
 export function SiteHeader() {
   return (
     <header className="site-header">
@@ -78,9 +87,18 @@ export function SiteFooter() {
         </nav>
         <div className="footer-group">
           <h2>Get in touch</h2>
-          <a href={contactPhoneHref}>{contactPhoneDisplay}</a>
-          <a href={whatsappHref} target="_blank" rel="noreferrer">WhatsApp us</a>
-          <a href={`mailto:${contactEmail}`}>{contactEmail}</a>
+          <a className="footer-contact-link" href={contactPhoneHref}>
+            <PhoneIcon />
+            <span>{contactPhoneDisplay}</span>
+          </a>
+          <a className="footer-contact-link" href={whatsappHref} target="_blank" rel="noreferrer">
+            <WhatsAppIcon />
+            <span>WhatsApp us</span>
+          </a>
+          <a className="footer-contact-link" href={`mailto:${contactEmail}`}>
+            <EmailIcon />
+            <span>{contactEmail}</span>
+          </a>
         </div>
         <nav className="footer-group" aria-label="Policies">
           <h2>Information</h2>

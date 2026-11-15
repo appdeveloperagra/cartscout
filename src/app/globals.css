@@ -290,6 +290,8 @@ button, select { cursor: pointer; }
 .footer-group { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
 .footer-group h2 { margin: 3px 0 5px; color: #415349; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
 .footer-group a { color: #69766b; font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
+.footer-group .footer-contact-link { display: inline-flex; align-items: center; gap: 9px; }
+.footer-contact-link svg { width: 15px; height: 15px; flex: 0 0 15px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; }
 .footer-group a:hover { color: var(--forest); text-decoration: underline; }
 .footer-bottom { display: flex; justify-content: space-between; gap: 16px; max-width: 1256px; margin: 24px auto 0; padding-top: 14px; border-top: 1px solid #e3e3d9; color: #737e74; font-size: 11px; }
 .content-page { width: min(100%, 1170px); min-height: 56vh; margin: 0 auto; padding: 64px 42px 76px; }
