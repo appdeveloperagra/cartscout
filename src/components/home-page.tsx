@@ -72,6 +72,28 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
         <p>Listings come from a third-party dealer and prices are shown in USD.</p>
       </section>
 
+      <section className="seat-categories" aria-labelledby="seat-categories-title">
+        <div className="eyebrow"><span /> FIND THE RIGHT SIZE</div>
+        <h2 id="seat-categories-title">How many passengers?</h2>
+        <div className="seat-category-grid">
+          <Link className="seat-category" href="/inventory?seats=2">
+            <span className="seat-category-count">02</span>
+            <strong>2 passengers</strong>
+            <span>Browse compact carts <span aria-hidden="true">→</span></span>
+          </Link>
+          <Link className="seat-category" href="/inventory?seats=4">
+            <span className="seat-category-count">04</span>
+            <strong>4 passengers</strong>
+            <span>Find room for more <span aria-hidden="true">→</span></span>
+          </Link>
+          <Link className="seat-category" href="/inventory?seats=6plus">
+            <span className="seat-category-count">06+</span>
+            <strong>6+ passengers</strong>
+            <span>Explore group carts <span aria-hidden="true">→</span></span>
+          </Link>
+        </div>
+      </section>
+
       <section className="home-featured">
         <div className="section-heading">
           <div>
@@ -109,7 +131,6 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
           ))}
         </div>
         <div className="featured-cta">
-          <p>Want to see all {totalProductCount} listings?</p>
           <Link className="button button-dark" href="/inventory">View full inventory <span aria-hidden="true">→</span></Link>
         </div>
       </section>

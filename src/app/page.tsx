@@ -12,5 +12,5 @@ export const metadata = createPageMetadata({
 
 export default function Home() {
   const products = inventory.products as CatalogProduct[];
-  return <HomePage products={products.slice(0, 4)} totalProductCount={products.length} />;
+  return <HomePage products={products.slice(0, 7)} totalProductCount={products.length} />;
 }

@@ -4,10 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { contactEmail } from "@/lib/contact";
-import { formatPrice, type CatalogProduct } from "@/lib/products";
+import { formatPrice, parseSeatFilter, type CatalogProduct, type SeatFilter } from "@/lib/products";
 
 type CatalogProps = {
   products: CatalogProduct[];
+  initialSeats: SeatFilter;
 };
 
 type Inquiry = {
@@ -47,10 +48,10 @@ function SearchIcon() {
   );
 }
 
-export default function Catalog({ products }: CatalogProps) {
+export default function Catalog({ products, initialSeats }: CatalogProps) {
   const [query, setQuery] = useState("");
   const [make, setMake] = useState("All makes");
-  const [seats, setSeats] = useState("Any seats");
+  const [seats, setSeats] = useState<SeatFilter>(initialSeats);
   const [sort, setSort] = useState("featured");
   const [inquiry, setInquiry] = useState<Inquiry | null>(null);
   const [inquiryError, setInquiryError] = useState("");
@@ -168,7 +169,7 @@ export default function Catalog({ products }: CatalogProps) {
               </label>
               <label className="select-wrap">
                 <span className="sr-only">Filter by passenger capacity</span>
-                <select value={seats} onChange={(event) => setSeats(event.target.value)}>
+                <select value={seats} onChange={(event) => setSeats(parseSeatFilter(event.target.value))}>
                   <option>Any seats</option>
                   <option value="2">2 seats</option>
                   <option value="4">4 seats</option>
