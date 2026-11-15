@@ -1,36 +1,24 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CartScout
 
-## Getting Started
+A customer-facing golf cart shop for purchase enquiries and rental requests, built with Next.js, TypeScript, and Tailwind CSS.
 
-First, run the development server:
+## Run locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Refresh the catalog
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run import:inventory
+```
 
-## Learn More
+The importer reads the public Mullens Golf Carts product API and writes the cart listing fields to `src/data/products.json`. It imports names, prices, stock status, product links, and the dealer's image URL; it does not copy the full product descriptions.
 
-To learn more about Next.js, take a look at the following resources:
+The purchase and rental forms prepare an email in the customer's default email app. Copy `.env.example` to `.env.local`, set `NEXT_PUBLIC_CONTACT_EMAIL`, and restart the app to enable enquiries. No enquiry is stored or sent automatically, and a request is not a confirmed sale or booking.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The provided rental sources do not expose bookable availability, so rental requests are sent for manual confirmation. Fast Eddie's inventory page currently exposes a gallery rather than individual product details. Apex Golf Carts' `robots.txt` disallows crawling, so its product listings are not imported. Product prices and stock should be confirmed before purchase.
