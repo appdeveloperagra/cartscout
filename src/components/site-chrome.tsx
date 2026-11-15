@@ -53,7 +53,7 @@ export function SiteHeader() {
         </Link>
         <nav className="main-nav" aria-label="Main navigation">
           <Link href="/">Home</Link>
-          <Link href="/#inventory">Buy</Link>
+          <Link href="/inventory">Buy</Link>
           <Link href="/rentals">Rentals</Link>
           <Link href="/about">About</Link>
           <Link href="/contact">Contact</Link>
@@ -80,7 +80,7 @@ export function SiteFooter() {
         </div>
         <nav className="footer-group" aria-label="Explore">
           <h2>Explore</h2>
-          <Link href="/#inventory">Shop carts</Link>
+          <Link href="/inventory">Shop carts</Link>
           <Link href="/rentals">Rental requests</Link>
           <Link href="/about">About CartScout</Link>
           <Link href="/contact">Contact</Link>

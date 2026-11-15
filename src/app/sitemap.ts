@@ -3,6 +3,7 @@ import { siteOrigin } from "@/lib/site-seo";
 
 const publicPaths = [
   { path: "/", priority: 1, changeFrequency: "weekly" },
+  { path: "/inventory", priority: 0.9, changeFrequency: "weekly" },
   { path: "/rentals", priority: 0.8, changeFrequency: "monthly" },
   { path: "/about", priority: 0.6, changeFrequency: "monthly" },
   { path: "/contact", priority: 0.7, changeFrequency: "monthly" },
