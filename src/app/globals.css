@@ -81,7 +81,7 @@ button, select { cursor: pointer; }
   flex: 0 0 auto;
 }
 
-.brand-logo { display: block; width: 190px; height: auto; }
+.brand-logo { display: block; width: 260px; height: auto; }
 
 .main-nav { display: flex; align-items: center; gap: clamp(13px, 2.4vw, 32px); }
 .main-nav a, .header-link { font-size: 13px; font-weight: 600; color: #67766c; }
@@ -413,7 +413,7 @@ button, select { cursor: pointer; }
 
 .site-footer { margin-top: 0; padding: 36px max(20px, calc((100% - 1256px) / 2)) 18px; border-top: 1px solid var(--line); background: #f5f4ed; }
 .footer-grid { display: grid; grid-template-columns: 1.35fr 1fr 1.4fr 1fr; gap: 32px; max-width: 1256px; margin: 0 auto; }
-.footer-brand .brand-logo { width: 180px; }
+.footer-brand .brand-logo { width: 220px; }
 .footer-about p { margin: 13px 0 0; color: #69766b; font-size: 13px; line-height: 1.7; text-align: justify; text-justify: inter-word; }
 .footer-group { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
 .footer-group h2 { margin: 3px 0 5px; color: #415349; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
@@ -563,7 +563,8 @@ button, select { cursor: pointer; }
   .announcement a { display: none; }
   .site-header-inner { min-height: 64px; padding: 0 10px; }
   .site-header-inner { position: relative; }
-  .brand-logo { width: 145px; }
+  .brand-logo { width: clamp(145px, 30vw, 210px); }
+  .footer-brand .brand-logo { width: min(210px, 100%); }
   .main-nav { gap: clamp(6px, 2vw, 12px); }
   .main-nav a, .main-nav .locations-nav-toggle { font-size: 11px; }
   .main-nav > a[href="/about"] { display: none; }
