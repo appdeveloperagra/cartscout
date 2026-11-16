@@ -78,31 +78,10 @@ button, select { cursor: pointer; }
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
-  font-size: 23px;
-  font-weight: 800;
-  letter-spacing: -.075em;
+  flex: 0 0 auto;
 }
 
-.brand-mark {
-  display: grid;
-  place-items: center;
-  width: 35px;
-  height: 35px;
-  border-radius: 11px;
-  background: var(--forest);
-}
-
-.brand-mark svg {
-  width: 25px;
-  fill: none;
-  stroke: #f7f4e8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 2;
-}
-
-.brand-accent { color: #829975; }
+.brand-logo { display: block; width: 190px; height: auto; }
 
 .main-nav { display: flex; align-items: center; gap: clamp(13px, 2.4vw, 32px); }
 .main-nav a, .header-link { font-size: 13px; font-weight: 600; color: #67766c; }
@@ -434,9 +413,7 @@ button, select { cursor: pointer; }
 
 .site-footer { margin-top: 0; padding: 36px max(20px, calc((100% - 1256px) / 2)) 18px; border-top: 1px solid var(--line); background: #f5f4ed; }
 .footer-grid { display: grid; grid-template-columns: 1.35fr 1fr 1.4fr 1fr; gap: 32px; max-width: 1256px; margin: 0 auto; }
-.footer-brand { font-size: 17px; }
-.footer-brand .brand-mark { width: 29px; height: 29px; border-radius: 8px; }
-.footer-brand .brand-mark svg { width: 20px; }
+.footer-brand .brand-logo { width: 180px; }
 .footer-about p { margin: 13px 0 0; color: #69766b; font-size: 13px; line-height: 1.7; text-align: justify; text-justify: inter-word; }
 .footer-group { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
 .footer-group h2 { margin: 3px 0 5px; color: #415349; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
@@ -586,9 +563,7 @@ button, select { cursor: pointer; }
   .announcement a { display: none; }
   .site-header-inner { min-height: 64px; padding: 0 10px; }
   .site-header-inner { position: relative; }
-  .brand { gap: 6px; font-size: 18px; }
-  .brand-mark { width: 28px; height: 28px; border-radius: 8px; }
-  .brand-mark svg { width: 21px; }
+  .brand-logo { width: 145px; }
   .main-nav { gap: clamp(6px, 2vw, 12px); }
   .main-nav a, .main-nav .locations-nav-toggle { font-size: 11px; }
   .main-nav > a[href="/about"] { display: none; }

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import {
   contactEmail,
@@ -6,17 +7,6 @@ import {
   whatsappHref,
 } from "@/lib/contact";
 import LocationsMenu from "@/components/locations-menu";
-
-function CartIcon() {
-  return (
-    <svg viewBox="0 0 48 32" aria-hidden="true">
-      <path d="M7 4h22a4 4 0 0 1 4 4v13H7z" />
-      <path d="M33 12h6l4 6v3H33zM4 23h39" />
-      <circle cx="13" cy="25" r="4" />
-      <circle cx="36" cy="25" r="4" />
-    </svg>
-  );
-}
 
 function PhoneIcon() {
   return (
@@ -49,8 +39,14 @@ export function SiteHeader() {
     <header className="site-header">
       <div className="site-header-inner">
         <Link className="brand" href="/" aria-label="CartScout home">
-          <span className="brand-mark"><CartIcon /></span>
-          <span>cart<span className="brand-accent">scout</span></span>
+          <Image
+            className="brand-logo"
+            src="/cartscout-logo.png"
+            alt=""
+            width={536}
+            height={82}
+            priority
+          />
         </Link>
         <nav className="main-nav" aria-label="Main navigation">
           <Link href="/">Home</Link>
@@ -75,8 +71,13 @@ export function SiteFooter() {
       <div className="footer-grid">
         <div className="footer-about">
           <Link className="brand footer-brand" href="/" aria-label="CartScout home">
-            <span className="brand-mark"><CartIcon /></span>
-            <span>cart<span className="brand-accent">scout</span></span>
+            <Image
+              className="brand-logo"
+              src="/cartscout-logo.png"
+              alt=""
+              width={536}
+              height={82}
+            />
           </Link>
           <p>Find a ride for wherever the day takes you.</p>
         </div>
