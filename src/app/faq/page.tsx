@@ -7,7 +7,7 @@ import { faqs } from "@/lib/faqs";
 export const metadata: Metadata = createPageMetadata({
   title: "Golf Cart FAQs: Prices, Buying & Hire",
   description:
-    "Answers about golf cart prices in ZAR, South African availability, buying, delivery, road use, and rental enquiries.",
+    "Answers about buying and renting golf carts from CartScout throughout South Africa.",
   path: "/faq",
 });
 
@@ -24,7 +24,7 @@ export default function FAQPage() {
       <div className="eyebrow"><span /> BUYING, PRICES & RENTALS</div>
       <h1>Golf cart questions answered</h1>
       <p className="page-intro">
-        Practical answers about ZAR budget ranges, purchase listings, local availability, delivery, and rental requests. Confirm current prices and arrangements before deciding.
+        Practical answers about CartScout&apos;s golf cart sales, rentals, and nationwide delivery.
       </p>
       <section className="faq-page-list" aria-label="Golf cart frequently asked questions">
         {faqs.map(({ question, answer }, index) => (
@@ -36,7 +36,7 @@ export default function FAQPage() {
       </section>
       <div className="faq-page-cta">
         <p>Need details for a specific cart or rental request?</p>
-        <Link className="button button-dark" href="/inventory">Browse cart listings <span aria-hidden="true">→</span></Link>
+        <Link className="button button-dark" href="/inventory">Browse our golf carts <span aria-hidden="true">→</span></Link>
         <Link className="text-link" href="/rentals">Ask about a rental <span aria-hidden="true">↗</span></Link>
       </div>
     </main>

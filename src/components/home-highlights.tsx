@@ -4,8 +4,8 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 
 const highlights = [
   {
-    title: "ZAR ranges are for planning.",
-    description: "Ask for a current South African price and confirm local availability and delivery before proceeding.",
+    title: "A golf cart dealership for all makes and models.",
+    description: "CartScout sells and rents golf carts throughout South Africa. Contact us for the current details.",
   },
   {
     title: "Confirm the details before you decide.",
@@ -16,8 +16,8 @@ const highlights = [
     description: "An email or WhatsApp message does not reserve a cart or confirm a rental.",
   },
   {
-    title: "Rental availability is checked manually.",
-    description: "Share your dates, passenger count, and location on the rentals page.",
+    title: "Sales and rentals across South Africa.",
+    description: "Share your preferred model, dates, passenger count, and location with our team.",
   },
 ];
 

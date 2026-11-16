@@ -6,7 +6,7 @@ import { createPageMetadata } from "@/lib/site-seo";
 export const metadata: Metadata = createPageMetadata({
   title: "Golf Cart Sales & Hire by Province",
   description:
-    "Explore golf cart sales and hire guides for all nine South African provinces. Choose your area and confirm local stock, delivery, and rental availability.",
+    "CartScout sells and rents golf carts throughout all nine South African provinces. Explore all makes and models and arrange nationwide delivery.",
   path: "/locations",
 });
 
@@ -22,14 +22,14 @@ export default function LocationsPage() {
       <div className="eyebrow"><span /> SOUTH AFRICA</div>
       <h1>Golf cart locations</h1>
       <p className="page-intro">
-        Explore information for all nine provinces. Each guide highlights major
-        towns, possible golf-cart uses, and the details to check before you
-        enquire. Choose a province to get started.
+        CartScout is a golf cart dealership serving every province in South
+        Africa. We deal in all makes and models for sale and rent, with
+        nationwide delivery and collection.
       </p>
       <p className="location-disclaimer">
-        These guides are regional information, not a promise of local stock,
-        delivery coverage, or rental availability. Confirm arrangements for
-        your exact location with CartScout.
+        Whether you are buying or renting, contact us from anywhere in South
+        Africa. Share your location and requirements so we can arrange the
+        right cart, delivery, and collection.
       </p>
       <section className="province-grid" aria-label="Golf cart guides by province">
         {provinces.map((province) => (

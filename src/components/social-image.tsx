@@ -59,7 +59,7 @@ export default function SocialImage() {
             Find a cart for your next route.
           </div>
           <div style={{ color: "#52675a", fontSize: "28px" }}>
-            Golf cart listings and rental enquiries
+            Golf cart sales and rental services
           </div>
         </div>
         <div style={{ color: "#52675a", fontSize: "20px" }}>

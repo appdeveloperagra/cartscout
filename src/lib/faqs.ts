@@ -7,22 +7,22 @@ export const faqs: FAQItem[] = [
   {
     question: "How much does a golf cart cost in South Africa?",
     answer:
-      "The ZAR planning guide shows R50 000–R90 000 for 2-seaters, R90 000–R150 000 for 4-seaters, and R120 000–R210 000 for 6-seaters. These are unverified budgeting ranges, not market averages, dealer quotes, or prices for specific carts. Request a current quote before making a decision.",
+      "The ZAR planning guide shows R50 000–R90 000 for 2-seaters, R90 000–R150 000 for 4-seaters, and R120 000–R210 000 for 6-seaters. These are unverified budgeting ranges, not market averages or prices for specific carts. Request a current quote before making a decision.",
   },
   {
-    question: "Are the ZAR ranges the actual prices of the listed carts?",
+    question: "Are the ZAR ranges the actual prices of individual carts?",
     answer:
-      "No. The ranges are for planning only and are not linked to individual listings. CartScout does not currently have confirmed South African prices or landed costs for each listed cart, so ask for a current ZAR quote.",
+      "No. The ranges are for planning only and are not linked to individual carts. CartScout does not currently have confirmed South African prices or landed costs for every cart, so ask us for a current ZAR quote.",
   },
   {
     question: "Are CartScout's price ranges shown in South African rand?",
     answer:
-      "Yes. The budget guide uses South African rand (ZAR). CartScout does not convert a third-party listing into a confirmed local price; the original dealer page may show its own currency.",
+      "Yes. The budget guide uses South African rand (ZAR). Contact CartScout for the current price of a specific cart and any applicable delivery costs.",
   },
   {
-    question: "Are the golf carts in the listings available in South Africa?",
+    question: "Are the golf carts in CartScout's collection available in South Africa?",
     answer:
-      "The catalog is sourced from public Mullens Golf Carts listings. Those listings do not confirm South African stock, import arrangements, or delivery to your address. Ask CartScout to check before relying on availability.",
+      "CartScout sells and rents golf carts throughout South Africa. Contact us about your preferred make and model, and we will arrange delivery to your location.",
   },
   {
     question: "How do I request a golf cart price in rand?",
@@ -32,7 +32,7 @@ export const faqs: FAQItem[] = [
   {
     question: "How much does golf cart hire or rental cost?",
     answer:
-      "There are no fixed rental rates on the site. Request a quote with your location, dates, duration, passenger count, and number of carts. Ask for the total in ZAR and confirm availability, delivery, inclusions, and terms before booking.",
+      "The rentals page shows daily, weekly, and monthly rates for several passenger capacities and utility carts. For custom dates, multiple carts, or special requirements, send your location and details to CartScout for a quote.",
   },
   {
     question: "Does sending an enquiry reserve a golf cart or confirm a rental?",
@@ -47,22 +47,22 @@ export const faqs: FAQItem[] = [
   {
     question: "How many seats should I choose?",
     answer:
-      "Start with the number of passengers and any equipment or cargo you need to carry. Check the listed capacity and intended use with the seller; the budget guide covers 2-, 4-, and 6-seater planning ranges only.",
+      "Start with the number of passengers and any equipment or cargo you need to carry. Check the stated capacity and intended use with CartScout; the budget guide covers 2-, 4-, and 6-seater planning ranges only.",
   },
   {
     question: "Are the listed golf carts new or used?",
     answer:
-      "Do not infer a cart's condition from its model year or listing title. Ask the seller to confirm whether it is new or used, its condition, service history, and any warranty before proceeding.",
+      "Do not infer a cart's condition from its model year or product title. Ask CartScout to confirm whether it is new or used, its condition, service history, and any warranty before proceeding.",
   },
   {
     question: "Does a golf cart include its battery and charger?",
     answer:
-      "Inclusions vary by listing. Confirm the battery type and condition, charger, accessories, and warranty directly with the seller before agreeing to a purchase.",
+      "Inclusions vary by cart. Confirm the battery type and condition, charger, accessories, and warranty with CartScout before agreeing to a purchase.",
   },
   {
     question: "Can a golf cart be delivered to my province?",
     answer:
-      "The province guides are informational and do not confirm delivery coverage. Share your exact town or address and ask for delivery feasibility, timing, and cost to be confirmed.",
+      "Yes. CartScout serves customers across South Africa. Share your full address and preferred timing so we can arrange delivery and confirm the details for your purchase.",
   },
   {
     question: "Can I drive a golf cart on public roads in South Africa?",
@@ -72,12 +72,12 @@ export const faqs: FAQItem[] = [
   {
     question: "Can I request carts for an event or group?",
     answer:
-      "You can send a rental request with the event location, dates, passenger count, and number of carts. Availability, delivery, and suitability are checked individually; an enquiry does not guarantee that the request can be accommodated.",
+      "Yes. CartScout rents golf carts throughout South Africa. Share the event location, dates, passenger count, and number of carts so we can arrange delivery and confirm availability.",
   },
   {
     question: "How can I check a cart before buying it?",
     answer:
-      "Review the source listing and ask the seller for current photos, condition details, service and battery history, included equipment, documentation, warranty, and whether an inspection can be arranged. Confirm all details and terms before paying.",
+      "Ask CartScout for current photos, condition details, service and battery history, included equipment, documentation, warranty, and whether an inspection can be arranged. Confirm all details and terms before paying.",
   },
 ];
 

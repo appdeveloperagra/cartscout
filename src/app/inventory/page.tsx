@@ -6,9 +6,9 @@ import { createPageMetadata } from "@/lib/site-seo";
 import inventory from "@/data/products.json";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Golf Carts for Sale | ZAR Catalogue",
+  title: "All Makes & Models | CartScout Golf Cart Dealership",
   description:
-    "Browse golf cart listings with sample ZAR placeholder amounts. These are not confirmed offers; verify local price, stock, and delivery before purchase.",
+    "Explore golf carts from all makes and models. CartScout sells and rents nationwide; contact us to arrange availability and delivery.",
   path: "/inventory",
 });
 

@@ -4,11 +4,12 @@ import {
   contactPhoneHref,
   whatsappHref,
 } from "@/lib/contact";
+import ContactForm from "@/components/contact-form";
 import { createPageMetadata } from "@/lib/site-seo";
 
 export const metadata = createPageMetadata({
   title: "Contact",
-  description: "Contact CartScout by phone, WhatsApp, or email about golf cart purchases and rental enquiries.",
+  description: "Contact CartScout, a South African golf cart dealership selling and renting all makes and models nationwide.",
   path: "/contact",
 });
 
@@ -18,7 +19,7 @@ export default function ContactPage() {
       <div className="eyebrow"><span /> CONTACT</div>
       <h1>Let&apos;s talk carts.</h1>
       <p className="page-intro">
-        Ask about a listed golf cart or tell us what you need for a rental. We&apos;ll help confirm the details before you make a decision.
+        We sell and rent all makes and models of golf carts throughout South Africa. Call, WhatsApp, email, or tell us what you need using the form below.
       </p>
 
       <section className="contact-card-grid" aria-label="Contact options">
@@ -39,14 +40,28 @@ export default function ContactPage() {
         </a>
       </section>
 
-      <section className="content-note">
-        <h2>What to include</h2>
-        <p>
-          For a purchase enquiry, include the cart name. For a rental request, include your preferred dates, passenger count, and location so availability can be checked.
-        </p>
-        <p className="small-print">
-          Email enquiries open your email app; they are not sent automatically. A message or call is not a confirmed order or rental booking.
-        </p>
+      <section className="contact-form-section" aria-labelledby="contact-form-title">
+        <div className="contact-form-grid">
+          <div>
+            <h2 id="contact-form-title">Send us a message</h2>
+            <p className="contact-form-intro">
+              Share the cart or rental details you have in mind, and our team will be in touch.
+            </p>
+            <ContactForm />
+          </div>
+          <aside className="contact-address-card" aria-labelledby="contact-address-title">
+            <span className="contact-card-label">BUSINESS ADDRESS</span>
+            <h2 id="contact-address-title">Visit CartScout</h2>
+            <address className="contact-address">
+              135 Rivonia Road<br />
+              Sandton (Sandown / Central Sandton)<br />
+              City of Johannesburg Metropolitan Municipality<br />
+              Gauteng<br />
+              2196<br />
+              South Africa
+            </address>
+          </aside>
+        </div>
       </section>
     </main>
   );

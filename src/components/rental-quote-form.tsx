@@ -64,11 +64,11 @@ export default function RentalQuoteForm({
       <div className="rental-form-row">
         <label>
           Number of passengers
-          <input data-field="passengers" type="number" min="1" max="99" value={request.passengers} required />
+          <input data-field="passengers" type="number" min="1" max="99" defaultValue={request.passengers} required />
         </label>
         <label>
           Number of carts
-          <input data-field="cartCount" type="number" min="1" max="99" value={request.cartCount} required />
+          <input data-field="cartCount" type="number" min="1" max="99" defaultValue={request.cartCount} required />
         </label>
       </div>
       <label>
@@ -81,15 +81,6 @@ export default function RentalQuoteForm({
       </label>
       <a
         className="button button-dark"
-        href={emailHref}
-        onClick={(event) => {
-          if (!formRef.current?.reportValidity()) event.preventDefault();
-        }}
-      >
-        Prepare email enquiry <span aria-hidden="true">→</span>
-      </a>
-      <a
-        className="text-link rental-whatsapp-link"
         href={`${whatsappHref}?text=${encodeURIComponent(message)}`}
         onClick={(event) => {
           if (!formRef.current?.reportValidity()) event.preventDefault();
@@ -97,11 +88,20 @@ export default function RentalQuoteForm({
         rel="noreferrer"
         target="_blank"
       >
-        Or continue to WhatsApp <span aria-hidden="true">↗</span>
+        Continue to WhatsApp <span aria-hidden="true">→</span>
+      </a>
+      <a
+        className="text-link"
+        href={emailHref}
+        onClick={(event) => {
+          if (!formRef.current?.reportValidity()) event.preventDefault();
+        }}
+      >
+        Prefer email? Send the request by email <span aria-hidden="true">↗</span>
       </a>
       <p className="rental-form-note">
-        The email button opens a draft addressed to {contactEmail}; you must send it from your
-        email app. WhatsApp is an alternative. Availability and booking are confirmed separately.
+        WhatsApp opens with your request ready; tap Send to submit it. Email opens a draft to
+        {` ${contactEmail}`}. Availability and booking are confirmed separately.
       </p>
     </form>
   );

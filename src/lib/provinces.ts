@@ -76,7 +76,7 @@ export const provinces: Province[] = [
       "Short-distance transport around private properties",
     ],
     considerations:
-      "For lodge, rural or uneven-ground use, confirm the vehicle's capabilities and intended operating environment with the seller. Delivery feasibility and costs need to be checked for the exact destination.",
+      "For lodge, rural or uneven-ground use, confirm the vehicle's capabilities and intended operating environment with CartScout. Delivery feasibility and costs need to be checked for the exact destination.",
   },
   {
     slug: "mpumalanga",

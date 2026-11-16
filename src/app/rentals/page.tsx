@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   ...createPageMetadata({
     title: "Golf Cart Hire in South Africa",
     description:
-      "Request a golf cart hire quote in South Africa. Share your dates and location to check rental availability, price, and delivery arrangements.",
+      "Rent golf carts from CartScout throughout South Africa. We deal in all makes and models, with nationwide delivery and collection.",
     path: "/rentals",
   }),
 };
@@ -17,12 +17,12 @@ const rentalQuestions = [
   {
     question: "Which areas can I request golf cart hire in?",
     answer:
-      "Send your exact town or delivery address and CartScout will check whether arrangements can be made. The locations pages are regional guides, not confirmation of delivery coverage.",
+      "CartScout rents golf carts throughout South Africa. Share your town or delivery address, dates, and passenger requirements so we can arrange availability, delivery, and collection.",
   },
   {
     question: "How much does golf cart hire cost?",
     answer:
-      "The rental rates table on this page lists daily, weekly, and monthly rates for 2-seater, 4-seater, 6-seater, and utility carts. The listed rates include delivery and collection. Confirm your location, availability, and any request-specific terms with CartScout.",
+      "The rental rates table on this page lists daily, weekly, and monthly rates for 2-seater, 4-seater, 6-seater, and utility carts. The listed rates include delivery and collection throughout South Africa. Confirm your dates and any request-specific terms with CartScout.",
   },
   {
     question: "Can I hire for a day, a week, or longer?",
@@ -42,7 +42,7 @@ const rentalQuestions = [
   {
     question: "What is included in the rental price?",
     answer:
-      "The listed daily, weekly, and monthly rates include delivery and collection. Confirm your service area, any additional costs, vehicle inclusions, and rental conditions for your request before accepting a quote.",
+      "The listed daily, weekly, and monthly rates include delivery and collection throughout South Africa. Confirm timing, any additional costs, vehicle inclusions, and rental conditions for your request before accepting a quote.",
   },
 ];
 
@@ -56,7 +56,7 @@ function RentalStructuredData() {
         ...(pageUrl ? { "@id": pageUrl, url: pageUrl } : {}),
         name: "Golf Cart Hire & Rental Enquiries",
         description:
-          "Request golf cart hire and ask CartScout to confirm availability, quote details, and arrangements for your location.",
+          "CartScout rents all makes and models of golf carts throughout South Africa, with delivery and collection arranged nationwide.",
         inLanguage: "en-ZA",
       },
       {
@@ -84,12 +84,13 @@ export default function RentalsPage() {
       <RentalStructuredData />
       <section className="rental-hero" aria-labelledby="rental-title">
         <div className="rental-hero-copy">
-          <div className="eyebrow"><span /> RENTAL ENQUIRIES</div>
-          <h1 id="rental-title">Request golf cart hire in South Africa.</h1>
+          <div className="eyebrow"><span /> RENTALS NATIONWIDE</div>
+          <h1 id="rental-title">Rent a golf cart anywhere in South Africa.</h1>
           <p>
-            Tell us when and where you need a cart, how many people will ride,
-            and how many carts you are looking for. We&apos;ll check the request
-            and confirm availability and pricing before you decide.
+            CartScout rents all makes and models throughout South Africa. Tell
+            us when and where you need a cart, how many people will ride, and
+            how many carts you need. We&apos;ll arrange delivery and confirm
+            your request details.
           </p>
           <div className="rental-hero-actions">
             <a className="button button-dark" href="#rental-quote">
@@ -119,9 +120,9 @@ export default function RentalsPage() {
           <div className="eyebrow"><span /> START WITH YOUR GROUP</div>
           <h2 id="rental-capacities-title">How many passengers?</h2>
           <p>
-            These are planning categories, not a list of confirmed rental
-            vehicles. Tell us your group size and we&apos;ll check what may suit
-            your request.
+            Choose the passenger capacity that fits your group. We rent golf
+            carts throughout South Africa; share your group size and location
+            so we can help find the right option.
           </p>
         </div>
         <div className="rental-capacity-grid">
@@ -151,8 +152,9 @@ export default function RentalsPage() {
           <div className="eyebrow"><span /> PRICING</div>
           <h2 id="rental-rates-title">Golf cart rental rates.</h2>
           <p>
-            Rates below include delivery and collection. Confirm your location
-            and availability with us. Contact us for custom multi-cart pricing.
+            Rates below include delivery and collection nationwide. Share your
+            address and dates with us to arrange your rental. Contact us for
+            custom multi-cart pricing.
           </p>
         </div>
         <div className="rental-rates-table-wrap">
@@ -209,7 +211,7 @@ export default function RentalsPage() {
           <article>
             <span>02</span>
             <h3>Transport arrangements</h3>
-            <p>The listed rates include delivery and collection. Confirm service coverage and arrangements for your exact address.</p>
+            <p>The listed rates include delivery and collection throughout South Africa. Share your address so we can arrange timing and access.</p>
           </article>
           <article>
             <span>03</span>
@@ -253,8 +255,8 @@ export default function RentalsPage() {
           <div className="eyebrow"><span /> START AN ENQUIRY</div>
           <h2 id="rental-form-title">Tell us what you need.</h2>
           <p>
-            Complete the details and choose email or WhatsApp. Review the
-            prepared message and send it to contact CartScout.
+            Complete the details and continue to WhatsApp or email. Send your
+            request from your chosen app and our team will follow up.
           </p>
           <p className="rental-request-alternative">
             Prefer email? <a href={`mailto:${contactEmail}?subject=Golf%20cart%20rental%20enquiry`}>{contactEmail}</a>
@@ -266,7 +268,7 @@ export default function RentalsPage() {
       <section className="rental-faq" aria-labelledby="rental-faq-title">
         <div className="eyebrow"><span /> RENTAL FAQ</div>
         <h2 id="rental-faq-title">Rental questions answered.</h2>
-        <p className="rental-faq-intro">If you have a question about a specific location or request, include it in your enquiry.</p>
+        <p className="rental-faq-intro">We serve rental customers nationwide. Include your location and request details so we can arrange delivery and collection.</p>
         <div className="home-faq-list">
           {rentalQuestions.map(({ question, answer }, index) => (
             <details className="home-faq-item" key={question} open={index === 0}>

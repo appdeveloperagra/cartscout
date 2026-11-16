@@ -4,9 +4,9 @@ import inventory from "@/data/products.json";
 import type { CatalogProduct } from "@/lib/products";
 
 export const metadata = createPageMetadata({
-  title: "Golf Cart Prices in South Africa",
+  title: "Golf Cart Dealership | Sales & Rentals Nationwide",
   description:
-    "Browse golf cart listings with sample ZAR placeholders and passenger-size budget ranges. Confirm actual local prices, stock, and delivery before purchase.",
+    "CartScout is a golf cart dealership for all makes and models, selling and renting throughout South Africa. Contact our team for sales, rentals, and delivery.",
   path: "/",
 });
 

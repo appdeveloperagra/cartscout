@@ -4,7 +4,7 @@ import { createPageMetadata } from "@/lib/site-seo";
 export const metadata = createPageMetadata({
   title: "About CartScout",
   description:
-    "Learn how CartScout helps people in South Africa explore golf cart listings, compare options, and ask about rental availability.",
+    "CartScout is a golf cart dealership for all makes and models, selling and renting throughout South Africa.",
   path: "/about",
 });
 
@@ -14,11 +14,11 @@ export default function AboutPage() {
       <section className="about-hero" aria-labelledby="about-title">
         <div className="about-hero-copy">
           <div className="eyebrow"><span /> ABOUT CARTSCOUT</div>
-          <h1 id="about-title">Golf cart choices, made clearer.</h1>
+          <h1 id="about-title">Your nationwide golf cart dealership.</h1>
           <p>
-            Whether you&apos;re considering a cart to buy or looking into a
-            rental, CartScout gives you one place to explore your options and
-            start the conversation in South Africa.
+            We deal in all makes and models of golf carts. CartScout sells and
+            rents throughout South Africa, helping you find a cart for your
+            business, venue, or personal use.
           </p>
           <div className="about-hero-actions">
             <Link className="button button-dark" href="/inventory">Explore carts <span aria-hidden="true">→</span></Link>
@@ -29,8 +29,8 @@ export default function AboutPage() {
           <span className="about-card-kicker">A PRACTICAL PLACE TO START</span>
           <h2>Explore first. Confirm the details before you decide.</h2>
           <p>
-            Browse purchase listings, check the rental rate guide, and send us
-            the details of what you&apos;re looking for.
+            Browse our golf cart collection, review the rental rate guide, and
+            tell us what you&apos;re looking for.
           </p>
           <Link href="/contact">Talk to CartScout <span aria-hidden="true">→</span></Link>
         </aside>
@@ -43,14 +43,14 @@ export default function AboutPage() {
         </div>
         <div className="about-purpose-copy">
           <p>
-            Finding a golf cart can mean comparing different models, passenger
-            sizes, prices, and rental needs. CartScout brings those starting
-            points together so you can narrow down what to ask about.
+            As a golf cart dealership, we offer a wide range of makes and
+            models for sale and rent. Tell us where in South Africa you are
+            and how you plan to use the cart so our team can help.
           </p>
           <p>
-            We aim to be clear about what the website can show and what still
-            needs checking. Listings and guide prices are not a promise of
-            current stock, a final quote, or a confirmed booking.
+            We aim to make the next steps clear. Contact us to confirm current
+            availability, final pricing, delivery, and rental arrangements for
+            your needs.
           </p>
         </div>
       </section>
@@ -64,12 +64,11 @@ export default function AboutPage() {
         <div className="about-options-grid">
           <article className="about-option-card">
             <span className="about-option-number">01 / PURCHASE</span>
-            <h3>Explore golf cart listings</h3>
+            <h3>Shop our golf cart collection</h3>
             <p>
-              Browse the catalogue and follow a listing to its dealer source.
-              Ask about the specific cart and confirm its current price,
-              specifications, stock, and delivery arrangements before
-              proceeding.
+              Explore our carts and contact CartScout about a specific model,
+              its current price, specifications, availability, and delivery
+              arrangements.
             </p>
             <Link href="/inventory">Browse the inventory <span aria-hidden="true">→</span></Link>
           </article>
@@ -91,10 +90,9 @@ export default function AboutPage() {
           <div className="eyebrow"><span /> HOW WE WORK</div>
           <h2 id="about-transparency-title">Useful information. Clear next steps.</h2>
           <p>
-            CartScout&apos;s purchase catalogue is based on public listings from
-            Mullens Golf Carts. The ZAR amounts shown on cart cards are sample
-            planning figures, not dealer prices or confirmed offers. Check the
-            original listing and ask for current details.
+            CartScout offers the golf carts shown in our collection. The ZAR
+            amounts on cart cards are sample planning figures, not confirmed
+            offers. Contact us for current prices and cart details.
           </p>
           <p>
             Rental rates are shown as a guide for the listed rental periods.
@@ -103,7 +101,7 @@ export default function AboutPage() {
           </p>
         </div>
         <ul className="about-principles">
-          <li><span>01</span><div><strong>Check the source</strong><p>Dealer listings can change; confirm details with the source and CartScout.</p></div></li>
+          <li><span>01</span><div><strong>Confirm availability</strong><p>Contact CartScout for current availability and details about a specific cart.</p></div></li>
           <li><span>02</span><div><strong>Ask for the specifics</strong><p>Confirm price, availability, delivery, inclusions, and terms for your request.</p></div></li>
           <li><span>03</span><div><strong>Decide when you&apos;re ready</strong><p>An enquiry is only a conversation. It does not create an order or reserve a rental.</p></div></li>
         </ul>

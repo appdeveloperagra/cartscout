@@ -3,7 +3,7 @@ import { createPageMetadata } from "@/lib/site-seo";
 
 export const metadata = createPageMetadata({
   title: "Terms of Use",
-  description: "Terms for browsing CartScout golf cart listings and sending purchase or rental enquiries.",
+  description: "Terms for browsing CartScout's golf cart collection and sending purchase or rental enquiries.",
   path: "/terms",
 });
 
@@ -15,9 +15,9 @@ export default function TermsPage() {
       <p className="page-intro">These terms explain the current purpose and limits of the CartScout website.</p>
 
       <section>
-        <h2>Listings and prices</h2>
+        <h2>Our catalogue and prices</h2>
         <p>
-          Product information in the catalog is sourced from public Mullens Golf Carts listings. Details, source currencies, and availability may change or contain errors. The passenger-capacity ranges on CartScout are unverified planning estimates, not market averages, seller quotes, or prices for individual carts. Confirm the full South African price, availability, and any transport or import costs before relying on a listing.
+          Cart information, displayed amounts, and availability may change or contain errors. The passenger-capacity ranges on CartScout are unverified planning estimates, not market averages or prices for individual carts. Confirm the full South African price, availability, and any transport or import costs before making a purchase decision.
         </p>
       </section>
       <section>
@@ -35,7 +35,7 @@ export default function TermsPage() {
       <section>
         <h2>External services</h2>
         <p>
-          Links to dealer listings, email, telephone, and WhatsApp services are provided for convenience. Those services are operated by third parties and may have separate terms.
+          CartScout&apos;s email, telephone, and WhatsApp contact options are provided for convenience. These services may be operated by third parties and may have separate terms.
         </p>
       </section>
       <section>

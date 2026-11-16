@@ -30,15 +30,15 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
     <main>
       <div className="announcement">
         <span className="announcement-dot" />
-        Shop a cart or ask about a rental
-        <Link href="/inventory">Browse inventory <span aria-hidden="true">→</span></Link>
+        All makes and models. Sales and rentals across South Africa.
+        <Link href="/inventory">Shop carts <span aria-hidden="true">→</span></Link>
       </div>
 
       <section className="hero">
         <div className="hero-copy">
-          <div className="eyebrow"><span /> BUY OR RENT A GOLF CART</div>
-          <h1>Golf carts for sale<br /><em>in South Africa.</em></h1>
-          <p>Compare dealer listings with sample ZAR prices, view passenger-size budget ranges, or request a golf cart hire quote. Local stock, actual pricing, delivery, and rental availability must be confirmed.</p>
+          <div className="eyebrow"><span /> YOUR SOUTH AFRICAN GOLF CART DEALERSHIP</div>
+          <h1>All makes. All models.<br /><em>Buy or rent nationwide.</em></h1>
+          <p>CartScout is your golf cart dealership for all makes and models. Shop or rent anywhere in South Africa, with a team ready to help you choose the right cart.</p>
           <div className="hero-actions">
             <Link className="button button-dark" href="/inventory">Browse carts <span aria-hidden="true">→</span></Link>
             <Link className="text-link" href="/rentals">Need a rental? <span aria-hidden="true">↗</span></Link>
@@ -62,7 +62,7 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
               />
             ) : <div className="image-placeholder"><CartIcon /></div>}
           </div>
-          <div className="hero-caption"><span>FEATURED FIND</span><span>{heroProduct?.name}</span></div>
+          <div className="hero-caption"><span>FEATURED CART</span><span>{heroProduct?.name}</span></div>
           <span className="hero-sun" aria-hidden="true" />
           <span className="hero-leaf leaf-one" aria-hidden="true">✳</span>
           <span className="hero-leaf leaf-two" aria-hidden="true">✳</span>
@@ -70,10 +70,10 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
       </section>
 
       <section className="trust-strip" aria-label="Catalog information">
-        <div><strong>{totalProductCount}</strong><span>dealer listings</span></div>
+        <div><strong>{totalProductCount}</strong><span>carts in our collection</span></div>
         <div><strong>ZAR guide</strong><span>budget ranges by seats</span></div>
         <div><strong>Confirm first</strong><span>local price and availability</span></div>
-        <p>Sample listing prices are placeholders, not confirmed offers. Dealer listings do not confirm South African stock or delivery.</p>
+        <p>Sample prices shown with our carts are placeholders, not confirmed offers. Contact CartScout to confirm availability and delivery.</p>
       </section>
 
       <section className="seat-categories" aria-labelledby="seat-categories-title">
@@ -106,7 +106,7 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
             <div className="eyebrow"><span /> A FEW FROM THE COLLECTION</div>
             <h2>Find a cart that fits <em>your day.</em></h2>
           </div>
-          <p>These are a small sample of the listings. Browse the full inventory to search and compare.</p>
+          <p>We deal in all makes and models, with sales and rentals available nationwide. Explore the collection by make and passenger capacity.</p>
         </div>
         <div className="product-grid">
           {featuredProducts.map((product) => (
@@ -123,11 +123,8 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
                 <span className="product-tag">ASK ABOUT AVAILABILITY</span>
               </div>
               <div className="product-info">
-                <div className="product-meta"><span>GOLF CART</span><span>DEALER LISTING</span></div>
+                <div className="product-meta"><span>GOLF CART</span><span>OUR COLLECTION</span></div>
                 <h3>{product.name}</h3>
-                <a className="listing-link" href={product.url} target="_blank" rel="noreferrer">
-                  View dealer listing <span aria-hidden="true">↗</span>
-                </a>
                 <div className="product-footer">
                   <div>
                     <span className="price-label">ZAR PRICE</span>
@@ -152,7 +149,7 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
           </div>
         </div>
         <div className="steps-grid">
-          <article><span>01</span><h3>Explore listings</h3><p>Browse models, compare listed prices, and find the seats and style that work for you.</p></article>
+          <article><span>01</span><h3>Explore all makes and models</h3><p>Browse our golf carts by brand and passenger capacity to find the right fit for you.</p></article>
           <article><span>02</span><h3>Send an enquiry</h3><p>Tell us which cart you want to buy, or share your dates for a rental request.</p></article>
           <article><span>03</span><h3>Confirm the details</h3><p>We&apos;ll verify availability, answer your questions, and arrange the next steps together.</p></article>
         </div>

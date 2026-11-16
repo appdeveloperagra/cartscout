@@ -7,11 +7,11 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: siteOrigin ? new URL(siteOrigin) : undefined,
   title: {
-    default: "Golf Cart Prices in South Africa | CartScout",
+    default: "Golf Cart Dealership | Sales & Rentals Nationwide | CartScout",
     template: "%s | CartScout",
   },
   description:
-    "Explore golf cart listings, indicative budget ranges in ZAR, and purchase or rental enquiries. Confirm local pricing and availability before deciding.",
+    "CartScout is a golf cart dealership for all makes and models, selling and renting throughout South Africa. Contact our team for sales, rentals, and delivery.",
   applicationName: "CartScout",
   authors: [{ name: "CartScout" }],
   publisher: "CartScout",
@@ -25,9 +25,9 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_ZA",
     siteName: "CartScout",
-    title: "Golf Cart Prices in South Africa | CartScout",
+    title: "Golf Cart Dealership | Sales & Rentals Nationwide | CartScout",
     description:
-      "Explore golf cart listings, indicative budget ranges in ZAR, and purchase or rental enquiries.",
+      "CartScout is a golf cart dealership for all makes and models, selling and renting throughout South Africa. Contact our team for sales, rentals, and delivery.",
     ...(siteOrigin
       ? {
           url: siteOrigin,
@@ -44,9 +44,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: siteOrigin ? "summary_large_image" : "summary",
-    title: "Golf Cart Prices in South Africa | CartScout",
+    title: "Golf Cart Dealership | Sales & Rentals Nationwide | CartScout",
     description:
-      "Explore golf cart listings, indicative budget ranges in ZAR, and purchase or rental enquiries.",
+      "CartScout is a golf cart dealership for all makes and models, selling and renting throughout South Africa. Contact our team for sales, rentals, and delivery.",
     ...(siteOrigin
       ? { images: [new URL("/api/social-image", siteOrigin).toString()] }
       : {}),

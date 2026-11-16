@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
-import { contactEmail } from "@/lib/contact";
+import { whatsappHref } from "@/lib/contact";
 import { PriceGuide } from "@/components/price-guide";
 import { parseSeatFilter, type CatalogProduct, type SeatFilter } from "@/lib/products";
 import { formatZar, getSampleCatalogPrice } from "@/lib/pricing";
@@ -56,7 +56,6 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
   const [seats, setSeats] = useState<SeatFilter>(initialSeats);
   const [sort, setSort] = useState("featured");
   const [inquiry, setInquiry] = useState<Inquiry | null>(null);
-  const [inquiryError, setInquiryError] = useState("");
   const inquiryTrigger = useRef<HTMLButtonElement | null>(null);
 
   function closeInquiry() {
@@ -98,7 +97,6 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
   }, [make, products, query, seats, sort]);
 
   function openInquiry(product: CatalogProduct, trigger: HTMLButtonElement) {
-    setInquiryError("");
     inquiryTrigger.current = trigger;
     setInquiry({ product });
   }
@@ -114,8 +112,8 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
     const location = String(formData.get("location") ?? "").trim();
     const message = String(formData.get("message") ?? "").trim();
 
-    const subject = `Golf cart purchase enquiry: ${inquiry.product.name}`;
     const body = [
+      "Hi CartScout, I would like to enquire about buying a golf cart.",
       `Name: ${name}`,
       `Email: ${email}`,
       `Phone: ${phone || "Not provided"}`,
@@ -125,8 +123,7 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
       message || "Please provide the current price in ZAR, confirm availability, and advise whether delivery can be arranged.",
     ].join("\n");
 
-    window.location.href = `mailto:${contactEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    setInquiryError("Your email app should open with this request. Send the email to complete your enquiry.");
+    window.open(`${whatsappHref}?text=${encodeURIComponent(body)}`, "_blank", "noopener,noreferrer");
   }
 
   return (
@@ -136,14 +133,14 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
           <div className="eyebrow"><span /> FULL CART INVENTORY</div>
           <h1>Golf carts for sale.</h1>
           <p>
-            Browse dealer listings with sample ZAR prices. These amounts are random placeholders, not confirmed offers or Merchant Center prices; confirm local stock, delivery, and the actual price before proceeding.
+            CartScout deals in all makes and models, with sales and rentals throughout South Africa. The sample ZAR amounts are random placeholders, not confirmed offers or Merchant Center prices; contact us to confirm the actual price, availability, and delivery.
           </p>
         </div>
         <PriceGuide compact />
         <div className="section-heading">
           <div>
             <div className="eyebrow"><span /> THE CART COLLECTION</div>
-            <h2>Choose your next <em>ride.</em> <span className="inventory-count">{products.length} listings</span></h2>
+            <h2>Choose your next <em>ride.</em> <span className="inventory-count">{products.length} carts</span></h2>
           </div>
           <p>Search by make or passenger capacity, then ask us to confirm the details.</p>
         </div>
@@ -177,7 +174,7 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
                 </select>
               </label>
               <label className="select-wrap sort-select">
-                <span className="sr-only">Sort listings</span>
+                <span className="sr-only">Sort carts</span>
                 <select value={sort} onChange={(event) => setSort(event.target.value)}>
                   <option value="featured">Featured</option>
                   <option value="name">Name: A to Z</option>
@@ -190,7 +187,7 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
           <>
             <div className="results-line">
               <span><strong>{filteredProducts.length}</strong> carts found</span>
-              <span>Local price and availability confirmed by enquiry</span>
+              <span>Sales and rentals available nationwide</span>
             </div>
             <div className="product-grid">
                   {filteredProducts.map((product, index) => (
@@ -210,7 +207,6 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
                       <div className="product-info">
                         <div className="product-meta"><span>{getMake(product.name)}</span><span>{getSeats(product.name) ? `${getSeats(product.name)} PASSENGER` : "GOLF CART"}</span></div>
                         <h3>{product.name}</h3>
-                        <a className="listing-link" href={product.url} target="_blank" rel="noreferrer">View source listing <span aria-hidden="true">↗</span></a>
                         <div className="product-footer">
                           <div>
                             <span className="price-label">ZAR PRICE</span>
@@ -241,8 +237,8 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
           <span className="empty-icon"><CartIcon /></span>
           <div className="rental-copy">
             <span className="eyebrow"><span /> LOOKING TO RENT?</span>
-            <h3>Rental enquiries have their own page.</h3>
-            <p>Share your preferred dates, passenger count, and location so availability can be confirmed.</p>
+            <h3>Need a golf cart for rent?</h3>
+            <p>We rent throughout South Africa. Share your dates, passenger count, and location to get started.</p>
           </div>
           <Link className="button button-dark" href="/rentals">Explore rental options <span aria-hidden="true">→</span></Link>
         </section>
@@ -257,7 +253,7 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
             <div className="eyebrow"><span /> PURCHASE REQUEST</div>
             <h2 id="inquiry-title">Enquire about this cart.</h2>
             <p className="inquiry-product">{inquiry.product.name}</p>
-            <p className="form-footnote">Include your town so the current ZAR price and any delivery arrangements can be checked.</p>
+            <p className="form-footnote">Include your town so we can confirm the current ZAR price and arrange nationwide delivery.</p>
             <form onSubmit={submitInquiry}>
               <div className="form-grid">
                 <label>Name<input name="name" autoComplete="name" required /></label>
@@ -268,12 +264,11 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
               <label className="message-field">Anything else we should know?
                 <textarea name="message" rows={3} placeholder="Ask for a price in ZAR and include any delivery questions." />
               </label>
-              {inquiryError && <p className="form-notice" role="status">{inquiryError}</p>}
               <button className="button button-dark submit-inquiry" type="submit">
-                Send purchase enquiry
+                Continue to WhatsApp
                 <span aria-hidden="true">→</span>
               </button>
-              <p className="form-footnote">This opens your email app; sending is not automatic and does not confirm a sale or rental booking.</p>
+              <p className="form-footnote">WhatsApp opens with your purchase enquiry ready. Tap Send to contact CartScout.</p>
             </form>
           </section>
         </div>

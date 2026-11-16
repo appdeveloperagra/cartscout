@@ -3,7 +3,7 @@ import { createPageMetadata } from "@/lib/site-seo";
 
 export const metadata = createPageMetadata({
   title: "Privacy Policy",
-  description: "How CartScout handles information when you browse golf cart listings or contact the business.",
+  description: "How CartScout handles information when you browse its golf cart collection or contact the business.",
   path: "/privacy",
 });
 
@@ -29,7 +29,7 @@ export default function PrivacyPage() {
       <section>
         <h2>Website and third-party services</h2>
         <p>
-          The current website does not load analytics or advertising scripts. The hosting provider may process standard technical information needed to deliver and protect the website. Product listings link to Mullens Golf Carts, and phone, email, and WhatsApp links open services operated by third parties. Their own privacy terms apply when you use those services.
+          The current website does not load analytics or advertising scripts. The hosting provider may process standard technical information needed to deliver and protect the website. Phone, email, and WhatsApp links open services operated by third parties. Their own privacy terms apply when you use those services.
         </p>
       </section>
       <section>

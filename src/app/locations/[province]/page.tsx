@@ -23,7 +23,7 @@ export async function generateMetadata({
 
   return createPageMetadata({
     title: `Golf Carts in ${province.name} | Sales & Hire`,
-    description: `Golf cart enquiries in ${province.name}, including ${province.towns[0]}. Browse listings or request hire; confirm stock, delivery, and rental availability.`,
+    description: `CartScout sells and rents golf carts in ${province.name} and throughout South Africa, with delivery and collection nationwide.`,
     path: `/locations/${province.slug}`,
   });
 }
@@ -46,7 +46,7 @@ function ProvinceStructuredData({
     {
       question: `Can I buy a golf cart in ${provinceName}?`,
       answer:
-        "Browse the current inventory and enquire about a specific listing. Stock and delivery arrangements for your location must be confirmed; the online catalog does not guarantee local availability.",
+        "CartScout sells all makes and models throughout South Africa. Contact us about your preferred cart and we will arrange delivery to your location.",
     },
     {
       question: `Can I request a golf cart rental in ${provinceName}?`,
@@ -55,7 +55,7 @@ function ProvinceStructuredData({
     },
     {
       question: `Which areas are included in this ${provinceName} guide?`,
-      answer: `The guide includes examples such as ${towns.join(", ")}. These examples do not confirm delivery coverage or local stock. Ask CartScout to check arrangements for your exact address.`,
+      answer: `CartScout serves customers throughout ${provinceName} and all of South Africa, including ${towns.join(", ")}. Contact us with your address to arrange delivery or collection.`,
     },
   ];
   const jsonLd = {
@@ -65,7 +65,7 @@ function ProvinceStructuredData({
         "@type": "WebPage",
         ...(pageUrl ? { "@id": pageUrl, url: pageUrl } : {}),
         name: `Golf Carts in ${provinceName}`,
-        description: `Golf cart listing and enquiry information for ${provinceName}, South Africa.`,
+        description: `Nationwide CartScout golf cart sales and rentals in ${provinceName}, South Africa.`,
         inLanguage: "en-ZA",
         ...(breadcrumbId ? { breadcrumb: { "@id": breadcrumbId } } : {}),
       },
@@ -137,8 +137,9 @@ async function ProvinceContent({ params }: ProvincePageProps) {
       <section className="location-section">
         <h2>Areas in this {province.name} guide</h2>
         <p>
-          These towns are examples to help you identify your region. They are
-          not a published delivery map or confirmation of local stock.
+          These towns are examples of areas we serve. CartScout sells and rents
+          golf carts throughout South Africa, with delivery and collection
+          arranged nationwide.
         </p>
         <ul className="town-list">
           {province.towns.map((town) => <li key={town}>{town}</li>)}
@@ -161,9 +162,9 @@ async function ProvinceContent({ params }: ProvincePageProps) {
         <p>{province.considerations}</p>
         <p>
           CartScout&apos;s online purchase catalog is sourced from public
-          Mullens Golf Carts listings. Listings do not guarantee stock or
-          province-specific delivery. Rental requests are checked manually;
-          neither an enquiry nor a message books a cart.
+          CartScout serves customers throughout South Africa. Contact us to
+          arrange sales, rentals, delivery, or collection in your province.
+          Rental bookings are confirmed after terms are agreed.
         </p>
       </section>
 
@@ -173,9 +174,8 @@ async function ProvinceContent({ params }: ProvincePageProps) {
           <summary>Can I buy a golf cart in {province.name}?</summary>
           <p>
             Browse the <Link href="/inventory">current inventory</Link> and
-            enquire about a specific listing. Stock and delivery arrangements
-            for your location must be confirmed; the online catalog does not
-            guarantee local availability.
+            contact CartScout about any make or model. We sell and rent
+            throughout South Africa and arrange delivery nationwide.
           </p>
         </details>
         <details className="home-faq-item">
@@ -189,9 +189,9 @@ async function ProvinceContent({ params }: ProvincePageProps) {
         <details className="home-faq-item">
           <summary>Which areas are included in this guide?</summary>
           <p>
-            The guide includes examples such as {province.towns.join(", ")}.
-            These examples do not confirm delivery coverage or local stock.
-            Ask CartScout to check arrangements for your exact address.
+            Examples include {province.towns.join(", ")}. CartScout serves
+            customers throughout South Africa; contact us to arrange delivery
+            to your exact address.
           </p>
         </details>
       </section>
