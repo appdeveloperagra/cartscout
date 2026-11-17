@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { provinces } from "@/lib/provinces";
+import { Suspense } from "react";
+import { getPublicServiceAreas } from "@/lib/cms";
 import { createPageMetadata } from "@/lib/site-seo";
 
 export const metadata: Metadata = createPageMetadata({
@@ -10,7 +11,9 @@ export const metadata: Metadata = createPageMetadata({
   path: "/locations",
 });
 
-export default function LocationsPage() {
+async function LocationsContent() {
+  const provinces = await getPublicServiceAreas();
+
   return (
     <main className="content-page locations-page">
       <nav className="breadcrumbs" aria-label="Breadcrumb">
@@ -45,5 +48,13 @@ export default function LocationsPage() {
         ))}
       </section>
     </main>
+  );
+}
+
+export default function LocationsPage() {
+  return (
+    <Suspense fallback={<main className="content-page locations-page" role="status">Loading locations...</main>}>
+      <LocationsContent />
+    </Suspense>
   );
 }

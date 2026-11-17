@@ -1,9 +1,8 @@
 "use client";
 
 import type { FormEvent } from "react";
-import { whatsappHref } from "@/lib/contact";
 
-export default function ContactForm() {
+export default function ContactForm({ whatsappHref }: { whatsappHref: string }) {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -45,7 +44,6 @@ export default function ContactForm() {
         <textarea
           name="message"
           rows={5}
-          placeholder="Tell us about the golf cart or rental you’re interested in."
           required
         />
       </label>

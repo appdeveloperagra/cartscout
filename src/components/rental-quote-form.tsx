@@ -49,7 +49,6 @@ export default function RentalQuoteForm({
         <input
           autoComplete="address-level2"
           data-field="location"
-          placeholder="e.g. Stellenbosch"
           required
         />
       </label>
@@ -57,7 +56,6 @@ export default function RentalQuoteForm({
         Preferred dates or duration
         <input
           data-field="dates"
-          placeholder="e.g. 12–14 December, or one week"
           required
         />
       </label>
@@ -76,7 +74,6 @@ export default function RentalQuoteForm({
         <textarea
           data-field="details"
           rows={3}
-          placeholder="Share event details, route or any questions."
         />
       </label>
       <a

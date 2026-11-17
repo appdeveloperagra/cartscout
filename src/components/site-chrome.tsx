@@ -1,12 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import {
-  contactEmail,
-  contactPhoneDisplay,
-  contactPhoneHref,
-  whatsappHref,
-} from "@/lib/contact";
 import LocationsMenu from "@/components/locations-menu";
+import { getPublicContactSettings, getPublicServiceAreas } from "@/lib/cms";
 
 function PhoneIcon() {
   return (
@@ -34,7 +29,12 @@ function EmailIcon() {
   );
 }
 
-export function SiteHeader() {
+export async function SiteHeader() {
+  const [locations, contact] = await Promise.all([
+    getPublicServiceAreas(),
+    getPublicContactSettings(),
+  ]);
+
   return (
     <header className="site-header">
       <div className="site-header-inner">
@@ -52,20 +52,23 @@ export function SiteHeader() {
           <Link href="/">Home</Link>
           <Link href="/inventory">Buy</Link>
           <Link href="/rentals">Rentals</Link>
-          <LocationsMenu />
+          <Link href="/blog">Journal</Link>
+          <LocationsMenu locations={locations.map(({ slug, name }) => ({ slug, name }))} />
           <Link href="/about">About</Link>
           <Link href="/contact">Contact</Link>
         </nav>
-        <a className="header-link" href={contactPhoneHref}>
+        <a className="header-link" href={contact.phone_href}>
           <PhoneIcon />
-          <span>{contactPhoneDisplay}</span>
+          <span>{contact.phone_display}</span>
         </a>
       </div>
     </header>
   );
 }
 
-export function SiteFooter() {
+export async function SiteFooter() {
+  const contact = await getPublicContactSettings();
+
   return (
     <footer className="site-footer">
       <div className="footer-grid">
@@ -91,17 +94,17 @@ export function SiteFooter() {
         </nav>
         <div className="footer-group">
           <h2>Get in touch</h2>
-          <a className="footer-contact-link" href={contactPhoneHref}>
+          <a className="footer-contact-link" href={contact.phone_href}>
             <PhoneIcon />
-            <span>{contactPhoneDisplay}</span>
+            <span>{contact.phone_display}</span>
           </a>
-          <a className="footer-contact-link" href={whatsappHref} target="_blank" rel="noreferrer">
+          <a className="footer-contact-link" href={contact.whatsapp_href} target="_blank" rel="noreferrer">
             <WhatsAppIcon />
             <span>WhatsApp us</span>
           </a>
-          <a className="footer-contact-link" href={`mailto:${contactEmail}`}>
+          <a className="footer-contact-link" href={`mailto:${contact.email}`}>
             <EmailIcon />
-            <span>{contactEmail}</span>
+            <span>{contact.email}</span>
           </a>
         </div>
         <nav className="footer-group" aria-label="Policies">
@@ -119,13 +122,15 @@ export function SiteFooter() {
   );
 }
 
-export function FloatingContactLinks() {
+export async function FloatingContactLinks() {
+  const contact = await getPublicContactSettings();
+
   return (
     <aside className="floating-contact" aria-label="Contact CartScout">
-      <a className="floating-contact-link floating-call" href={contactPhoneHref} aria-label={`Call CartScout at ${contactPhoneDisplay}`} title="Call CartScout">
+      <a className="floating-contact-link floating-call" href={contact.phone_href} aria-label={`Call CartScout at ${contact.phone_display}`} title="Call CartScout">
         <PhoneIcon />
       </a>
-      <a className="floating-contact-link floating-whatsapp" href={whatsappHref} target="_blank" rel="noreferrer" aria-label={`Chat with CartScout on WhatsApp at ${contactPhoneDisplay}`} title="Chat on WhatsApp">
+      <a className="floating-contact-link floating-whatsapp" href={contact.whatsapp_href} target="_blank" rel="noreferrer" aria-label={`Chat with CartScout on WhatsApp at ${contact.phone_display}`} title="Chat on WhatsApp">
         <WhatsAppIcon />
       </a>
     </aside>

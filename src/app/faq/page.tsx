@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { FAQStructuredData } from "@/components/faq-structured-data";
 import { createPageMetadata } from "@/lib/site-seo";
-import { faqs } from "@/lib/faqs";
+import { getPublicFaqs } from "@/lib/cms";
 
 export const metadata: Metadata = createPageMetadata({
   title: "Golf Cart FAQs: Prices, Buying & Hire",
@@ -11,7 +12,9 @@ export const metadata: Metadata = createPageMetadata({
   path: "/faq",
 });
 
-export default function FAQPage() {
+async function FAQContent() {
+  const faqs = await getPublicFaqs("general");
+
   return (
     <main className="content-page faq-page">
       <FAQStructuredData questions={faqs} />
@@ -40,5 +43,13 @@ export default function FAQPage() {
         <Link className="text-link" href="/rentals">Ask about a rental <span aria-hidden="true">↗</span></Link>
       </div>
     </main>
+  );
+}
+
+export default function FAQPage() {
+  return (
+    <Suspense fallback={<main className="content-page faq-page" role="status">Loading FAQs...</main>}>
+      <FAQContent />
+    </Suspense>
   );
 }

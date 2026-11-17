@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import Catalog from "@/components/catalog";
-import { parseSeatFilter, type CatalogProduct } from "@/lib/products";
+import { parseSeatFilter } from "@/lib/products";
 import { createPageMetadata } from "@/lib/site-seo";
-import inventory from "@/data/products.json";
+import { getPublicContactSettings, getPublicProducts } from "@/lib/cms";
 
 export const metadata: Metadata = createPageMetadata({
   title: "All Makes & Models | CartScout Golf Cart Dealership",
@@ -22,11 +22,16 @@ async function InventoryContent({
   searchParams: Promise<InventorySearchParams>;
 }) {
   const { seats } = await searchParams;
+  const [products, contact] = await Promise.all([
+    getPublicProducts(),
+    getPublicContactSettings(),
+  ]);
 
   return (
     <Catalog
-      products={inventory.products as CatalogProduct[]}
+      products={products}
       initialSeats={parseSeatFilter(seats)}
+      whatsappHref={contact.whatsapp_href}
     />
   );
 }

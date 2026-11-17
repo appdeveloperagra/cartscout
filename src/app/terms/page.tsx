@@ -1,4 +1,5 @@
-import { contactEmail } from "@/lib/contact";
+import { Suspense } from "react";
+import { getPublicContactSettings } from "@/lib/cms";
 import { createPageMetadata } from "@/lib/site-seo";
 
 export const metadata = createPageMetadata({
@@ -7,7 +8,9 @@ export const metadata = createPageMetadata({
   path: "/terms",
 });
 
-export default function TermsPage() {
+async function TermsContent() {
+  const contact = await getPublicContactSettings();
+
   return (
     <main className="content-page legal-page">
       <div className="eyebrow"><span /> LEGAL</div>
@@ -17,7 +20,7 @@ export default function TermsPage() {
       <section>
         <h2>Our catalogue and prices</h2>
         <p>
-          Cart information, displayed amounts, and availability may change or contain errors. The passenger-capacity ranges on CartScout are unverified planning estimates, not market averages or prices for individual carts. Confirm the full South African price, availability, and any transport or import costs before making a purchase decision.
+          Catalogue prices are displayed in whole-rand ZAR after conversion from the listed USD price using the exchange rate shown on the inventory page. Prices and availability can change; the written sale quote will state the agreed price and any applicable delivery or other charges.
         </p>
       </section>
       <section>
@@ -41,12 +44,20 @@ export default function TermsPage() {
       <section>
         <h2>Contact</h2>
         <p>
-          Questions about these terms can be sent to <a className="inline-link" href={`mailto:${contactEmail}`}>{contactEmail}</a>.
+          Questions about these terms can be sent to <a className="inline-link" href={`mailto:${contact.email}`}>{contact.email}</a>.
         </p>
       </section>
       <p className="small-print">
         These general website terms do not replace a purchase agreement or rental contract. Have them reviewed for the business&apos;s legal name, location, and applicable law before launch.
       </p>
     </main>
+  );
+}
+
+export default function TermsPage() {
+  return (
+    <Suspense fallback={<main className="content-page" role="status">Loading terms information...</main>}>
+      <TermsContent />
+    </Suspense>
   );
 }

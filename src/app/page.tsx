@@ -1,7 +1,7 @@
+import { Suspense } from "react";
 import { createPageMetadata } from "@/lib/site-seo";
 import HomePage from "@/components/home-page";
-import inventory from "@/data/products.json";
-import type { CatalogProduct } from "@/lib/products";
+import { getPublicProducts } from "@/lib/cms";
 
 export const metadata = createPageMetadata({
   title: "Golf Cart Dealership | Sales & Rentals Nationwide",
@@ -10,7 +10,15 @@ export const metadata = createPageMetadata({
   path: "/",
 });
 
+async function HomeContent() {
+  const products = await getPublicProducts();
+  return <HomePage products={products} totalProductCount={products.length} />;
+}
+
 export default function Home() {
-  const products = inventory.products as CatalogProduct[];
-  return <HomePage products={products.slice(0, 7)} totalProductCount={products.length} />;
+  return (
+    <Suspense fallback={<main className="home-page-loading" role="status">Loading CartScout...</main>}>
+      <HomeContent />
+    </Suspense>
+  );
 }

@@ -1,52 +1,23 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import RentalQuoteForm from "@/components/rental-quote-form";
-import { contactEmail, contactPhoneDisplay, contactPhoneHref, whatsappHref } from "@/lib/contact";
+import { getPublicContactSettings, getPublicFaqs, getPublicRentalRates } from "@/lib/cms";
+import { formatZar } from "@/lib/pricing";
 import { createPageMetadata, siteOrigin } from "@/lib/site-seo";
 
-export const metadata: Metadata = {
-  ...createPageMetadata({
-    title: "Golf Cart Hire in South Africa",
-    description:
-      "Rent golf carts from CartScout throughout South Africa. We deal in all makes and models, with nationwide delivery and collection.",
-    path: "/rentals",
-  }),
-};
+export const metadata: Metadata = createPageMetadata({
+  title: "Golf Cart Hire in South Africa",
+  description:
+    "Rent golf carts from CartScout throughout South Africa. We deal in all makes and models, with nationwide delivery and collection.",
+  path: "/rentals",
+});
 
-const rentalQuestions = [
-  {
-    question: "Which areas can I request golf cart hire in?",
-    answer:
-      "CartScout rents golf carts throughout South Africa. Share your town or delivery address, dates, and passenger requirements so we can arrange availability, delivery, and collection.",
-  },
-  {
-    question: "How much does golf cart hire cost?",
-    answer:
-      "The rental rates table on this page lists daily, weekly, and monthly rates for 2-seater, 4-seater, 6-seater, and utility carts. The listed rates include delivery and collection throughout South Africa. Confirm your dates and any request-specific terms with CartScout.",
-  },
-  {
-    question: "Can I hire for a day, a week, or longer?",
-    answer:
-      "The rate guide includes daily, weekly, and monthly periods. For a different duration or multiple carts, include your dates and requirements in a request for custom pricing.",
-  },
-  {
-    question: "Is the cart booked when I send a request?",
-    answer:
-      "No. A WhatsApp message, call, or email is only an enquiry. Your rental is not booked until CartScout confirms availability and you agree to the quote and rental terms.",
-  },
-  {
-    question: "Can I request carts for an event or group?",
-    answer:
-      "You can include the number of carts, passenger needs, location, dates, and intended use in your enquiry. CartScout will check whether the request can be accommodated.",
-  },
-  {
-    question: "What is included in the rental price?",
-    answer:
-      "The listed daily, weekly, and monthly rates include delivery and collection throughout South Africa. Confirm timing, any additional costs, vehicle inclusions, and rental conditions for your request before accepting a quote.",
-  },
-];
-
-function RentalStructuredData() {
+function RentalStructuredData({
+  questions,
+}: {
+  questions: { question: string; answer: string }[];
+}) {
   const pageUrl = siteOrigin ? new URL("/rentals", siteOrigin).toString() : undefined;
   const jsonLd = {
     "@context": "https://schema.org",
@@ -61,7 +32,7 @@ function RentalStructuredData() {
       },
       {
         "@type": "FAQPage",
-        mainEntity: rentalQuestions.map(({ question, answer }) => ({
+        mainEntity: questions.map(({ question, answer }) => ({
           "@type": "Question",
           name: question,
           acceptedAnswer: { "@type": "Answer", text: answer },
@@ -78,10 +49,16 @@ function RentalStructuredData() {
   );
 }
 
-export default function RentalsPage() {
+async function RentalsContent() {
+  const [rentalRates, rentalQuestions, contact] = await Promise.all([
+    getPublicRentalRates(),
+    getPublicFaqs("rental"),
+    getPublicContactSettings(),
+  ]);
+
   return (
     <main className="rental-page">
-      <RentalStructuredData />
+      <RentalStructuredData questions={rentalQuestions} />
       <section className="rental-hero" aria-labelledby="rental-title">
         <div className="rental-hero-copy">
           <div className="eyebrow"><span /> RENTALS NATIONWIDE</div>
@@ -96,7 +73,7 @@ export default function RentalsPage() {
             <a className="button button-dark" href="#rental-quote">
               Request a rental quote <span aria-hidden="true">↓</span>
             </a>
-            <a className="text-link" href={contactPhoneHref}>Call {contactPhoneDisplay}</a>
+            <a className="text-link" href={contact.phone_href}>Call {contact.phone_display}</a>
           </div>
           <p className="rental-hero-note">
             An enquiry is not a booking. Your rental is confirmed only after
@@ -152,8 +129,8 @@ export default function RentalsPage() {
           <div className="eyebrow"><span /> PRICING</div>
           <h2 id="rental-rates-title">Golf cart rental rates.</h2>
           <p>
-            Rates below include delivery and collection nationwide. Share your
-            address and dates with us to arrange your rental. Contact us for
+            Each rate shows whether delivery and collection are included.
+            Share your address and dates with us to arrange your rental. Contact us for
             custom multi-cart pricing.
           </p>
         </div>
@@ -169,10 +146,19 @@ export default function RentalsPage() {
               </tr>
             </thead>
             <tbody>
-              <tr><th scope="row">2-Seater Golf Cart</th><td>R 850</td><td>R 5,100</td><td>R 25,000</td></tr>
-              <tr><th scope="row">4-Seater Golf Cart</th><td>R 1,100</td><td>R 6,800</td><td>R 30,000</td></tr>
-              <tr><th scope="row">6-Seater Golf Cart</th><td>R 1,400</td><td>R 8,000</td><td>R 38,000</td></tr>
-              <tr><th scope="row">Utility Golf Cart</th><td>R 1,500</td><td>R 9,200</td><td>R 41,000</td></tr>
+              {rentalRates.map((rate) => (
+                <tr key={rate.id ?? rate.name}>
+                  <th scope="row">
+                    {rate.name}
+                    <span className="rental-rate-delivery">
+                      {rate.includes_delivery ? "Delivery and collection included" : "Delivery and collection quoted separately"}
+                    </span>
+                  </th>
+                  <td>{formatZar(rate.daily_price_zar)}</td>
+                  <td>{formatZar(rate.weekly_price_zar)}</td>
+                  <td>{formatZar(rate.monthly_price_zar)}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -259,10 +245,10 @@ export default function RentalsPage() {
             request from your chosen app and our team will follow up.
           </p>
           <p className="rental-request-alternative">
-            Prefer email? <a href={`mailto:${contactEmail}?subject=Golf%20cart%20rental%20enquiry`}>{contactEmail}</a>
+            Prefer email? <a href={`mailto:${contact.email}?subject=Golf%20cart%20rental%20enquiry`}>{contact.email}</a>
           </p>
         </div>
-        <RentalQuoteForm contactEmail={contactEmail} whatsappHref={whatsappHref} />
+        <RentalQuoteForm contactEmail={contact.email} whatsappHref={contact.whatsapp_href} />
       </section>
 
       <section className="rental-faq" aria-labelledby="rental-faq-title">
@@ -290,9 +276,17 @@ export default function RentalsPage() {
         </div>
         <div className="rental-final-actions">
           <a className="button button-dark" href="#rental-quote">Request a quote <span aria-hidden="true">↓</span></a>
-          <a className="text-link" href={contactPhoneHref}>Call {contactPhoneDisplay}</a>
+          <a className="text-link" href={contact.phone_href}>Call {contact.phone_display}</a>
         </div>
       </section>
     </main>
+  );
+}
+
+export default function RentalsPage() {
+  return (
+    <Suspense fallback={<main className="rental-page" role="status">Loading rental information...</main>}>
+      <RentalsContent />
+    </Suspense>
   );
 }

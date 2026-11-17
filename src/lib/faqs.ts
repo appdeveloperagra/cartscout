@@ -1,23 +1,22 @@
 export type FAQItem = {
+  id?: string;
+  category?: "general" | "rental";
   question: string;
   answer: string;
+  display_order?: number;
+  is_published?: boolean;
 };
 
 export const faqs: FAQItem[] = [
   {
-    question: "How much does a golf cart cost in South Africa?",
+    question: "How are catalogue prices calculated?",
     answer:
-      "The ZAR planning guide shows R50 000–R90 000 for 2-seaters, R90 000–R150 000 for 4-seaters, and R120 000–R210 000 for 6-seaters. These are unverified budgeting ranges, not market averages or prices for specific carts. Request a current quote before making a decision.",
+      "Each catalogue price is calculated from its source USD price using the exchange rate shown on the inventory page and rounded to whole rand.",
   },
   {
-    question: "Are the ZAR ranges the actual prices of individual carts?",
+    question: "Are catalogue prices shown in South African rand?",
     answer:
-      "No. The ranges are for planning only and are not linked to individual carts. CartScout does not currently have confirmed South African prices or landed costs for every cart, so ask us for a current ZAR quote.",
-  },
-  {
-    question: "Are CartScout's price ranges shown in South African rand?",
-    answer:
-      "Yes. The budget guide uses South African rand (ZAR). Contact CartScout for the current price of a specific cart and any applicable delivery costs.",
+      "Yes. Catalogue prices and the passenger-capacity price guide are displayed in whole-rand South African rand (ZAR).",
   },
   {
     question: "Are the golf carts in CartScout's collection available in South Africa?",
@@ -27,7 +26,7 @@ export const faqs: FAQItem[] = [
   {
     question: "How do I request a golf cart price in rand?",
     answer:
-      "Choose “Enquire to buy” on a cart, send the prepared email, and include your town or province. Ask for the current ZAR price and confirm whether any transport or import costs apply. The enquiry is not an order.",
+      "Select “Enquire to buy” on a cart and include your town or province in the purchase enquiry. The listed catalogue price is shown on the product card.",
   },
   {
     question: "How much does golf cart hire or rental cost?",
@@ -47,7 +46,7 @@ export const faqs: FAQItem[] = [
   {
     question: "How many seats should I choose?",
     answer:
-      "Start with the number of passengers and any equipment or cargo you need to carry. Check the stated capacity and intended use with CartScout; the budget guide covers 2-, 4-, and 6-seater planning ranges only.",
+      "Start with the number of passengers and any equipment or cargo you need to carry. Check the stated capacity and intended use with CartScout; the price guide groups listed carts by passenger capacity.",
   },
   {
     question: "Are the listed golf carts new or used?",
@@ -77,7 +76,7 @@ export const faqs: FAQItem[] = [
   {
     question: "How can I check a cart before buying it?",
     answer:
-      "Ask CartScout for current photos, condition details, service and battery history, included equipment, documentation, warranty, and whether an inspection can be arranged. Confirm all details and terms before paying.",
+      "Contact CartScout to arrange a vehicle inspection and discuss the cart specifications, service history, included equipment, and applicable warranty.",
   },
 ];
 

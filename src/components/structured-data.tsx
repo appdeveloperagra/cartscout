@@ -1,20 +1,25 @@
-import { contactEmail, contactPhone } from "@/lib/contact";
 import { siteOrigin } from "@/lib/site-seo";
 
-export function StructuredData() {
+export function StructuredData({
+  email,
+  phone,
+}: {
+  email: string;
+  phone: string;
+}) {
   const organizationId = siteOrigin ? `${siteOrigin}/#organization` : undefined;
   const graph = [
     {
       "@type": "Organization",
       ...(organizationId ? { "@id": organizationId, url: siteOrigin } : {}),
       name: "CartScout",
-      email: contactEmail,
-      telephone: contactPhone,
+      email,
+      telephone: phone,
       contactPoint: {
         "@type": "ContactPoint",
         contactType: "customer service",
-        telephone: contactPhone,
-        email: contactEmail,
+        telephone: phone,
+        email,
         areaServed: {
           "@type": "Country",
           name: "South Africa",

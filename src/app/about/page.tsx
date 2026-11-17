@@ -67,7 +67,7 @@ export default function AboutPage() {
             <h3>Shop our golf cart collection</h3>
             <p>
               Explore our carts and contact CartScout about a specific model,
-              its current price, specifications, availability, and delivery
+              its listed price, specifications, availability, and delivery
               arrangements.
             </p>
             <Link href="/inventory">Browse the inventory <span aria-hidden="true">→</span></Link>
@@ -76,7 +76,7 @@ export default function AboutPage() {
             <span className="about-option-number">02 / RENTAL</span>
             <h3>Plan a golf cart rental</h3>
             <p>
-              Review the daily, weekly, and monthly rate guide, then send your
+              Review the daily, weekly, and monthly rental rates, then send your
               dates, group size, and location. Availability and arrangements
               must be checked for each request.
             </p>
@@ -90,12 +90,12 @@ export default function AboutPage() {
           <div className="eyebrow"><span /> HOW WE WORK</div>
           <h2 id="about-transparency-title">Useful information. Clear next steps.</h2>
           <p>
-            CartScout offers the golf carts shown in our collection. The ZAR
-            amounts on cart cards are sample planning figures, not confirmed
-            offers. Contact us for current prices and cart details.
+            CartScout offers the golf carts shown in our collection. Listed prices are
+            displayed in whole-rand ZAR, converted from the catalogue USD price
+            using the rate shown on the inventory page.
           </p>
           <p>
-            Rental rates are shown as a guide for the listed rental periods.
+            Review the daily, weekly, and monthly rental rates.
             Send your location and dates so availability and the details of
             your request can be confirmed.
           </p>

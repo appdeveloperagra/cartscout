@@ -3,14 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
-import { whatsappHref } from "@/lib/contact";
 import { PriceGuide } from "@/components/price-guide";
-import { parseSeatFilter, type CatalogProduct, type SeatFilter } from "@/lib/products";
-import { formatZar, getSampleCatalogPrice } from "@/lib/pricing";
+import { getPassengerCapacity, parseSeatFilter, type CatalogProduct, type SeatFilter } from "@/lib/products";
+import { formatZar, getCatalogPriceZar, usdToZarRate, usdToZarRateAsOf } from "@/lib/pricing";
 
 type CatalogProps = {
   products: CatalogProduct[];
   initialSeats: SeatFilter;
+  whatsappHref: string;
 };
 
 type Inquiry = {
@@ -23,11 +23,6 @@ function getMake(name: string) {
   );
   if (!match) return "Other";
   return /^ezgo$/i.test(match[0]) ? "E-Z-GO" : match[0];
-}
-
-function getSeats(name: string) {
-  const match = name.match(/\b([2-8])\s*Passenger/i);
-  return match ? Number(match[1]) : null;
 }
 
 function CartIcon() {
@@ -50,7 +45,7 @@ function SearchIcon() {
   );
 }
 
-export default function Catalog({ products, initialSeats }: CatalogProps) {
+export default function Catalog({ products, initialSeats, whatsappHref }: CatalogProps) {
   const [query, setQuery] = useState("");
   const [make, setMake] = useState("All makes");
   const [seats, setSeats] = useState<SeatFilter>(initialSeats);
@@ -85,7 +80,7 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
         !normalizedQuery ||
         `${product.name} ${getMake(product.name)}`.toLowerCase().includes(normalizedQuery);
       const matchesMake = make === "All makes" || getMake(product.name) === make;
-      const productSeats = getSeats(product.name);
+      const productSeats = getPassengerCapacity(product.name);
       const matchesSeats =
         seats === "Any seats" ||
         (seats === "6+ seats" ? (productSeats ?? 0) >= 6 : productSeats === Number(seats));
@@ -119,8 +114,9 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
       `Phone: ${phone || "Not provided"}`,
       `Town or province: ${location || "Not provided"}`,
       `Cart: ${inquiry.product.name}`,
+      `Listed price: ${formatZar(getCatalogPriceZar(inquiry.product.price, inquiry.product.currency))}`,
       "",
-      message || "Please provide the current price in ZAR, confirm availability, and advise whether delivery can be arranged.",
+      message || "Please share the delivery arrangements for my location.",
     ].join("\n");
 
     window.open(`${whatsappHref}?text=${encodeURIComponent(body)}`, "_blank", "noopener,noreferrer");
@@ -133,10 +129,10 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
           <div className="eyebrow"><span /> FULL CART INVENTORY</div>
           <h1>Golf carts for sale.</h1>
           <p>
-            CartScout deals in all makes and models, with sales and rentals throughout South Africa. The sample ZAR amounts are random placeholders, not confirmed offers or Merchant Center prices; contact us to confirm the actual price, availability, and delivery.
+            CartScout deals in all makes and models, with sales and rentals throughout South Africa. Prices are converted from USD at R{usdToZarRate} per USD ({usdToZarRateAsOf}) and rounded to whole rand.
           </p>
         </div>
-        <PriceGuide compact />
+        <PriceGuide products={products} compact />
         <div className="section-heading">
           <div>
             <div className="eyebrow"><span /> THE CART COLLECTION</div>
@@ -151,7 +147,6 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
                 <SearchIcon />
                 <input
                   type="search"
-                  placeholder="Search carts..."
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
                   aria-label="Search golf carts"
@@ -201,16 +196,25 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
                             loading={index === 0 ? "eager" : "lazy"}
                             sizes="(max-width: 680px) 90vw, (max-width: 1050px) 45vw, 30vw"
                           />
-                        ) : <div className="image-placeholder"><CartIcon /></div>}
+                                ) : <div className="product-image-empty" aria-hidden="true" />}
                         <span className="product-tag">ASK ABOUT AVAILABILITY</span>
                       </div>
                       <div className="product-info">
-                        <div className="product-meta"><span>{getMake(product.name)}</span><span>{getSeats(product.name) ? `${getSeats(product.name)} PASSENGER` : "GOLF CART"}</span></div>
-                        <h3>{product.name}</h3>
+                        <div className="product-meta"><span>{getMake(product.name)}</span><span>{getPassengerCapacity(product.name) ? `${getPassengerCapacity(product.name)} PASSENGER` : "GOLF CART"}</span></div>
+                        <h3>
+                          {product.slug ? (
+                            <Link href={`/inventory/${product.slug}`}>{product.name}</Link>
+                          ) : product.name}
+                        </h3>
+                        {product.slug && (
+                          <Link className="product-detail-link" href={`/inventory/${product.slug}`}>
+                            View photos and details <span aria-hidden="true">→</span>
+                          </Link>
+                        )}
                         <div className="product-footer">
                           <div>
                             <span className="price-label">ZAR PRICE</span>
-                            <strong>{formatZar(getSampleCatalogPrice(product.id, product.name))}</strong>
+                            <strong>{formatZar(getCatalogPriceZar(product.price, product.currency))}</strong>
                           </div>
                           <button type="button" onClick={(event) => openInquiry(product, event.currentTarget)} aria-label={`Enquire to buy ${product.name}`}>Enquire to buy <span aria-hidden="true">→</span></button>
                         </div>
@@ -253,16 +257,16 @@ export default function Catalog({ products, initialSeats }: CatalogProps) {
             <div className="eyebrow"><span /> PURCHASE REQUEST</div>
             <h2 id="inquiry-title">Enquire about this cart.</h2>
             <p className="inquiry-product">{inquiry.product.name}</p>
-            <p className="form-footnote">Include your town so we can confirm the current ZAR price and arrange nationwide delivery.</p>
+            <p className="form-footnote">Include your town so we can arrange delivery for your purchase.</p>
             <form onSubmit={submitInquiry}>
               <div className="form-grid">
                 <label>Name<input name="name" autoComplete="name" required /></label>
                 <label>Email<input name="email" type="email" autoComplete="email" required /></label>
                 <label>Phone (optional)<input name="phone" type="tel" autoComplete="tel" /></label>
-                <label>Town or province (optional)<input name="location" autoComplete="address-level2" placeholder="e.g. Pretoria, Gauteng" /></label>
+                <label>Town or province (optional)<input name="location" autoComplete="address-level2" /></label>
               </div>
               <label className="message-field">Anything else we should know?
-                <textarea name="message" rows={3} placeholder="Ask for a price in ZAR and include any delivery questions." />
+                <textarea name="message" rows={3} />
               </label>
               <button className="button button-dark submit-inquiry" type="submit">
                 Continue to WhatsApp

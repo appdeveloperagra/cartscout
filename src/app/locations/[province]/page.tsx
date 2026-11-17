@@ -2,23 +2,20 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { getProvince, provinces } from "@/lib/provinces";
+import { getPublicContactSettings, getPublicServiceAreas } from "@/lib/cms";
+import { RequestTimeMarker } from "@/components/request-time-marker";
 import { createPageMetadata, siteOrigin } from "@/lib/site-seo";
-import { whatsappHref } from "@/lib/contact";
 
 type ProvincePageProps = {
   params: Promise<{ province: string }>;
 };
 
-export function generateStaticParams() {
-  return provinces.map(({ slug }) => ({ province: slug }));
-}
-
 export async function generateMetadata({
   params,
 }: ProvincePageProps): Promise<Metadata> {
   const { province: slug } = await params;
-  const province = getProvince(slug);
+  const provinces = await getPublicServiceAreas();
+  const province = provinces.find((item) => item.slug === slug);
   if (!province) return {};
 
   return createPageMetadata({
@@ -113,11 +110,15 @@ function ProvinceStructuredData({
 
 async function ProvinceContent({ params }: ProvincePageProps) {
   const { province: slug } = await params;
-  const province = getProvince(slug);
+  const [provinces, contact] = await Promise.all([
+    getPublicServiceAreas(),
+    getPublicContactSettings(),
+  ]);
+  const province = provinces.find((item) => item.slug === slug);
   if (!province) notFound();
 
   const rentalMessage = encodeURIComponent(
-    `Hi CartScout, I would like to ask about golf cart availability in ${province.name}. My town is __. I am interested in a purchase or rental.`,
+    `Hi CartScout, I am based in ${province.name} and would like to ask about golf cart availability. I am interested in a purchase or rental.`,
   );
 
   return (
@@ -161,7 +162,6 @@ async function ProvinceContent({ params }: ProvincePageProps) {
         <h2>Check location and suitability before proceeding</h2>
         <p>{province.considerations}</p>
         <p>
-          CartScout&apos;s online purchase catalog is sourced from public
           CartScout serves customers throughout South Africa. Contact us to
           arrange sales, rentals, delivery, or collection in your province.
           Rental bookings are confirmed after terms are agreed.
@@ -203,7 +203,7 @@ async function ProvinceContent({ params }: ProvincePageProps) {
         </div>
         <div className="page-actions">
           <Link className="button button-dark" href="/inventory">Browse inventory <span aria-hidden="true">→</span></Link>
-          <a className="text-link" href={`${whatsappHref}?text=${rentalMessage}`} target="_blank" rel="noreferrer">
+          <a className="text-link" href={`${contact.whatsapp_href}?text=${rentalMessage}`} target="_blank" rel="noreferrer">
             Ask on WhatsApp <span aria-hidden="true">↗</span>
           </a>
         </div>
@@ -223,8 +223,11 @@ async function ProvinceContent({ params }: ProvincePageProps) {
 
 export default function ProvincePage({ params }: ProvincePageProps) {
   return (
-    <Suspense fallback={<main className="content-page location-page"><p role="status">Loading province guide…</p></main>}>
-      <ProvinceContent params={params} />
-    </Suspense>
+    <>
+      <Suspense fallback={null}><RequestTimeMarker /></Suspense>
+      <Suspense fallback={<main className="content-page location-page"><p role="status">Loading province guide...</p></main>}>
+        <ProvinceContent params={params} />
+      </Suspense>
+    </>
   );
 }

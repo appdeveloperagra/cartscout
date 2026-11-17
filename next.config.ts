@@ -1,5 +1,9 @@
 import type { NextConfig } from "next";
 
+const supabaseImageHost = process.env.NEXT_PUBLIC_SUPABASE_URL
+  ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
+  : null;
+
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
@@ -8,6 +12,13 @@ const nextConfig: NextConfig = {
         hostname: "mullensgolfcarts.com",
         pathname: "/wp-content/uploads/**",
       },
+      ...(supabaseImageHost
+        ? [{
+            protocol: "https" as const,
+            hostname: supabaseImageHost,
+            pathname: "/storage/v1/object/public/**",
+          }]
+        : []),
     ],
   },
   cacheComponents: true,

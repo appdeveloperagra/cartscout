@@ -9,7 +9,7 @@ const highlights = [
   },
   {
     title: "Confirm the details before you decide.",
-    description: "Send an enquiry to check current availability, price, and purchase arrangements.",
+    description: "Send an enquiry to check current availability, specifications, and purchase arrangements.",
   },
   {
     title: "An enquiry is not a reservation.",

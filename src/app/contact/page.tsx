@@ -1,10 +1,6 @@
-import {
-  contactEmail,
-  contactPhoneDisplay,
-  contactPhoneHref,
-  whatsappHref,
-} from "@/lib/contact";
+import { Suspense } from "react";
 import ContactForm from "@/components/contact-form";
+import { getPublicContactSettings } from "@/lib/cms";
 import { createPageMetadata } from "@/lib/site-seo";
 
 export const metadata = createPageMetadata({
@@ -13,7 +9,9 @@ export const metadata = createPageMetadata({
   path: "/contact",
 });
 
-export default function ContactPage() {
+async function ContactContent() {
+  const contact = await getPublicContactSettings();
+
   return (
     <main className="content-page">
       <div className="eyebrow"><span /> CONTACT</div>
@@ -23,19 +21,19 @@ export default function ContactPage() {
       </p>
 
       <section className="contact-card-grid" aria-label="Contact options">
-        <a className="contact-card" href={contactPhoneHref}>
+        <a className="contact-card" href={contact.phone_href}>
           <span className="contact-card-label">CALL</span>
-          <strong>{contactPhoneDisplay}</strong>
+          <strong>{contact.phone_display}</strong>
           <span>Call CartScout</span>
         </a>
-        <a className="contact-card" href={whatsappHref} target="_blank" rel="noreferrer">
+        <a className="contact-card" href={contact.whatsapp_href} target="_blank" rel="noreferrer">
           <span className="contact-card-label">WHATSAPP</span>
           <strong>Chat with us</strong>
           <span>Opens WhatsApp in a new tab</span>
         </a>
-        <a className="contact-card" href={`mailto:${contactEmail}`}>
+        <a className="contact-card" href={`mailto:${contact.email}`}>
           <span className="contact-card-label">EMAIL</span>
-          <strong>{contactEmail}</strong>
+          <strong>{contact.email}</strong>
           <span>Send a purchase or rental enquiry</span>
         </a>
       </section>
@@ -47,22 +45,27 @@ export default function ContactPage() {
             <p className="contact-form-intro">
               Share the cart or rental details you have in mind, and our team will be in touch.
             </p>
-            <ContactForm />
+            <ContactForm whatsappHref={contact.whatsapp_href} />
           </div>
           <aside className="contact-address-card" aria-labelledby="contact-address-title">
             <span className="contact-card-label">BUSINESS ADDRESS</span>
             <h2 id="contact-address-title">Visit CartScout</h2>
             <address className="contact-address">
-              135 Rivonia Road<br />
-              Sandton (Sandown / Central Sandton)<br />
-              City of Johannesburg Metropolitan Municipality<br />
-              Gauteng<br />
-              2196<br />
-              South Africa
+              {contact.address.map((line, index) => (
+                <span key={`${line}-${index}`}>{line}<br /></span>
+              ))}
             </address>
           </aside>
         </div>
       </section>
     </main>
+  );
+}
+
+export default function ContactPage() {
+  return (
+    <Suspense fallback={<main className="content-page" role="status">Loading contact information...</main>}>
+      <ContactContent />
+    </Suspense>
   );
 }

@@ -2,9 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { provinces } from "@/lib/provinces";
 
-export default function LocationsMenu() {
+type LocationLink = {
+  slug: string;
+  name: string;
+};
+
+export default function LocationsMenu({ locations }: { locations: LocationLink[] }) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -67,7 +71,7 @@ export default function LocationsMenu() {
         <Link className="locations-menu-index" href="/locations" onClick={closeMenu}>
           All locations
         </Link>
-        {provinces.map(({ slug, name }) => (
+        {locations.map(({ slug, name }) => (
           <Link href={`/locations/${slug}`} key={slug} onClick={closeMenu}>
             {name}
           </Link>

@@ -1,24 +1,15 @@
-export const passengerBudgetRanges = [
-  { label: "2-seater carts", passengers: 2, minimum: 50000, maximum: 90000 },
-  { label: "4-seater carts", passengers: 4, minimum: 90000, maximum: 150000 },
-  { label: "6-seater carts", passengers: 6, minimum: 120000, maximum: 210000 },
-] as const;
+export const usdToZarRate = 16.943;
+export const usdToZarRateAsOf = "2026-11-16";
 
-export function getSampleCatalogPrice(id: number, name: string) {
-  const passengerMatch = name.match(/\b([2-8])\s*Passenger\b/i);
-  const passengers = passengerMatch ? Number(passengerMatch[1]) : null;
-  const range = passengers === 2
-    ? passengerBudgetRanges[0]
-    : passengers === 4
-      ? passengerBudgetRanges[1]
-      : passengers !== null && passengers >= 6
-        ? passengerBudgetRanges[2]
-        : { minimum: 50000, maximum: 210000 };
-  const increment = 1000;
-  const availablePrices = Math.floor((range.maximum - range.minimum) / increment) + 1;
-  const stableOffset = Math.imul(Math.trunc(id), 0x9e3779b1) >>> 0;
+export function getCatalogPriceZar(price: number, currency: string) {
+  if (!Number.isFinite(price) || price < 0) {
+    throw new Error("Catalog price must be a non-negative number.");
+  }
 
-  return range.minimum + (stableOffset % availablePrices) * increment;
+  if (currency === "ZAR") return Math.round(price);
+  if (currency === "USD") return Math.round(price * usdToZarRate);
+
+  throw new Error(`Unsupported catalog currency: ${currency}`);
 }
 
 export function formatZar(amount: number) {

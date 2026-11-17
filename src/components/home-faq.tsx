@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { FAQStructuredData } from "@/components/faq-structured-data";
-import { homeFaqs } from "@/lib/faqs";
+import { getPublicFaqs } from "@/lib/cms";
 
-export function HomeFaq() {
+export async function HomeFaq() {
+  const homeFaqs = (await getPublicFaqs("general")).slice(0, 7);
+
   return (
     <section className="home-faq" aria-labelledby="home-faq-title">
       <FAQStructuredData questions={homeFaqs} />
@@ -18,7 +20,7 @@ export function HomeFaq() {
         ))}
       </div>
       <p className="faq-all-link">
-        <Link className="inline-link" href="/faq">See all 15 golf cart FAQs <span aria-hidden="true">→</span></Link>
+        <Link className="inline-link" href="/faq">See all golf cart FAQs <span aria-hidden="true">→</span></Link>
       </p>
     </section>
   );

@@ -1,4 +1,5 @@
-import { contactEmail } from "@/lib/contact";
+import { Suspense } from "react";
+import { getPublicContactSettings } from "@/lib/cms";
 import { createPageMetadata } from "@/lib/site-seo";
 
 export const metadata = createPageMetadata({
@@ -7,7 +8,9 @@ export const metadata = createPageMetadata({
   path: "/privacy",
 });
 
-export default function PrivacyPage() {
+async function PrivacyContent() {
+  const contact = await getPublicContactSettings();
+
   return (
     <main className="content-page legal-page">
       <div className="eyebrow"><span /> LEGAL</div>
@@ -35,12 +38,20 @@ export default function PrivacyPage() {
       <section>
         <h2>Your choices and questions</h2>
         <p>
-          You can choose not to submit an enquiry. To ask about personal information you have sent directly to CartScout, contact <a className="inline-link" href={`mailto:${contactEmail}`}>{contactEmail}</a>.
+          You can choose not to submit an enquiry. To ask about personal information you have sent directly to CartScout, contact <a className="inline-link" href={`mailto:${contact.email}`}>{contact.email}</a>.
         </p>
       </section>
       <p className="small-print">
         This summary reflects the website&apos;s current features. The business should review it against its actual email handling, hosting arrangements, and applicable privacy laws before launch.
       </p>
     </main>
+  );
+}
+
+export default function PrivacyPage() {
+  return (
+    <Suspense fallback={<main className="content-page" role="status">Loading privacy information...</main>}>
+      <PrivacyContent />
+    </Suspense>
   );
 }

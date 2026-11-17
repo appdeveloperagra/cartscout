@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { FloatingContactLinks, SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { StructuredData } from "@/components/structured-data";
+import { getPublicContactSettings } from "@/lib/cms";
 import { siteOrigin } from "@/lib/site-seo";
 import "./globals.css";
 
@@ -53,15 +55,24 @@ export const metadata: Metadata = {
   },
 };
 
+async function PublicStructuredData() {
+  const contact = await getPublicContactSettings();
+  return <StructuredData email={contact.email} phone={contact.phone} />;
+}
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en-ZA">
       <body>
-        <StructuredData />
-        <SiteHeader />
+        <Suspense fallback={null}>
+          <PublicStructuredData />
+        </Suspense>
+        <Suspense fallback={<div className="site-header-skeleton" aria-hidden="true" />}>
+          <SiteHeader />
+        </Suspense>
         {children}
-        <SiteFooter />
-        <FloatingContactLinks />
+        <Suspense fallback={null}><SiteFooter /></Suspense>
+        <Suspense fallback={null}><FloatingContactLinks /></Suspense>
       </body>
     </html>
   );

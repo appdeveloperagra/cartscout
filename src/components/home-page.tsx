@@ -4,27 +4,16 @@ import { type CatalogProduct } from "@/lib/products";
 import { HomeFaq } from "@/components/home-faq";
 import { HomeHighlights } from "@/components/home-highlights";
 import { PriceGuide } from "@/components/price-guide";
-import { formatZar, getSampleCatalogPrice } from "@/lib/pricing";
+import { formatZar, getCatalogPriceZar, usdToZarRate, usdToZarRateAsOf } from "@/lib/pricing";
 
 type HomePageProps = {
   products: CatalogProduct[];
   totalProductCount: number;
 };
 
-function CartIcon() {
-  return (
-    <svg viewBox="0 0 48 32" aria-hidden="true">
-      <path d="M7 4h22a4 4 0 0 1 4 4v13H7z" />
-      <path d="M33 12h6l4 6v3H33zM4 23h39" />
-      <circle cx="13" cy="25" r="4" />
-      <circle cx="36" cy="25" r="4" />
-    </svg>
-  );
-}
-
 export default function HomePage({ products, totalProductCount }: HomePageProps) {
   const heroProduct = products[0];
-  const featuredProducts = products.slice(1);
+  const featuredProducts = products.slice(1, 7);
 
   return (
     <main>
@@ -60,7 +49,7 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
                 sizes="(max-width: 760px) 90vw, 48vw"
                 className="hero-image"
               />
-            ) : <div className="image-placeholder"><CartIcon /></div>}
+            ) : <div className="product-image-empty" aria-hidden="true" />}
           </div>
           <div className="hero-caption"><span>FEATURED CART</span><span>{heroProduct?.name}</span></div>
           <span className="hero-sun" aria-hidden="true" />
@@ -71,9 +60,9 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
 
       <section className="trust-strip" aria-label="Catalog information">
         <div><strong>{totalProductCount}</strong><span>carts in our collection</span></div>
-        <div><strong>ZAR guide</strong><span>budget ranges by seats</span></div>
-        <div><strong>Confirm first</strong><span>local price and availability</span></div>
-        <p>Sample prices shown with our carts are placeholders, not confirmed offers. Contact CartScout to confirm availability and delivery.</p>
+        <div><strong>ZAR prices</strong><span>converted from USD</span></div>
+        <div><strong>Confirm first</strong><span>availability and delivery</span></div>
+        <p>Prices use R{usdToZarRate} per USD ({usdToZarRateAsOf}) and are rounded to whole rand.</p>
       </section>
 
       <section className="seat-categories" aria-labelledby="seat-categories-title">
@@ -98,7 +87,7 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
         </div>
       </section>
 
-      <PriceGuide />
+      <PriceGuide products={products} />
 
       <section className="home-featured">
         <div className="section-heading">
@@ -119,16 +108,20 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
                     fill
                     sizes="(max-width: 680px) 90vw, (max-width: 1050px) 45vw, 30vw"
                   />
-                ) : <div className="image-placeholder"><CartIcon /></div>}
+                ) : <div className="product-image-empty" aria-hidden="true" />}
                 <span className="product-tag">ASK ABOUT AVAILABILITY</span>
               </div>
               <div className="product-info">
                 <div className="product-meta"><span>GOLF CART</span><span>OUR COLLECTION</span></div>
-                <h3>{product.name}</h3>
+                <h3>
+                  {product.slug ? (
+                    <Link href={`/inventory/${product.slug}`}>{product.name}</Link>
+                  ) : product.name}
+                </h3>
                 <div className="product-footer">
                   <div>
                     <span className="price-label">ZAR PRICE</span>
-                    <strong>{formatZar(getSampleCatalogPrice(product.id, product.name))}</strong>
+                    <strong>{formatZar(getCatalogPriceZar(product.price, product.currency))}</strong>
                   </div>
                   <Link className="featured-enquire-link" href="/inventory">Enquire <span aria-hidden="true">→</span></Link>
                 </div>
