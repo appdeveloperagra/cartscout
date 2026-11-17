@@ -1,10 +1,10 @@
 import type { User } from "@supabase/supabase-js";
-import { requireSuperadmin } from "@/lib/supabase/admin";
+import { requireAdmin } from "@/lib/supabase/admin";
 
-type AdminRole = "staff" | "superadmin";
+type AccountRole = "staff" | "admin" | "superadmin";
 
-function isAdminRole(value: unknown): value is AdminRole {
-  return value === "staff" || value === "superadmin";
+function isAccountRole(value: unknown, canManageSuperadmins: boolean): value is AccountRole {
+  return value === "staff" || value === "admin" || (value === "superadmin" && canManageSuperadmins);
 }
 
 function sameOriginRequest(request: Request) {
@@ -12,7 +12,7 @@ function sameOriginRequest(request: Request) {
 }
 
 export async function GET() {
-  const access = await requireSuperadmin();
+  const access = await requireAdmin();
   if ("response" in access) return access.response;
 
   const { data: profiles, error: profilesError } = await access.admin
@@ -45,12 +45,14 @@ export async function GET() {
       id: authUser.id,
       display_name: profile?.display_name ??
         (typeof metadataName === "string" ? metadataName : null),
-      role: profile?.role === "superadmin" || profile?.role === "staff" ? profile.role : null,
+      role: profile?.role === "superadmin" || profile?.role === "admin" || profile?.role === "staff"
+        ? profile.role
+        : null,
       created_at: profile?.created_at ?? authUser.created_at,
       email: authUser.email ?? "",
-      invitationPending: Boolean(authUser.email && !authUser.email_confirmed_at),
+      emailConfirmed: Boolean(authUser.email_confirmed_at),
     };
-  });
+  }).filter((account) => access.role === "superadmin" || account.role !== "superadmin");
 
   return Response.json({ users });
 }
@@ -60,45 +62,53 @@ export async function POST(request: Request) {
     return Response.json({ error: "This request must come from CartScout." }, { status: 403 });
   }
 
-  const access = await requireSuperadmin();
+  const access = await requireAdmin();
   if ("response" in access) return access.response;
 
   let body: Record<string, unknown>;
   try {
     const parsed: unknown = await request.json();
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
-      return Response.json({ error: "Enter an email address and access role." }, { status: 400 });
+      return Response.json({ error: "Enter account details and choose an access role." }, { status: 400 });
     }
     body = parsed as Record<string, unknown>;
   } catch {
-    return Response.json({ error: "The invitation request is not valid JSON." }, { status: 400 });
+    return Response.json({ error: "The account request is not valid JSON." }, { status: 400 });
   }
 
   const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
   const displayName = typeof body.displayName === "string" ? body.displayName.trim() : "";
+  const password = typeof body.password === "string" ? body.password : "";
   const role = body.role;
 
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return Response.json({ error: "Enter a valid email address." }, { status: 400 });
   }
+  if (password.length < 8 || password.length > 128) {
+    return Response.json({ error: "Password must be between 8 and 128 characters." }, { status: 400 });
+  }
   if (displayName.length > 120) {
     return Response.json({ error: "Display name must be 120 characters or fewer." }, { status: 400 });
   }
-  if (!isAdminRole(role)) {
-    return Response.json({ error: "Choose Staff or Superadmin." }, { status: 400 });
+  if (!isAccountRole(role, access.role === "superadmin")) {
+    return Response.json({ error: "Choose a role you are permitted to assign." }, { status: 400 });
   }
 
-  const redirectTo = new URL("/admin/accept-invite", request.url).toString();
-  const { data, error: inviteError } = await access.admin.auth.admin.inviteUserByEmail(email, {
-    data: displayName ? { full_name: displayName } : {},
-    redirectTo,
+  const { data, error: createError } = await access.admin.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+    user_metadata: displayName ? { full_name: displayName } : {},
   });
 
-  if (inviteError) {
-    return Response.json({ error: `Unable to send invitation: ${inviteError.message}` }, { status: 400 });
+  if (createError) {
+    return Response.json(
+      { error: "Unable to create account. Check that the email is not already registered and the password meets Auth requirements." },
+      { status: 400 },
+    );
   }
   if (!data.user) {
-    return Response.json({ error: "Supabase did not return the invited account." }, { status: 502 });
+    return Response.json({ error: "Supabase did not return the created account." }, { status: 502 });
   }
 
   const { error: profileError } = await access.admin
@@ -111,15 +121,17 @@ export async function POST(request: Request) {
   if (profileError) {
     const { error: cleanupError } = await access.admin.auth.admin.deleteUser(data.user.id);
     const detail = cleanupError
-      ? ` The invited account could not be rolled back: ${cleanupError.message}`
-      : " The invitation was rolled back.";
+      ? ` The account could not be rolled back: ${cleanupError.message}`
+      : " The account was rolled back.";
     return Response.json(
       { error: `Unable to assign the requested role: ${profileError.message}.${detail}` },
       { status: 500 },
     );
   }
 
-  return Response.json({ message: `Invitation sent to ${email}.` }, { status: 201 });
+  return Response.json({
+    message: `Account created for ${email}. It is active immediately; no invitation email was sent.`,
+  }, { status: 201 });
 }
 
 export async function PATCH(request: Request) {
@@ -127,7 +139,7 @@ export async function PATCH(request: Request) {
     return Response.json({ error: "This request must come from CartScout." }, { status: 403 });
   }
 
-  const access = await requireSuperadmin();
+  const access = await requireAdmin();
   if ("response" in access) return access.response;
 
   let body: Record<string, unknown>;
@@ -146,11 +158,24 @@ export async function PATCH(request: Request) {
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {
     return Response.json({ error: "Choose a valid team account." }, { status: 400 });
   }
-  if (!isAdminRole(role)) {
-    return Response.json({ error: "Choose Staff or Superadmin." }, { status: 400 });
+  if (!isAccountRole(role, access.role === "superadmin")) {
+    return Response.json({ error: "Choose a role you are permitted to assign." }, { status: 400 });
   }
-  if (id === access.user.id && role !== "superadmin") {
-    return Response.json({ error: "You cannot remove your own superadmin access." }, { status: 409 });
+  if (id === access.user.id && role !== access.role) {
+    return Response.json({ error: "You cannot change your own access role." }, { status: 409 });
+  }
+
+  const { data: targetProfile, error: targetError } = await access.admin
+    .from("profiles")
+    .select("role")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (targetError) {
+    return Response.json({ error: `Unable to verify the target account: ${targetError.message}` }, { status: 500 });
+  }
+  if (access.role === "admin" && targetProfile?.role === "superadmin") {
+    return Response.json({ error: "That account could not be found." }, { status: 404 });
   }
 
   const { data, error } = await access.admin
@@ -160,7 +185,8 @@ export async function PATCH(request: Request) {
     .maybeSingle();
 
   if (error) {
-    return Response.json({ error: `Unable to update access role: ${error.message}` }, { status: 500 });
+    const status = error.code === "23503" ? 404 : 500;
+    return Response.json({ error: status === 404 ? "That account could not be found." : `Unable to update access role: ${error.message}` }, { status });
   }
   if (!data) {
     return Response.json({ error: "That team account could not be found." }, { status: 404 });

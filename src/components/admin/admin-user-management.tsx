@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 
-type AdminRole = "staff" | "superadmin";
+type AdminRole = "staff" | "admin" | "superadmin";
 
 type AdminUser = {
   id: string;
@@ -10,7 +10,7 @@ type AdminUser = {
   display_name: string | null;
   role: AdminRole | null;
   created_at: string;
-  invitationPending: boolean;
+  emailConfirmed: boolean;
 };
 
 async function getResponseMessage(response: Response) {
@@ -29,14 +29,22 @@ function formatCreatedAt(value: string) {
     : new Intl.DateTimeFormat("en-ZA", { dateStyle: "medium" }).format(date);
 }
 
-export default function AdminUserManagement({ currentUserId }: { currentUserId: string }) {
+export default function AdminUserManagement({
+  currentUserId,
+  currentUserRole,
+}: {
+  currentUserId: string;
+  currentUserRole: "admin" | "superadmin";
+}) {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [roles, setRoles] = useState<Record<string, AdminRole | "">>({});
   const [email, setEmail] = useState("");
   const [displayName, setDisplayName] = useState("");
-  const [newRole, setNewRole] = useState<AdminRole>("staff");
+  const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const [newRole, setNewRole] = useState<AdminRole>(currentUserRole === "superadmin" ? "admin" : "staff");
   const [isLoading, setIsLoading] = useState(true);
-  const [isInviting, setIsInviting] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
   const [savingId, setSavingId] = useState("");
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -80,29 +88,36 @@ export default function AdminUserManagement({ currentUserId }: { currentUserId: 
     };
   }, [fetchUsers]);
 
-  async function inviteUser(event: FormEvent<HTMLFormElement>) {
+  async function createUser(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
     setNotice("");
-    setIsInviting(true);
+    if (password !== passwordConfirmation) {
+      setError("The passwords do not match.");
+      return;
+    }
+
+    setIsCreating(true);
 
     try {
       const response = await fetch("/api/admin/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, displayName, role: newRole }),
+        body: JSON.stringify({ email, displayName, password, role: newRole }),
       });
       const result = await getResponseMessage(response);
       setEmail("");
       setDisplayName("");
-      setNewRole("staff");
-      setNotice(result.message ?? "Invitation sent.");
+      setPassword("");
+      setPasswordConfirmation("");
+      setNewRole(currentUserRole === "superadmin" ? "admin" : "staff");
+      setNotice(result.message ?? "Account created.");
       setIsLoading(true);
       await loadUsers();
-    } catch (inviteError) {
-      setError(inviteError instanceof Error ? inviteError.message : "Unable to invite this account.");
+    } catch (creationError) {
+      setError(creationError instanceof Error ? creationError.message : "Unable to create this account.");
     } finally {
-      setIsInviting(false);
+      setIsCreating(false);
     }
   }
 
@@ -135,20 +150,24 @@ export default function AdminUserManagement({ currentUserId }: { currentUserId: 
       <div className="admin-page-heading">
         <div>
           <p className="admin-kicker">ADMINISTRATION</p>
-          <h1>Admin access</h1>
-          <p className="admin-page-subtitle">Invite team members and choose what they can access.</p>
+          <h1>Team access</h1>
+          <p className="admin-page-subtitle">
+            {currentUserRole === "superadmin"
+              ? "Create accounts and manage access for the entire team."
+              : "Manage Admin and Staff accounts. Superadmin accounts are private."}
+          </p>
         </div>
       </div>
 
-      <section className="admin-invite-panel" aria-labelledby="admin-invite-title">
-        <div className="admin-invite-heading">
+      <section className="admin-account-create-panel" aria-labelledby="admin-account-create-title">
+        <div className="admin-account-create-heading">
           <div>
             <p className="admin-kicker">TEAM ACCOUNTS</p>
-            <h2 id="admin-invite-title">Invite a team member</h2>
-            <p>They’ll receive an email link to set their password and sign in.</p>
+            <h2 id="admin-account-create-title">Create an account</h2>
+            <p>Accounts are active immediately. No invitation email is sent; share the login details securely.</p>
           </div>
         </div>
-        <form className="admin-invite-form" onSubmit={inviteUser}>
+        <form className="admin-account-create-form" onSubmit={createUser}>
           <label className="admin-form-field">
             <span>Email address <i aria-hidden="true">*</i></span>
             <input
@@ -170,17 +189,42 @@ export default function AdminUserManagement({ currentUserId }: { currentUserId: 
             />
           </label>
           <label className="admin-form-field">
+            <span>Initial password <i aria-hidden="true">*</i></span>
+            <input
+              autoComplete="new-password"
+              maxLength={128}
+              minLength={8}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+              type="password"
+              value={password}
+            />
+          </label>
+          <label className="admin-form-field">
+            <span>Confirm password <i aria-hidden="true">*</i></span>
+            <input
+              autoComplete="new-password"
+              maxLength={128}
+              minLength={8}
+              onChange={(event) => setPasswordConfirmation(event.target.value)}
+              required
+              type="password"
+              value={passwordConfirmation}
+            />
+          </label>
+          <label className="admin-form-field">
             <span>Access role <i aria-hidden="true">*</i></span>
-            <select
-              onChange={(event) => setNewRole(event.target.value === "superadmin" ? "superadmin" : "staff")}
-              value={newRole}
-            >
+            <select onChange={(event) => {
+              const role = event.target.value;
+              if (role === "admin" || role === "superadmin" || role === "staff") setNewRole(role);
+            }} value={newRole}>
+              {currentUserRole === "superadmin" && <option value="superadmin">Superadmin</option>}
+              <option value="admin">Admin</option>
               <option value="staff">Staff — read-only access</option>
-              <option value="superadmin">Superadmin — manage the workspace</option>
             </select>
           </label>
-          <button className="admin-button admin-button-primary" disabled={isInviting} type="submit">
-            {isInviting ? "Sending invitation..." : "Send invitation"}
+          <button className="admin-button admin-button-primary" disabled={isCreating} type="submit">
+            {isCreating ? "Creating account..." : "Create account"}
           </button>
         </form>
       </section>
@@ -237,18 +281,21 @@ export default function AdminUserManagement({ currentUserId }: { currentUserId: 
                             ? ""
                             : event.target.value === "superadmin"
                               ? "superadmin"
-                              : "staff",
+                              : event.target.value === "admin"
+                                ? "admin"
+                                : "staff",
                         }))}
                         value={roles[user.id] ?? user.role ?? ""}
                       >
                         <option value="">No role assigned</option>
+                        {currentUserRole === "superadmin" && <option value="superadmin">Superadmin</option>}
+                        <option value="admin">Admin</option>
                         <option value="staff">Staff</option>
-                        <option value="superadmin">Superadmin</option>
                       </select>
                     </td>
                     <td>
-                      <span className={`admin-status-pill${user.invitationPending ? "" : " is-active"}`}>
-                        <i />{user.invitationPending ? "Invitation pending" : "Active"}
+                      <span className={`admin-status-pill${user.emailConfirmed ? " is-active" : ""}`}>
+                        <i />{user.emailConfirmed ? "Email confirmed" : "Email unverified"}
                       </span>
                     </td>
                     <td>{formatCreatedAt(user.created_at)}</td>
@@ -274,7 +321,7 @@ export default function AdminUserManagement({ currentUserId }: { currentUserId: 
           <div className="admin-empty-state">
             <span aria-hidden="true">✦</span>
             <h2>No team accounts found</h2>
-            <p>Send an invitation above to add your first team member.</p>
+            <p>Create an account above to add your first team member.</p>
           </div>
         )}
       </div>

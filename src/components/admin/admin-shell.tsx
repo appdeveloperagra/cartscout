@@ -7,7 +7,7 @@ import { adminNavigation } from "@/lib/admin-modules";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { AdminRoleContext, type AdminRole } from "@/components/admin/admin-role-context";
 
-function AdminSignOutButton() {
+function AdminAccountActions() {
   const router = useRouter();
   const [error, setError] = useState("");
 
@@ -25,6 +25,7 @@ function AdminSignOutButton() {
   return (
     <div className="admin-account-actions">
       {error && <span className="admin-inline-error" role="alert">{error}</span>}
+      <Link className="admin-account-link" href="/admin/account">Change password</Link>
       <button className="admin-signout-button" onClick={signOut} type="button">
         <span aria-hidden="true">↗</span> Sign out
       </button>
@@ -80,7 +81,7 @@ export default function AdminShell({
                 );
               }
 
-              const items = role === "superadmin"
+              const items = role !== "staff"
                 ? item.items
                 : item.items.filter((child) => child.key !== "admins");
               const isTagConnections = item.key === "blog-management" && pathname === "/admin/blog-tag-assignments";
@@ -134,10 +135,10 @@ export default function AdminShell({
           <div className="admin-sidebar-footer">
             <div className="admin-user-avatar">{initials}</div>
             <div className="admin-user-details">
-              <strong>{displayName || (role === "superadmin" ? "Superadmin" : "Staff")}</strong>
+              <strong>{displayName || (role === "superadmin" ? "Superadmin" : role === "admin" ? "Admin" : "Staff")}</strong>
               <span>{email}</span>
             </div>
-            <AdminSignOutButton />
+            <AdminAccountActions />
           </div>
         </aside>
         {mobileNavOpen && (
@@ -161,6 +162,7 @@ export default function AdminShell({
             </button>
             <div className="admin-breadcrumb"><span>Workspace</span><span aria-hidden="true">/</span><strong>{pathname === "/admin" ? "Overview" : "Management"}</strong></div>
             {role === "staff" && <span className="admin-role-indicator">Read-only access</span>}
+            {role === "admin" && <span className="admin-role-indicator">Admin access</span>}
             <Link className="admin-preview-link" href="/" target="_blank">
               View website <span aria-hidden="true">↗</span>
             </Link>

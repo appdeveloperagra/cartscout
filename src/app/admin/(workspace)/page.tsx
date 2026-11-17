@@ -2,7 +2,7 @@ import Link from "next/link";
 import { connection } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { adminModules } from "@/lib/admin-modules";
-import { SuperadminOnly } from "@/components/admin/admin-role-context";
+import { AdminOnly } from "@/components/admin/admin-role-context";
 
 export default async function AdminDashboardPage() {
   await connection();
@@ -31,11 +31,11 @@ export default async function AdminDashboardPage() {
           <h1>Overview</h1>
           <p className="admin-page-subtitle">A clear view of your catalogue, content, and customer-facing information.</p>
         </div>
-        <SuperadminOnly>
+        <AdminOnly>
           <Link className="admin-button admin-button-primary" href="/admin/products">
             <span aria-hidden="true">＋</span> Add a product
           </Link>
-        </SuperadminOnly>
+        </AdminOnly>
       </div>
 
       <section className="admin-metric-grid" aria-label="Content overview">

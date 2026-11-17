@@ -34,7 +34,11 @@ export default async function WorkspaceLayout({ children }: { children: ReactNod
     .maybeSingle();
 
   if (profileError) throw new Error(`Unable to verify admin access: ${profileError.message}`);
-  if (profile?.role !== "superadmin" && profile?.role !== "staff") redirect("/admin/access");
+  if (
+    profile?.role !== "superadmin"
+    && profile?.role !== "admin"
+    && profile?.role !== "staff"
+  ) redirect("/admin/access");
 
   return (
     <AdminShell email={user.email ?? ""} displayName={profile.display_name} role={profile.role}>

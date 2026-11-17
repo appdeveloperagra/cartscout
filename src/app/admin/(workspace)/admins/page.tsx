@@ -15,7 +15,7 @@ export default async function AdminsPage() {
     .maybeSingle();
 
   if (profileError) throw new Error(`Unable to verify admin access: ${profileError.message}`);
-  if (profile?.role !== "superadmin") redirect("/admin/access");
+  if (profile?.role !== "superadmin" && profile?.role !== "admin") redirect("/admin/access");
 
-  return <AdminUserManagement currentUserId={user.id} />;
+  return <AdminUserManagement currentUserId={user.id} currentUserRole={profile.role} />;
 }

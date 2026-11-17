@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from "react";
 
-export type AdminRole = "staff" | "superadmin";
+export type AdminRole = "staff" | "admin" | "superadmin";
 
 export const AdminRoleContext = createContext<AdminRole>("staff");
 
@@ -10,7 +10,7 @@ export function useAdminRole() {
   return useContext(AdminRoleContext);
 }
 
-export function SuperadminOnly({ children }: { children: React.ReactNode }) {
+export function AdminOnly({ children }: { children: React.ReactNode }) {
   const role = useAdminRole();
-  return role === "superadmin" ? children : null;
+  return role === "admin" || role === "superadmin" ? children : null;
 }

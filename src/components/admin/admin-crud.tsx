@@ -280,7 +280,7 @@ function RecordForm({
 }
 
 export default function AdminCrud({ module }: { module: AdminModule }) {
-  const isSuperadmin = useAdminRole() === "superadmin";
+  const canManage = useAdminRole() !== "staff";
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [records, setRecords] = useState<AdminRecord[]>([]);
   const [relations, setRelations] = useState<RelationOptions>({});
@@ -439,7 +439,7 @@ export default function AdminCrud({ module }: { module: AdminModule }) {
           <h1>{module.title}</h1>
           <p className="admin-page-subtitle">{module.description}</p>
         </div>
-        {isSuperadmin && module.canCreate !== false && (
+        {canManage && module.canCreate !== false && (
           <button className="admin-button admin-button-primary" onClick={() => setEditing(null)} type="button">
             <span aria-hidden="true">＋</span> Add {getCreateLabel(module.title)}
           </button>
@@ -489,7 +489,7 @@ export default function AdminCrud({ module }: { module: AdminModule }) {
                         </td>
                       );
                     })}
-                    {isSuperadmin && (
+                    {canManage && (
                       <td className="admin-row-actions">
                         <button aria-label={`Edit ${String(record[module.columns[0]])}`} onClick={() => setEditing(record)} type="button">Edit</button>
                         {module.canDelete !== false && (
@@ -507,7 +507,7 @@ export default function AdminCrud({ module }: { module: AdminModule }) {
             <span aria-hidden="true">✦</span>
             <h2>{query ? "No matching records" : `No ${module.title.toLowerCase()} yet`}</h2>
             <p>{query ? "Try a different search." : "Create a record to add it to the workspace."}</p>
-            {!query && isSuperadmin && module.canCreate !== false && (
+            {!query && canManage && module.canCreate !== false && (
               <button className="admin-button admin-button-subtle" onClick={() => setEditing(null)} type="button">
                 Create the first record
               </button>
