@@ -1,5 +1,21 @@
-import AdminModulePage from "@/app/admin/module-page";
+import { redirect } from "next/navigation";
+import AdminUserManagement from "@/components/admin/admin-user-management";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export default function AdminsPage() {
-  return <AdminModulePage moduleKey="admins" />;
+export default async function AdminsPage() {
+  const supabase = await createSupabaseServerClient();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
+  if (authError) throw new Error(`Unable to verify admin session: ${authError.message}`);
+  if (!user) redirect("/admin/login");
+
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (profileError) throw new Error(`Unable to verify admin access: ${profileError.message}`);
+  if (profile?.role !== "superadmin") redirect("/admin/access");
+
+  return <AdminUserManagement currentUserId={user.id} />;
 }

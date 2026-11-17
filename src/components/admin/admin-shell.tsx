@@ -1,11 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import { adminNavigation } from "@/lib/admin-modules";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
+import { AdminRoleContext, type AdminRole } from "@/components/admin/admin-role-context";
 
 function AdminSignOutButton() {
   const router = useRouter();
@@ -36,87 +36,138 @@ export default function AdminShell({
   children,
   email,
   displayName,
+  role,
 }: {
   children: React.ReactNode;
   email: string;
   displayName: string | null;
+  role: AdminRole;
 }) {
   const pathname = usePathname();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
   const initials = (displayName || email).slice(0, 1).toUpperCase();
 
   return (
-    <div className="admin-shell">
-      <aside className={`admin-sidebar${mobileNavOpen ? " is-open" : ""}`}>
-        <Link className="admin-logo" href="/admin" onClick={() => setMobileNavOpen(false)}>
-          <Image src="/cartscout-logo.png" alt="CartScout" width={180} height={28} priority />
-          <span>CONTROL CENTER</span>
-        </Link>
-        <div className="admin-workspace-switcher">
-          <span className="admin-workspace-avatar">C</span>
-          <span><strong>CartScout</strong><small>Business workspace</small></span>
-          <span className="admin-workspace-chevron" aria-hidden="true">⌄</span>
-        </div>
-        <nav className="admin-sidebar-nav" aria-label="Admin navigation">
-          {adminNavigation.map((group) => (
-            <section className="admin-nav-group" key={group.heading}>
-              <p>{group.heading}</p>
-              {group.items.map((item, index) => {
-                const href = item.key === "overview" ? "/admin" : `/admin/${item.key}`;
-                const active = item.key === "overview"
-                  ? pathname === "/admin"
-                  : pathname === href || pathname.startsWith(`${href}/`);
+    <AdminRoleContext.Provider value={role}>
+      <div className="admin-shell" data-admin-role={role}>
+        <aside className={`admin-sidebar${mobileNavOpen ? " is-open" : ""}`}>
+          <Link
+            aria-label="CartScout business workspace"
+            className="admin-workspace-switcher"
+            href="/admin"
+            onClick={() => setMobileNavOpen(false)}
+          >
+            <span className="admin-workspace-avatar">C</span>
+            <span><strong>CartScout</strong><small>Business workspace</small></span>
+          </Link>
+          <nav className="admin-sidebar-nav" aria-label="Admin navigation">
+            {adminNavigation.map((item, index) => {
+              if (!("items" in item)) {
+                const active = pathname === item.href;
                 return (
                   <Link
-                    className={`admin-nav-link${active ? " is-active" : ""}`}
-                    href={href}
+                    aria-current={active ? "page" : undefined}
+                    className={`admin-nav-parent${active ? " is-active" : ""}`}
+                    href={item.href}
                     key={item.key}
                     onClick={() => setMobileNavOpen(false)}
                   >
-                    <span className="admin-nav-icon" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                    <span className="admin-nav-parent-icon" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
                     <span>{item.label}</span>
                     {active && <span className="admin-nav-active-dot" aria-hidden="true" />}
                   </Link>
                 );
-              })}
-            </section>
-          ))}
-        </nav>
-        <div className="admin-sidebar-footer">
-          <div className="admin-user-avatar">{initials}</div>
-          <div className="admin-user-details">
-            <strong>{displayName || "Superadmin"}</strong>
-            <span>{email}</span>
+              }
+
+              const items = role === "superadmin"
+                ? item.items
+                : item.items.filter((child) => child.key !== "admins");
+              const isTagConnections = item.key === "blog-management" && pathname === "/admin/blog-tag-assignments";
+              const active = isTagConnections || items.some((child) => pathname === child.href || pathname.startsWith(`${child.href}/`));
+              const expanded = expandedGroups[item.key] ?? active;
+              if (!items.length) return null;
+
+              return (
+                <section className="admin-nav-group" key={item.key}>
+                  <button
+                    aria-expanded={expanded}
+                    className={`admin-nav-parent${active ? " is-active" : ""}`}
+                    onClick={() => setExpandedGroups((current) => ({ ...current, [item.key]: !expanded }))}
+                    type="button"
+                  >
+                    <span className="admin-nav-parent-icon" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+                    <span>{item.label}</span>
+                    <span className={`admin-nav-chevron${expanded ? " is-expanded" : ""}`} aria-hidden="true">⌄</span>
+                  </button>
+                  {expanded && (
+                    <div className="admin-nav-children">
+                      {items.map((child) => {
+                        const childActive = pathname === child.href || pathname.startsWith(`${child.href}/`);
+                        return (
+                          <Link
+                            aria-current={childActive ? "page" : undefined}
+                            className={`admin-nav-child${childActive ? " is-active" : ""}`}
+                            href={child.href}
+                            key={child.key}
+                            onClick={() => setMobileNavOpen(false)}
+                          >
+                            {child.label}
+                          </Link>
+                        );
+                      })}
+                      {item.key === "blog-management" && (
+                        <Link
+                          aria-current={isTagConnections ? "page" : undefined}
+                          className={`admin-nav-child${isTagConnections ? " is-active" : ""}`}
+                          href="/admin/blog-tag-assignments"
+                        >
+                          Connect tags to posts
+                        </Link>
+                      )}
+                    </div>
+                  )}
+                </section>
+              );
+            })}
+          </nav>
+          <div className="admin-sidebar-footer">
+            <div className="admin-user-avatar">{initials}</div>
+            <div className="admin-user-details">
+              <strong>{displayName || (role === "superadmin" ? "Superadmin" : "Staff")}</strong>
+              <span>{email}</span>
+            </div>
+            <AdminSignOutButton />
           </div>
-          <AdminSignOutButton />
-        </div>
-      </aside>
-      {mobileNavOpen && (
-        <button
-          aria-label="Close navigation"
-          className="admin-sidebar-backdrop"
-          onClick={() => setMobileNavOpen(false)}
-          type="button"
-        />
-      )}
-      <div className="admin-content">
-        <header className="admin-topbar">
+        </aside>
+        {mobileNavOpen && (
           <button
-            aria-expanded={mobileNavOpen}
-            aria-label="Toggle navigation"
-            className="admin-mobile-toggle"
-            onClick={() => setMobileNavOpen((open) => !open)}
+            aria-label="Close navigation"
+            className="admin-sidebar-backdrop"
+            onClick={() => setMobileNavOpen(false)}
             type="button"
-          >
-            <span /><span /><span />
-          </button>
-          <div className="admin-breadcrumb"><span>Workspace</span><span aria-hidden="true">/</span><strong>{pathname === "/admin" ? "Overview" : "Management"}</strong></div>
-          <Link className="admin-preview-link" href="/" target="_blank">
-            View website <span aria-hidden="true">↗</span>
-          </Link>
-        </header>
-        <main className="admin-main">{children}</main>
+          />
+        )}
+        <div className="admin-content">
+          <header className="admin-topbar">
+            <button
+              aria-expanded={mobileNavOpen}
+              aria-label="Toggle navigation"
+              className="admin-mobile-toggle"
+              onClick={() => setMobileNavOpen((open) => !open)}
+              type="button"
+            >
+              <span /><span /><span />
+            </button>
+            <div className="admin-breadcrumb"><span>Workspace</span><span aria-hidden="true">/</span><strong>{pathname === "/admin" ? "Overview" : "Management"}</strong></div>
+            {role === "staff" && <span className="admin-role-indicator">Read-only access</span>}
+            <Link className="admin-preview-link" href="/" target="_blank">
+              View website <span aria-hidden="true">↗</span>
+            </Link>
+          </header>
+          <main className="admin-main">{children}</main>
+        </div>
       </div>
-    </div>
+    </AdminRoleContext.Provider>
   );
 }

@@ -102,7 +102,7 @@ export const adminModules: Record<string, AdminModule> = {
   },
   "blog-posts": {
     key: "blog-posts",
-    title: "Blog posts",
+    title: "Posts",
     description: "Write, schedule, publish, and optimize articles.",
     table: "blog_posts",
     primaryKey: ["id"],
@@ -158,7 +158,7 @@ export const adminModules: Record<string, AdminModule> = {
   },
   "blog-tag-assignments": {
     key: "blog-tag-assignments",
-    title: "Article tag assignments",
+    title: "Tag posts",
     description: "Connect tags to blog articles.",
     table: "blog_post_tags",
     primaryKey: ["post_id", "tag_id"],
@@ -240,46 +240,47 @@ export const adminModules: Record<string, AdminModule> = {
       { name: "is_public", label: "Available to public pages", type: "boolean" },
     ],
   },
-  admins: {
-    key: "admins",
-    title: "Admin access",
-    description: "Control which authenticated team members have superadmin privileges.",
-    table: "profiles",
-    primaryKey: ["id"],
-    orderBy: "created_at",
-    orderAscending: false,
-    columns: ["display_name", "role", "created_at"],
-    canCreate: false,
-    canDelete: false,
-    notice: "Create or invite team accounts in Supabase Auth. Change access roles here.",
-    fields: [
-      { name: "display_name", label: "Display name", type: "text", nullable: true },
-      { name: "role", label: "Access role", type: "select", required: true, options: [
-        { label: "Staff", value: "staff" },
-        { label: "Superadmin", value: "superadmin" },
-      ] },
-    ],
-  },
 };
 
-export const adminNavigation = [
-  { heading: "Workspace", items: [{ key: "overview", label: "Overview" }] },
-  { heading: "Commerce", items: [
-    { key: "products", label: "Products" },
-    { key: "product-categories", label: "Categories" },
-    { key: "product-categorization", label: "Product assignments" },
-    { key: "rental-rates", label: "Rental rates" },
-    { key: "locations", label: "Service areas" },
-  ] },
-  { heading: "Publishing", items: [
-    { key: "blog-posts", label: "Blog posts" },
-    { key: "blog-categories", label: "Blog categories" },
-    { key: "blog-tags", label: "Blog tags" },
-    { key: "blog-tag-assignments", label: "Article tags" },
-    { key: "faqs", label: "FAQs" },
-  ] },
-  { heading: "Administration", items: [
-    { key: "settings", label: "Site settings" },
-    { key: "admins", label: "Admin access" },
-  ] },
+type AdminNavLink = { key: string; label: string; href: string };
+type AdminNavGroup = { key: string; label: string; items: AdminNavLink[] };
+
+export const adminNavigation: (AdminNavLink | AdminNavGroup)[] = [
+  { key: "overview", label: "Overview", href: "/admin" },
+  {
+    key: "catalogue",
+    label: "Catalogue",
+    items: [
+      { key: "products", label: "Products", href: "/admin/products" },
+      { key: "product-categories", label: "Categories", href: "/admin/product-categories" },
+      { key: "product-categorization", label: "Product assignments", href: "/admin/product-categorization" },
+    ],
+  },
+  {
+    key: "blog-management",
+    label: "Blog management",
+    items: [
+      { key: "blog", label: "Overview", href: "/admin/blog" },
+      { key: "blog-posts", label: "Posts", href: "/admin/blog-posts" },
+      { key: "blog-categories", label: "Categories", href: "/admin/blog-categories" },
+      { key: "blog-tags", label: "Tags", href: "/admin/blog-tags" },
+    ],
+  },
+  {
+    key: "operations",
+    label: "Operations",
+    items: [
+      { key: "rental-rates", label: "Rental rates", href: "/admin/rental-rates" },
+      { key: "locations", label: "Service areas", href: "/admin/locations" },
+      { key: "faqs", label: "FAQs", href: "/admin/faqs" },
+    ],
+  },
+  {
+    key: "administration",
+    label: "Administration",
+    items: [
+      { key: "settings", label: "Site settings", href: "/admin/settings" },
+      { key: "admins", label: "Admin access", href: "/admin/admins" },
+    ],
+  },
 ];

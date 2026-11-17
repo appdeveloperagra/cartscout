@@ -61,7 +61,7 @@ export default function AdminLoginForm({ configured }: { configured: boolean }) 
           <span className="admin-login-mobile-mark">CS</span>
           <p className="admin-login-form-kicker">WELCOME BACK</p>
           <h2>Sign in to your workspace</h2>
-          <p className="admin-login-form-intro">Use the superadmin account created for your CartScout project.</p>
+          <p className="admin-login-form-intro">Sign in with your CartScout team account.</p>
           {configured ? (
             <form className="admin-login-form" onSubmit={handleSubmit}>
               <label htmlFor="admin-email">Email address</label>
@@ -84,7 +84,7 @@ export default function AdminLoginForm({ configured }: { configured: boolean }) 
           )}
           <p className="admin-login-back"><Link href="/">← Back to CartScout</Link></p>
         </div>
-        <div className="admin-login-support">SECURE ACCESS · SUPERADMIN ONLY</div>
+        <div className="admin-login-support">SECURE TEAM ACCESS</div>
       </section>
     </main>
   );

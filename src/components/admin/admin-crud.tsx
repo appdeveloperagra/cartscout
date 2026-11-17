@@ -7,6 +7,7 @@ import {
   type AdminModule,
 } from "@/lib/admin-modules";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
+import { useAdminRole } from "@/components/admin/admin-role-context";
 
 type AdminRecord = Record<string, unknown>;
 type RelationOptions = Record<string, { label: string; value: string }[]>;
@@ -25,6 +26,12 @@ function displayValue(value: unknown, fieldName: string) {
   if (fieldName === "in_stock") return value ? "In stock" : "Out of stock";
   if (typeof value === "object") return JSON.stringify(value);
   return String(value);
+}
+
+function getCreateLabel(title: string) {
+  const normalizedTitle = title.toLowerCase();
+  if (normalizedTitle.endsWith("ies")) return `${normalizedTitle.slice(0, -3)}y`;
+  return normalizedTitle.endsWith("s") ? normalizedTitle.slice(0, -1) : normalizedTitle;
 }
 
 function getFieldValue(field: AdminField, record?: AdminRecord | null) {
@@ -273,6 +280,7 @@ function RecordForm({
 }
 
 export default function AdminCrud({ module }: { module: AdminModule }) {
+  const isSuperadmin = useAdminRole() === "superadmin";
   const supabase = useMemo(() => createSupabaseBrowserClient(), []);
   const [records, setRecords] = useState<AdminRecord[]>([]);
   const [relations, setRelations] = useState<RelationOptions>({});
@@ -431,9 +439,9 @@ export default function AdminCrud({ module }: { module: AdminModule }) {
           <h1>{module.title}</h1>
           <p className="admin-page-subtitle">{module.description}</p>
         </div>
-        {module.canCreate !== false && (
+        {isSuperadmin && module.canCreate !== false && (
           <button className="admin-button admin-button-primary" onClick={() => setEditing(null)} type="button">
-            <span aria-hidden="true">＋</span> Add {module.title.replace(/s$/, "").toLowerCase()}
+            <span aria-hidden="true">＋</span> Add {getCreateLabel(module.title)}
           </button>
         )}
       </div>
@@ -481,12 +489,14 @@ export default function AdminCrud({ module }: { module: AdminModule }) {
                         </td>
                       );
                     })}
-                    <td className="admin-row-actions">
-                      <button aria-label={`Edit ${String(record[module.columns[0]])}`} onClick={() => setEditing(record)} type="button">Edit</button>
-                      {module.canDelete !== false && (
-                        <button aria-label={`Delete ${String(record[module.columns[0]])}`} className="is-danger" onClick={() => void deleteRecord(record)} type="button">Delete</button>
-                      )}
-                    </td>
+                    {isSuperadmin && (
+                      <td className="admin-row-actions">
+                        <button aria-label={`Edit ${String(record[module.columns[0]])}`} onClick={() => setEditing(record)} type="button">Edit</button>
+                        {module.canDelete !== false && (
+                          <button aria-label={`Delete ${String(record[module.columns[0]])}`} className="is-danger" onClick={() => void deleteRecord(record)} type="button">Delete</button>
+                        )}
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -497,7 +507,7 @@ export default function AdminCrud({ module }: { module: AdminModule }) {
             <span aria-hidden="true">✦</span>
             <h2>{query ? "No matching records" : `No ${module.title.toLowerCase()} yet`}</h2>
             <p>{query ? "Try a different search." : "Create a record to add it to the workspace."}</p>
-            {!query && module.canCreate !== false && (
+            {!query && isSuperadmin && module.canCreate !== false && (
               <button className="admin-button admin-button-subtle" onClick={() => setEditing(null)} type="button">
                 Create the first record
               </button>

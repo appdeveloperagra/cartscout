@@ -2,6 +2,7 @@ import Link from "next/link";
 import { connection } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { adminModules } from "@/lib/admin-modules";
+import { SuperadminOnly } from "@/components/admin/admin-role-context";
 
 export default async function AdminDashboardPage() {
   await connection();
@@ -17,7 +18,7 @@ export default async function AdminDashboardPage() {
 
   const metrics = [
     { label: "Catalogue products", value: products.count ?? 0, icon: "01", module: "products", tone: "mint" },
-    { label: "Published articles", value: posts.count ?? 0, icon: "02", module: "blog-posts", tone: "blue" },
+    { label: "Published posts", value: posts.count ?? 0, icon: "02", module: "blog", tone: "blue" },
     { label: "Rental plans", value: rates.count ?? 0, icon: "03", module: "rental-rates", tone: "amber" },
     { label: "Service areas", value: areas.count ?? 0, icon: "04", module: "locations", tone: "violet" },
   ];
@@ -30,14 +31,16 @@ export default async function AdminDashboardPage() {
           <h1>Overview</h1>
           <p className="admin-page-subtitle">A clear view of your catalogue, content, and customer-facing information.</p>
         </div>
-        <Link className="admin-button admin-button-primary" href="/admin/products">
-          <span aria-hidden="true">＋</span> Add a product
-        </Link>
+        <SuperadminOnly>
+          <Link className="admin-button admin-button-primary" href="/admin/products">
+            <span aria-hidden="true">＋</span> Add a product
+          </Link>
+        </SuperadminOnly>
       </div>
 
       <section className="admin-metric-grid" aria-label="Content overview">
         {metrics.map((metric) => (
-          <Link className="admin-metric-card" href={`/admin/${metric.module}`} key={metric.label}>
+          <Link className="admin-metric-card" href={metric.module === "blog" ? "/admin/blog" : `/admin/${metric.module}`} key={metric.label}>
             <span className={`admin-metric-icon ${metric.tone}`} aria-hidden="true">{metric.icon}</span>
             <span className="admin-metric-label">{metric.label}</span>
             <strong>{metric.value.toLocaleString("en-ZA")}</strong>
@@ -49,16 +52,16 @@ export default async function AdminDashboardPage() {
       <section className="admin-dashboard-lower">
         <div className="admin-panel admin-quick-actions">
           <div className="admin-panel-heading">
-            <div><p className="admin-kicker">MOVE THINGS FORWARD</p><h2>Quick actions</h2></div>
+            <div><p className="admin-kicker">WORKSPACE SHORTCUTS</p><h2>Browse content</h2></div>
           </div>
           <div className="admin-action-grid">
             {[
-              { label: "Add product", detail: "Update your inventory", module: "products", icon: "↗" },
-              { label: "Write an article", detail: "Create a blog post", module: "blog-posts", icon: "✎" },
-              { label: "Update rental rates", detail: "Edit daily, weekly, monthly", module: "rental-rates", icon: "R" },
-              { label: "Edit FAQs", detail: "Keep answers current", module: "faqs", icon: "?" },
+              { label: "View products", detail: "Browse the current catalogue", module: "products", icon: "↗" },
+              { label: "Browse the blog", detail: "Posts, categories, and tags", module: "blog", icon: "✎" },
+              { label: "Review rental rates", detail: "See current rental plans", module: "rental-rates", icon: "R" },
+              { label: "Review FAQs", detail: "Browse customer answers", module: "faqs", icon: "?" },
             ].map((action) => (
-              <Link className="admin-action-card" href={`/admin/${action.module}`} key={action.label}>
+              <Link className="admin-action-card" href={action.module === "blog" ? "/admin/blog" : `/admin/${action.module}`} key={action.label}>
                 <span>{action.icon}</span>
                 <strong>{action.label}</strong>
                 <small>{action.detail}</small>
@@ -69,9 +72,9 @@ export default async function AdminDashboardPage() {
 
         <div className="admin-panel admin-guidance-panel">
           <span className="admin-guidance-icon">✦</span>
-          <p className="admin-kicker">PUBLISH WITH CONFIDENCE</p>
-          <h2>Keep every detail accurate.</h2>
-          <p>Changes to published products, rental rates, FAQs, and service areas update the public site directly.</p>
+          <p className="admin-kicker">CONTENT WORKSPACE</p>
+          <h2>One clear view of your site.</h2>
+          <p>Review the catalogue, publishing, rental plans, service areas, and customer-facing details in one place.</p>
           <Link className="admin-inline-link" href="/admin/settings">Review site settings <span aria-hidden="true">→</span></Link>
         </div>
       </section>
@@ -82,8 +85,18 @@ export default async function AdminDashboardPage() {
           <span className="admin-panel-caption">{Object.keys(adminModules).length} management areas</span>
         </div>
         <div className="admin-module-grid">
-          {Object.values(adminModules).map((module) => (
-            <Link href={`/admin/${module.key}`} className="admin-module-card" key={module.key}>
+          {[
+            ...Object.values(adminModules)
+              .filter((module) => !module.key.startsWith("blog-"))
+              .map((module) => ({ key: module.key, title: module.title, description: module.description, href: `/admin/${module.key}` })),
+            {
+              key: "blog-management",
+              title: "Blog management",
+              description: "Manage posts, categories, and tags in one place.",
+              href: "/admin/blog",
+            },
+          ].map((module) => (
+            <Link href={module.href} className="admin-module-card" key={module.key}>
               <strong>{module.title}</strong>
               <span>{module.description}</span>
               <span className="admin-module-arrow" aria-hidden="true">↗</span>

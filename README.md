@@ -23,7 +23,7 @@ The importer reads the current catalog source and writes product names, USD pric
 
 The database schema and initial catalogue, rental rates, service areas, and FAQs are versioned in `supabase/migrations`. Do not edit a migration that has already been applied; add a new migration for later database changes.
 
-1. Copy `.env.example` to `.env.local` and add your Supabase project URL and publishable key. Set the same `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` in the production build environment.
+1. Copy `.env.example` to `.env.local` and add your Supabase project URL and publishable key. Team invitations also require `SUPABASE_SERVICE_ROLE_KEY`; keep this server-only key private and never prefix it with `NEXT_PUBLIC_`. Set the public Supabase variables and the service-role key in the production environment.
 2. Create a Supabase project, then link this checkout once:
 
    ```bash
@@ -51,7 +51,7 @@ WHERE profile.id = auth_user.id
   AND auth_user.email = 'your-admin@example.com';
 ```
 
-Sign in at `/admin`. The dashboard includes create, edit, publish, and delete workflows for products, catalogue categories and assignments, rental rates, locations, FAQs, blog posts, blog categories and tags, site settings, and admin roles. Product records include SEO title and description fields, a featured image, and a multi-image gallery (up to 12 images); published products have detail pages at `/inventory/{slug}`. Product and blog image uploads use the public `catalog-media` Storage bucket. RLS policies enforce superadmin write access.
+Sign in at `/admin`. To add team accounts, use **Admin → Admin access → Invite a team member**. Supabase sends the invitee a link to set their password. Add `/admin/accept-invite` to the Supabase Auth **Redirect URLs** allow list for each deployed domain and local development URL you use. Superadmins can assign the **Staff** (read-only) or **Superadmin** role; staff only see content available under the database's public-read policies. Superadmins retain the create, edit, publish, and delete workflows for products, catalogue categories and assignments, rental rates, locations, FAQs, blog posts, blog categories and tags, site settings, and admin roles. Product records include SEO title and description fields, a featured image, and a multi-image gallery (up to 12 images); published products have detail pages at `/inventory/{slug}`. Product and blog image uploads use the public `catalog-media` Storage bucket. RLS policies enforce superadmin write access.
 
 Once Supabase is configured and migrations are applied, the public catalogue, FAQs, rental rates, location pages, and contact details read published records from the database. Blog articles publish at `/blog`. If Supabase is not configured in local development, catalogue, FAQs, rental rates, location pages, and contact details use the checked-in initial content.
 
