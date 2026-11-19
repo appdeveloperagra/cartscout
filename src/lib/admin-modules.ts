@@ -51,8 +51,8 @@ export const adminModules: Record<string, AdminModule> = {
     orderBy: "display_order",
     columns: ["name", "price_zar", "in_stock", "is_published"],
     fields: [
-      { name: "slug", label: "URL slug", type: "text", required: true },
       { name: "name", label: "Product name", type: "text", required: true },
+      { name: "slug", label: "URL slug", type: "text", required: true },
       { name: "description", label: "Description", type: "textarea" },
       { name: "seo_title", label: "SEO title", type: "text", nullable: true },
       { name: "seo_description", label: "SEO description", type: "textarea", nullable: true },

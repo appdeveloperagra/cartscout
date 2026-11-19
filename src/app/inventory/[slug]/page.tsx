@@ -1,102 +1,12 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { notFound } from "next/navigation";
-import { Suspense } from "react";
-import ProductGallery from "@/components/product-gallery";
-import { getPublicContactSettings, getPublicProduct } from "@/lib/cms";
-import { formatZar, getCatalogPriceZar } from "@/lib/pricing";
-import { getPassengerCapacity } from "@/lib/products";
-import { createPageMetadata } from "@/lib/site-seo";
+import { permanentRedirect } from "next/navigation";
 
-type ProductPageProps = {
+export const instant = false;
+
+type LegacyProductPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+export default async function LegacyProductPage({ params }: LegacyProductPageProps) {
   const { slug } = await params;
-  const product = await getPublicProduct(slug);
-  if (!product) return {};
-
-  const description =
-    product.seoDescription?.trim() ||
-    product.description?.trim() ||
-    `${product.name} available from CartScout. Contact us to confirm current availability, pricing, and delivery arrangements.`;
-
-  return createPageMetadata({
-    title: product.seoTitle?.trim() || product.name,
-    description,
-    path: `/inventory/${product.slug}`,
-  });
-}
-
-async function ProductContent({ params }: ProductPageProps) {
-  const { slug } = await params;
-  const [product, contact] = await Promise.all([
-    getPublicProduct(slug),
-    getPublicContactSettings(),
-  ]);
-  if (!product) notFound();
-
-  const images = [...new Set([product.imageUrl, ...(product.imageGallery ?? [])].filter(
-    (image): image is string => Boolean(image),
-  ))];
-  const capacity = getPassengerCapacity(product.name);
-  const priceZar = getCatalogPriceZar(product.price, product.currency);
-  const attributes = Object.entries(product.attributes ?? {});
-  const message = encodeURIComponent(
-    `Hi CartScout, I would like to enquire about ${product.name}. Listed price: ${formatZar(priceZar)}. Please confirm current availability and delivery arrangements.`,
-  );
-
-  return (
-    <main className="content-page product-detail-page">
-      <nav className="breadcrumbs" aria-label="Breadcrumb">
-        <ol>
-          <li><Link href="/">Home</Link></li>
-          <li><Link href="/inventory">Inventory</Link></li>
-          <li aria-current="page">{product.name}</li>
-        </ol>
-      </nav>
-      <div className="product-detail-grid">
-        <ProductGallery images={images} productName={product.name} />
-        <section className="product-detail-copy">
-          <div className="eyebrow"><span /> CARTSCOUT COLLECTION</div>
-          <h1>{product.name}</h1>
-          <div className="product-detail-meta">
-            {capacity ? <span>{capacity} passenger</span> : <span>Golf cart</span>}
-            <span>{product.inStock ? "Ask about availability" : "Ask about this cart"}</span>
-          </div>
-          <p className="product-detail-price">{formatZar(priceZar)}</p>
-          {product.description && <p className="product-detail-description">{product.description}</p>}
-          {attributes.length > 0 && (
-            <dl className="product-specs">
-              {attributes.map(([label, value]) => (
-                <div key={label}>
-                  <dt>{label.replaceAll("_", " ")}</dt>
-                  <dd>{value}</dd>
-                </div>
-              ))}
-            </dl>
-          )}
-          <p className="product-detail-note">
-            Our team is ready to help with the cart&apos;s specifications, availability, final price, and delivery arrangements.
-          </p>
-          <div className="page-actions">
-            <a className="button button-dark" href={`${contact.whatsapp_href}?text=${message}`} rel="noreferrer" target="_blank">
-              Enquire on WhatsApp <span aria-hidden="true">→</span>
-            </a>
-            <a className="text-link" href={contact.phone_href}>Call {contact.phone_display}</a>
-          </div>
-          <Link className="inline-link product-back-link" href="/inventory">Back to the full inventory</Link>
-        </section>
-      </div>
-    </main>
-  );
-}
-
-export default function ProductPage({ params }: ProductPageProps) {
-  return (
-    <Suspense fallback={<main className="content-page product-detail-page" role="status">Loading product details...</main>}>
-      <ProductContent params={params} />
-    </Suspense>
-  );
+  permanentRedirect(`/${slug}`);
 }

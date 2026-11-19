@@ -203,11 +203,11 @@ export default function Catalog({ products, initialSeats, whatsappHref }: Catalo
                         <div className="product-meta"><span>{getMake(product.name)}</span><span>{getPassengerCapacity(product.name) ? `${getPassengerCapacity(product.name)} PASSENGER` : "GOLF CART"}</span></div>
                         <h3>
                           {product.slug ? (
-                            <Link href={`/inventory/${product.slug}`}>{product.name}</Link>
+                            <Link href={`/${product.slug}`}>{product.name}</Link>
                           ) : product.name}
                         </h3>
                         {product.slug && (
-                          <Link className="product-detail-link" href={`/inventory/${product.slug}`}>
+                          <Link className="product-detail-link" href={`/${product.slug}`}>
                             View photos and details <span aria-hidden="true">→</span>
                           </Link>
                         )}

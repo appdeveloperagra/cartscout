@@ -43,7 +43,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly" as const,
     })),
     ...products.flatMap(({ slug }) => slug ? [{
-      url: new URL(`/inventory/${slug}`, origin).toString(),
+      url: new URL(`/${slug}`, origin).toString(),
       priority: 0.6,
       changeFrequency: "weekly" as const,
     }] : []),

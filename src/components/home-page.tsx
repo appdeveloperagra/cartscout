@@ -115,7 +115,7 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
                 <div className="product-meta"><span>GOLF CART</span><span>OUR COLLECTION</span></div>
                 <h3>
                   {product.slug ? (
-                    <Link href={`/inventory/${product.slug}`}>{product.name}</Link>
+                    <Link href={`/${product.slug}`}>{product.name}</Link>
                   ) : product.name}
                 </h3>
                 <div className="product-footer">
