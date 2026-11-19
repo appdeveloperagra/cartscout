@@ -47,7 +47,7 @@ function getFieldValue(field: AdminField, record?: AdminRecord | null) {
   return "";
 }
 
-function getRecordPayload(formData: FormData, fields: AdminField[]) {
+function getRecordPayload(formData: FormData, fields: AdminField[], record?: AdminRecord | null) {
   const payload: AdminRecord = {};
 
   for (const field of fields) {
@@ -63,6 +63,8 @@ function getRecordPayload(formData: FormData, fields: AdminField[]) {
         payload[`upload:${field.name}`] = upload;
       } else if (rawValue) {
         payload[field.name] = rawValue;
+      } else if (record && typeof record[field.name] === "string" && record[field.name]) {
+        payload[field.name] = record[field.name];
       } else if (field.nullable) {
         payload[field.name] = null;
       }
@@ -226,12 +228,6 @@ function RecordForm({
                         name={`upload:${field.name}`}
                         type="file"
                       />
-                      <span className="admin-image-or">or</span>
-                      <input
-                        defaultValue={value}
-                        name={field.name}
-                        type="url"
-                      />
                     </>
                   ) : field.type === "textarea" || field.type === "json" ? (
                     <textarea
@@ -354,7 +350,7 @@ export default function AdminCrud({ module }: { module: AdminModule }) {
   }, [loadRecords]);
 
   async function saveRecord(formData: FormData, record?: AdminRecord | null) {
-    const parsed = getRecordPayload(formData, module.fields);
+    const parsed = getRecordPayload(formData, module.fields, record);
     if ("error" in parsed) throw new Error(parsed.error);
     const payload = parsed.payload;
 

@@ -57,7 +57,7 @@ export const adminModules: Record<string, AdminModule> = {
       { name: "seo_title", label: "SEO title", type: "text", nullable: true },
       { name: "seo_description", label: "SEO description", type: "textarea", nullable: true },
       { name: "price_zar", label: "Price (ZAR, whole rand)", type: "number", step: "1", required: true },
-      { name: "image_url", label: "Featured image", type: "image", nullable: true, helpText: "Upload an image or enter its public image URL. A featured image is required before publishing." },
+      { name: "image_url", label: "Featured image", type: "image", nullable: true, helpText: "Upload a featured image. A featured image is required before publishing." },
       { name: "image_gallery", label: "Product gallery", type: "gallery", helpText: "Upload up to 12 images. Uncheck an image to remove it from this product." },
       { name: "in_stock", label: "In stock", type: "boolean", defaultValue: true },
       { name: "is_published", label: "Published", type: "boolean", defaultValue: false },
