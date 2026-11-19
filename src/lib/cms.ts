@@ -6,7 +6,7 @@ import { faqs, type FAQItem } from "@/lib/faqs";
 import { provinces, type Province } from "@/lib/provinces";
 import { rentalFaqs, rentalRates, type RentalRate } from "@/lib/rentals";
 import { createSupabasePublicClient } from "@/lib/supabase/public";
-import type { CatalogProduct } from "@/lib/products";
+import { createProductSlug, type CatalogProduct } from "@/lib/products";
 import {
   contactEmail,
   contactPhone,
@@ -64,7 +64,7 @@ function isStringArray(value: unknown): value is string[] {
 function getFallbackProducts(): CatalogProduct[] {
   return (inventory.products as CatalogProduct[]).map((product) => ({
     ...product,
-    slug: `${product.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}-${product.id}`,
+    slug: createProductSlug(product.name, product.id),
     description: "",
     imageGallery: [],
     seoTitle: null,
