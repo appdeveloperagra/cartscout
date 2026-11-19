@@ -62,12 +62,12 @@ async function ProductContent({ params }: ProductPageProps) {
           <h1>{product.name}</h1>
           <div className="product-detail-meta">
             {capacity ? <span>{capacity} passenger</span> : <span>Golf cart</span>}
-            <span>{product.inStock ? "Availability to be confirmed" : "Currently unavailable"}</span>
+            <span>{product.inStock ? "Ask about availability" : "Ask about this cart"}</span>
           </div>
           <p className="product-detail-price">{formatZar(priceZar)}</p>
           {product.description && <p className="product-detail-description">{product.description}</p>}
           <p className="product-detail-note">
-            Confirm the cart&apos;s specifications, availability, final price, and delivery arrangements with CartScout before proceeding.
+            Our team is ready to help with the cart&apos;s specifications, availability, final price, and delivery arrangements.
           </p>
           <div className="page-actions">
             <a className="button button-dark" href={`${contact.whatsapp_href}?text=${message}`} rel="noreferrer" target="_blank">
