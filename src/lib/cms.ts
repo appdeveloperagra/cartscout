@@ -61,6 +61,13 @@ function isStringArray(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((line): line is string => typeof line === "string");
 }
 
+function isProductAttributes(value: unknown): value is Record<string, string | number> {
+  return typeof value === "object" &&
+    value !== null &&
+    !Array.isArray(value) &&
+    Object.values(value).every((item) => typeof item === "string" || typeof item === "number");
+}
+
 function getFallbackProducts(): CatalogProduct[] {
   return (inventory.products as CatalogProduct[]).map((product) => ({
     ...product,
@@ -82,6 +89,7 @@ function mapPublicProduct(product: {
   source_url: string | null;
   image_url: string | null;
   image_gallery: unknown;
+  attributes: unknown;
   in_stock: boolean;
   seo_title: string | null;
   seo_description: string | null;
@@ -99,6 +107,7 @@ function mapPublicProduct(product: {
     inStock: product.in_stock,
     seoTitle: product.seo_title,
     seoDescription: product.seo_description,
+    attributes: isProductAttributes(product.attributes) ? product.attributes : undefined,
   };
 }
 
@@ -153,7 +162,7 @@ export async function getPublicProducts(): Promise<CatalogProduct[]> {
   await connection();
   const { data, error } = await client
     .from("products")
-    .select("id, source_product_id, slug, name, description, price_zar, source_url, image_url, image_gallery, in_stock, seo_title, seo_description")
+    .select("id, source_product_id, slug, name, description, price_zar, source_url, image_url, image_gallery, attributes, in_stock, seo_title, seo_description")
     .eq("is_published", true)
     .order("is_featured", { ascending: false })
     .order("display_order", { ascending: true })
@@ -172,7 +181,7 @@ export async function getPublicProduct(slug: string): Promise<CatalogProduct | n
   await connection();
   const { data, error } = await client
     .from("products")
-    .select("id, source_product_id, slug, name, description, price_zar, source_url, image_url, image_gallery, in_stock, seo_title, seo_description")
+    .select("id, source_product_id, slug, name, description, price_zar, source_url, image_url, image_gallery, attributes, in_stock, seo_title, seo_description")
     .eq("slug", slug)
     .eq("is_published", true)
     .maybeSingle();

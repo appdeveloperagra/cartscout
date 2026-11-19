@@ -42,6 +42,7 @@ async function ProductContent({ params }: ProductPageProps) {
   ))];
   const capacity = getPassengerCapacity(product.name);
   const priceZar = getCatalogPriceZar(product.price, product.currency);
+  const attributes = Object.entries(product.attributes ?? {});
   const message = encodeURIComponent(
     `Hi CartScout, I would like to enquire about ${product.name}. Listed price: ${formatZar(priceZar)}. Please confirm current availability and delivery arrangements.`,
   );
@@ -66,6 +67,16 @@ async function ProductContent({ params }: ProductPageProps) {
           </div>
           <p className="product-detail-price">{formatZar(priceZar)}</p>
           {product.description && <p className="product-detail-description">{product.description}</p>}
+          {attributes.length > 0 && (
+            <dl className="product-specs">
+              {attributes.map(([label, value]) => (
+                <div key={label}>
+                  <dt>{label.replaceAll("_", " ")}</dt>
+                  <dd>{value}</dd>
+                </div>
+              ))}
+            </dl>
+          )}
           <p className="product-detail-note">
             Our team is ready to help with the cart&apos;s specifications, availability, final price, and delivery arrangements.
           </p>

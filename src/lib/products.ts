@@ -11,6 +11,7 @@ export type CatalogProduct = {
   inStock: boolean;
   seoTitle?: string | null;
   seoDescription?: string | null;
+  attributes?: Record<string, string | number>;
 };
 
 export type SeatFilter = "Any seats" | "2" | "4" | "6+ seats";
