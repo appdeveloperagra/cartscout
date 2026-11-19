@@ -52,8 +52,8 @@ export function createPageMetadata({
       ...(socialImageUrl ? { images: [socialImageUrl] } : {}),
     },
     robots: {
-      index: Boolean(siteOrigin),
-      follow: Boolean(siteOrigin),
+      index: false,
+      follow: false,
     },
   };
 }

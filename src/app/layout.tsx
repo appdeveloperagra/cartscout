@@ -20,8 +20,8 @@ export const metadata: Metadata = {
   category: "shopping",
   referrer: "origin-when-cross-origin",
   robots: {
-    index: Boolean(siteOrigin),
-    follow: Boolean(siteOrigin),
+    index: false,
+    follow: false,
   },
   openGraph: {
     type: "website",
