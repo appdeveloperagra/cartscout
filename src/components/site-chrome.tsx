@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import LocationsMenu from "@/components/locations-menu";
+import MainNavigation from "@/components/main-navigation";
 import { getPublicContactSettings, getPublicServiceAreas } from "@/lib/cms";
 
 function PhoneIcon() {
@@ -48,15 +48,12 @@ export async function SiteHeader() {
             priority
           />
         </Link>
-        <nav className="main-nav" aria-label="Main navigation">
-          <Link href="/">Home</Link>
-          <Link href="/inventory">Buy</Link>
-          <Link href="/rentals">Rentals</Link>
-          <Link href="/blog">Journal</Link>
-          <LocationsMenu locations={locations.map(({ slug, name }) => ({ slug, name }))} />
-          <Link href="/about">About</Link>
-          <Link href="/contact">Contact</Link>
-        </nav>
+        <MainNavigation
+          locations={locations.map(({ slug, name }) => ({ slug, name }))}
+          phoneHref={contact.phone_href}
+          phoneDisplay={contact.phone_display}
+          whatsappHref={contact.whatsapp_href}
+        />
         <a className="header-link" href={contact.phone_href}>
           <PhoneIcon />
           <span>{contact.phone_display}</span>

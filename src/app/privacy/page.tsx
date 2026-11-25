@@ -32,7 +32,7 @@ async function PrivacyContent() {
       <section>
         <h2>Website and third-party services</h2>
         <p>
-          The current website does not load analytics or advertising scripts. The hosting provider may process standard technical information needed to deliver and protect the website. Phone, email, and WhatsApp links open services operated by third parties. Their own privacy terms apply when you use those services.
+          CartScout uses Google Tag Manager to manage measurement and advertising tags. Depending on the tags enabled in its container, Google and other providers may receive technical and usage information, such as pages viewed, browser or device details, and online identifiers, and may use cookies or similar technologies. The hosting provider may also process standard technical information needed to deliver and protect the website. Phone, email, and WhatsApp links open services operated by third parties; their own privacy terms apply when you use those services.
         </p>
       </section>
       <section>

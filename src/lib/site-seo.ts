@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 const configuredSiteUrl =
   process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://cartscout.co.za";
 export const siteOrigin = new URL(configuredSiteUrl).origin;
+export const shouldIndex = process.env.NODE_ENV === "production";
 
 type PageMetadataInput = {
   title: string;
@@ -52,8 +53,8 @@ export function createPageMetadata({
       ...(socialImageUrl ? { images: [socialImageUrl] } : {}),
     },
     robots: {
-      index: false,
-      follow: false,
+      index: shouldIndex,
+      follow: shouldIndex,
     },
   };
 }

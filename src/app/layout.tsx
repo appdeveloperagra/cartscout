@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import Script from "next/script";
 import { FloatingContactLinks, SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { StructuredData } from "@/components/structured-data";
 import { getPublicContactSettings } from "@/lib/cms";
-import { siteOrigin } from "@/lib/site-seo";
+import { shouldIndex, siteOrigin } from "@/lib/site-seo";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -19,9 +20,12 @@ export const metadata: Metadata = {
   publisher: "CartScout",
   category: "shopping",
   referrer: "origin-when-cross-origin",
+  verification: {
+    google: "OKxaELeZaGUynPYyXe9fyaB1CyA1J4rR5RH6Y2ahJDo",
+  },
   robots: {
-    index: false,
-    follow: false,
+    index: shouldIndex,
+    follow: shouldIndex,
   },
   openGraph: {
     type: "website",
@@ -73,6 +77,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {children}
         <Suspense fallback={null}><SiteFooter /></Suspense>
         <Suspense fallback={null}><FloatingContactLinks /></Suspense>
+        <Script id="google-tag-manager" strategy="afterInteractive">
+          {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!=='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-P6745HM3');`}
+        </Script>
       </body>
     </html>
   );

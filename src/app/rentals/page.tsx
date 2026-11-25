@@ -197,7 +197,7 @@ async function RentalsContent() {
           <article>
             <span>02</span>
             <h3>Transport arrangements</h3>
-            <p>The listed rates include delivery and collection throughout South Africa. Share your address so we can arrange timing and access.</p>
+            <p>Check the rate table for delivery and collection inclusions. Share your address so we can confirm timing, access, and any quoted transport costs.</p>
           </article>
           <article>
             <span>03</span>

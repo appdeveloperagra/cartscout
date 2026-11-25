@@ -2,14 +2,25 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { PriceGuide } from "@/components/price-guide";
-import { getPassengerCapacity, parseSeatFilter, type CatalogProduct, type SeatFilter } from "@/lib/products";
+import {
+  getPassengerCapacity,
+  getProductMake,
+  parseCatalogSort,
+  parseSeatFilter,
+  type CatalogProduct,
+  type CatalogSort,
+  type SeatFilter,
+} from "@/lib/products";
 import { formatZar, getCatalogPriceZar, usdToZarRate, usdToZarRateAsOf } from "@/lib/pricing";
 
 type CatalogProps = {
   products: CatalogProduct[];
+  initialQuery: string;
+  initialMake: string;
   initialSeats: SeatFilter;
+  initialSort: CatalogSort;
   whatsappHref: string;
 };
 
@@ -17,12 +28,35 @@ type Inquiry = {
   product: CatalogProduct;
 };
 
-function getMake(name: string) {
-  const match = name.match(
-    /\b(Club Car|E-Z-GO|EZGO|Yamaha|Evolution|Icon|Tomberlin|Star EV|Denago|Advanced EV|Bintelli|Garia)\b/i,
+function getCatalogMake(name: string) {
+  return getProductMake(name) ?? "Other";
+}
+
+function updateCatalogUrl(
+  query: string,
+  make: string,
+  seats: SeatFilter,
+  sort: CatalogSort,
+) {
+  const params = new URLSearchParams(window.location.search);
+  const values = {
+    q: query.trim(),
+    make: make === "All makes" ? "" : make,
+    seats: seats === "Any seats" ? "" : seats === "6+ seats" ? "6plus" : seats,
+    sort: sort === "featured" ? "" : sort,
+  };
+
+  Object.entries(values).forEach(([key, value]) => {
+    if (value) params.set(key, value);
+    else params.delete(key);
+  });
+
+  const search = params.toString();
+  window.history.replaceState(
+    null,
+    "",
+    `${window.location.pathname}${search ? `?${search}` : ""}${window.location.hash}`,
   );
-  if (!match) return "Other";
-  return /^ezgo$/i.test(match[0]) ? "E-Z-GO" : match[0];
 }
 
 function CartIcon() {
@@ -45,31 +79,73 @@ function SearchIcon() {
   );
 }
 
-export default function Catalog({ products, initialSeats, whatsappHref }: CatalogProps) {
-  const [query, setQuery] = useState("");
-  const [make, setMake] = useState("All makes");
+export default function Catalog({
+  products,
+  initialQuery,
+  initialMake,
+  initialSeats,
+  initialSort,
+  whatsappHref,
+}: CatalogProps) {
+  const [query, setQuery] = useState(initialQuery);
+  const [make, setMake] = useState(() =>
+    products.some((product) => getCatalogMake(product.name) === initialMake)
+      ? initialMake
+      : "All makes",
+  );
   const [seats, setSeats] = useState<SeatFilter>(initialSeats);
-  const [sort, setSort] = useState("featured");
+  const [sort, setSort] = useState<CatalogSort>(initialSort);
   const [inquiry, setInquiry] = useState<Inquiry | null>(null);
   const inquiryTrigger = useRef<HTMLButtonElement | null>(null);
+  const inquiryDialog = useRef<HTMLElement | null>(null);
+  const wasInquiryOpen = useRef(false);
 
-  function closeInquiry() {
-    const trigger = inquiryTrigger.current;
-    setInquiry(null);
-    requestAnimationFrame(() => trigger?.focus());
-  }
+  const closeInquiry = useCallback(() => setInquiry(null), []);
 
   useEffect(() => {
-    if (!inquiry) return;
-    function closeOnEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") closeInquiry();
+    if (!inquiry) {
+      if (wasInquiryOpen.current) {
+        wasInquiryOpen.current = false;
+        requestAnimationFrame(() => inquiryTrigger.current?.focus());
+      }
+      return;
     }
-    document.addEventListener("keydown", closeOnEscape);
-    return () => document.removeEventListener("keydown", closeOnEscape);
-  }, [inquiry]);
+    wasInquiryOpen.current = true;
+
+    const dialog = inquiryDialog.current;
+    const focusableElements = dialog
+      ? Array.from(dialog.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ))
+      : [];
+    focusableElements[0]?.focus();
+
+    function handleDialogKeydown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeInquiry();
+        return;
+      }
+      if (event.key !== "Tab" || focusableElements.length === 0) return;
+
+      const first = focusableElements[0];
+      const last = focusableElements[focusableElements.length - 1];
+      const focusIsOutside = !dialog?.contains(document.activeElement);
+      if (event.shiftKey && (document.activeElement === first || focusIsOutside)) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || focusIsOutside)) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    document.addEventListener("keydown", handleDialogKeydown);
+    return () => document.removeEventListener("keydown", handleDialogKeydown);
+  }, [closeInquiry, inquiry]);
 
   const makes = useMemo(
-    () => [...new Set(products.map((product) => getMake(product.name)))].sort(),
+    () => [...new Set(products.map((product) => getCatalogMake(product.name)))].sort(),
     [products],
   );
 
@@ -78,8 +154,8 @@ export default function Catalog({ products, initialSeats, whatsappHref }: Catalo
     const filtered = products.filter((product) => {
       const matchesQuery =
         !normalizedQuery ||
-        `${product.name} ${getMake(product.name)}`.toLowerCase().includes(normalizedQuery);
-      const matchesMake = make === "All makes" || getMake(product.name) === make;
+        `${product.name} ${getCatalogMake(product.name)}`.toLowerCase().includes(normalizedQuery);
+      const matchesMake = make === "All makes" || getCatalogMake(product.name) === make;
       const productSeats = getPassengerCapacity(product.name);
       const matchesSeats =
         seats === "Any seats" ||
@@ -88,6 +164,16 @@ export default function Catalog({ products, initialSeats, whatsappHref }: Catalo
     });
 
     if (sort === "name") filtered.sort((a, b) => a.name.localeCompare(b.name));
+    if (sort === "price-asc") {
+      filtered.sort((a, b) =>
+        getCatalogPriceZar(a.price, a.currency) - getCatalogPriceZar(b.price, b.currency),
+      );
+    }
+    if (sort === "price-desc") {
+      filtered.sort((a, b) =>
+        getCatalogPriceZar(b.price, b.currency) - getCatalogPriceZar(a.price, a.currency),
+      );
+    }
     return filtered;
   }, [make, products, query, seats, sort]);
 
@@ -148,20 +234,39 @@ export default function Catalog({ products, initialSeats, whatsappHref }: Catalo
                 <input
                   type="search"
                   value={query}
-                  onChange={(event) => setQuery(event.target.value)}
+                  onChange={(event) => {
+                    const nextQuery = event.target.value;
+                    setQuery(nextQuery);
+                    updateCatalogUrl(nextQuery, make, seats, sort);
+                  }}
                   aria-label="Search golf carts"
+                  placeholder="Search by make or model"
                 />
               </label>
               <label className="select-wrap">
                 <span className="sr-only">Filter by make</span>
-                <select value={make} onChange={(event) => setMake(event.target.value)}>
+                <select
+                  value={make}
+                  onChange={(event) => {
+                    const nextMake = event.target.value;
+                    setMake(nextMake);
+                    updateCatalogUrl(query, nextMake, seats, sort);
+                  }}
+                >
                   <option>All makes</option>
                   {makes.map((item) => <option key={item}>{item}</option>)}
                 </select>
               </label>
               <label className="select-wrap">
                 <span className="sr-only">Filter by passenger capacity</span>
-                <select value={seats} onChange={(event) => setSeats(parseSeatFilter(event.target.value))}>
+                <select
+                  value={seats}
+                  onChange={(event) => {
+                    const nextSeats = parseSeatFilter(event.target.value);
+                    setSeats(nextSeats);
+                    updateCatalogUrl(query, make, nextSeats, sort);
+                  }}
+                >
                   <option>Any seats</option>
                   <option value="2">2 seats</option>
                   <option value="4">4 seats</option>
@@ -170,9 +275,18 @@ export default function Catalog({ products, initialSeats, whatsappHref }: Catalo
               </label>
               <label className="select-wrap sort-select">
                 <span className="sr-only">Sort carts</span>
-                <select value={sort} onChange={(event) => setSort(event.target.value)}>
+                <select
+                  value={sort}
+                  onChange={(event) => {
+                    const nextSort = parseCatalogSort(event.target.value);
+                    setSort(nextSort);
+                    updateCatalogUrl(query, make, seats, nextSort);
+                  }}
+                >
                   <option value="featured">Featured</option>
                   <option value="name">Name: A to Z</option>
+                  <option value="price-asc">Price: Low to high</option>
+                  <option value="price-desc">Price: High to low</option>
                 </select>
               </label>
           </div>
@@ -200,7 +314,7 @@ export default function Catalog({ products, initialSeats, whatsappHref }: Catalo
                         <span className="product-tag">ASK ABOUT AVAILABILITY</span>
                       </div>
                       <div className="product-info">
-                        <div className="product-meta"><span>{getMake(product.name)}</span><span>{getPassengerCapacity(product.name) ? `${getPassengerCapacity(product.name)} PASSENGER` : "GOLF CART"}</span></div>
+                        <div className="product-meta"><span>{getCatalogMake(product.name)}</span><span>{getPassengerCapacity(product.name) ? `${getPassengerCapacity(product.name)} PASSENGER` : "GOLF CART"}</span></div>
                         <h3>
                           {product.slug ? (
                             <Link href={`/${product.slug}`}>{product.name}</Link>
@@ -232,7 +346,13 @@ export default function Catalog({ products, initialSeats, whatsappHref }: Catalo
             <button
               className="button button-dark"
               type="button"
-              onClick={() => { setQuery(""); setMake("All makes"); setSeats("Any seats"); }}
+              onClick={() => {
+                setQuery("");
+                setMake("All makes");
+                setSeats("Any seats");
+                setSort("featured");
+                updateCatalogUrl("", "All makes", "Any seats", "featured");
+              }}
             >Clear filters</button>
           </div>
         )}
@@ -252,8 +372,14 @@ export default function Catalog({ products, initialSeats, whatsappHref }: Catalo
         <div className="modal-backdrop" onMouseDown={(event) => {
           if (event.target === event.currentTarget) closeInquiry();
         }}>
-          <section className="inquiry-modal" role="dialog" aria-modal="true" aria-labelledby="inquiry-title">
-            <button className="modal-close" type="button" onClick={closeInquiry} aria-label="Close enquiry form" autoFocus>×</button>
+          <section
+            className="inquiry-modal"
+            ref={inquiryDialog}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="inquiry-title"
+          >
+            <button className="modal-close" type="button" onClick={closeInquiry} aria-label="Close enquiry form">×</button>
             <div className="eyebrow"><span /> PURCHASE REQUEST</div>
             <h2 id="inquiry-title">Enquire about this cart.</h2>
             <p className="inquiry-product">{inquiry.product.name}</p>

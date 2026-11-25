@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import Catalog from "@/components/catalog";
-import { parseSeatFilter } from "@/lib/products";
+import { parseCatalogSort, parseSeatFilter } from "@/lib/products";
 import { createPageMetadata } from "@/lib/site-seo";
 import { getPublicContactSettings, getPublicProducts } from "@/lib/cms";
 
@@ -13,15 +13,22 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 type InventorySearchParams = {
+  q?: string | string[];
+  make?: string | string[];
   seats?: string | string[];
+  sort?: string | string[];
 };
+
+function firstSearchValue(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] ?? "" : value ?? "";
+}
 
 async function InventoryContent({
   searchParams,
 }: {
   searchParams: Promise<InventorySearchParams>;
 }) {
-  const { seats } = await searchParams;
+  const { q, make, seats, sort } = await searchParams;
   const [products, contact] = await Promise.all([
     getPublicProducts(),
     getPublicContactSettings(),
@@ -30,7 +37,10 @@ async function InventoryContent({
   return (
     <Catalog
       products={products}
+      initialQuery={firstSearchValue(q)}
+      initialMake={firstSearchValue(make)}
       initialSeats={parseSeatFilter(seats)}
+      initialSort={parseCatalogSort(sort)}
       whatsappHref={contact.whatsapp_href}
     />
   );

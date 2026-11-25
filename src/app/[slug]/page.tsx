@@ -6,22 +6,16 @@ import { Suspense } from "react";
 import ProductGallery from "@/components/product-gallery";
 import { getPublicContactSettings, getPublicProduct, getPublicProducts } from "@/lib/cms";
 import { formatZar, getCatalogPriceZar } from "@/lib/pricing";
-import { getPassengerCapacity } from "@/lib/products";
-import { createPageMetadata } from "@/lib/site-seo";
+import { getPassengerCapacity, getProductMake } from "@/lib/products";
+import { createPageMetadata, siteOrigin } from "@/lib/site-seo";
 import type { CatalogProduct } from "@/lib/products";
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-function getMake(name: string) {
-  const match = name.match(/\b(Club Car|E-Z-GO|EZGO|Yamaha|Evolution|Icon|Tomberlin|Star EV|Denago|Advanced EV|Bintelli|Garia)\b/i);
-  if (!match) return null;
-  return /^ezgo$/i.test(match[0]) ? "E-Z-GO" : match[0];
-}
-
 function getRelatedProducts(product: CatalogProduct, products: CatalogProduct[]) {
-  const make = getMake(product.name);
+  const make = getProductMake(product.name);
   const capacity = getPassengerCapacity(product.name);
 
   return products
@@ -29,7 +23,7 @@ function getRelatedProducts(product: CatalogProduct, products: CatalogProduct[])
     .map((candidate) => ({
       product: candidate,
       relevance:
-        (make && getMake(candidate.name)?.toLowerCase() === make.toLowerCase() ? 2 : 0) +
+        (make && getProductMake(candidate.name)?.toLowerCase() === make.toLowerCase() ? 2 : 0) +
         (capacity && getPassengerCapacity(candidate.name) === capacity ? 1 : 0),
     }))
     .sort((a, b) => b.relevance - a.relevance)
@@ -67,15 +61,36 @@ async function ProductContent({ params }: ProductPageProps) {
     (image): image is string => Boolean(image),
   ))];
   const capacity = getPassengerCapacity(product.name);
+  const productBrand = getProductMake(product.name);
   const priceZar = getCatalogPriceZar(product.price, product.currency);
   const attributes = Object.entries(product.attributes ?? {});
   const relatedProducts = getRelatedProducts(product, products);
   const message = encodeURIComponent(
     `Hi CartScout, I would like to enquire about ${product.name}. Listed price: ${formatZar(priceZar)}. Please confirm current availability and delivery arrangements.`,
   );
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    ...(product.description?.trim() ? { description: product.description.trim() } : {}),
+    ...(images.length ? { image: images } : {}),
+    ...(productBrand ? { brand: { "@type": "Brand", name: productBrand } } : {}),
+    offers: {
+      "@type": "Offer",
+      url: new URL(`/${product.slug}`, siteOrigin).toString(),
+      price: priceZar,
+      priceCurrency: "ZAR",
+    },
+  };
 
   return (
     <main className="content-page product-detail-page">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(productJsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
       <nav className="breadcrumbs" aria-label="Breadcrumb">
         <ol>
           <li><Link href="/">Home</Link></li>
@@ -149,7 +164,7 @@ async function ProductContent({ params }: ProductPageProps) {
                 </Link>
                 <div className="product-info">
                   <div className="product-meta">
-                    <span>{getMake(related.name) ?? "GOLF CART"}</span>
+                    <span>{getProductMake(related.name) ?? "GOLF CART"}</span>
                     <span>{getPassengerCapacity(related.name) ? `${getPassengerCapacity(related.name)} PASSENGER` : "OUR COLLECTION"}</span>
                   </div>
                   <h3><Link href={`/${related.slug}`}>{related.name}</Link></h3>

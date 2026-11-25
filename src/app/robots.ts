@@ -1,11 +1,11 @@
 import type { MetadataRoute } from "next";
-import { siteOrigin } from "@/lib/site-seo";
+import { shouldIndex, siteOrigin } from "@/lib/site-seo";
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
-      disallow: "/",
+      ...(shouldIndex ? { allow: "/" } : { disallow: "/" }),
     },
     ...(siteOrigin ? { sitemap: `${siteOrigin}/sitemap.xml` } : {}),
   };

@@ -8,7 +8,13 @@ type LocationLink = {
   name: string;
 };
 
-export default function LocationsMenu({ locations }: { locations: LocationLink[] }) {
+export default function LocationsMenu({
+  locations,
+  onNavigate,
+}: {
+  locations: LocationLink[];
+  onNavigate?: () => void;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -47,6 +53,7 @@ export default function LocationsMenu({ locations }: { locations: LocationLink[]
 
   function closeMenu() {
     setIsOpen(false);
+    onNavigate?.();
   }
 
   return (

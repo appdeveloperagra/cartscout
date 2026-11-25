@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { type CatalogProduct } from "@/lib/products";
+import { getPassengerCapacity, getProductMake, type CatalogProduct } from "@/lib/products";
 import { HomeFaq } from "@/components/home-faq";
 import { HomeHighlights } from "@/components/home-highlights";
 import { PriceGuide } from "@/components/price-guide";
@@ -112,7 +112,14 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
                 <span className="product-tag">ASK ABOUT AVAILABILITY</span>
               </div>
               <div className="product-info">
-                <div className="product-meta"><span>GOLF CART</span><span>OUR COLLECTION</span></div>
+                <div className="product-meta">
+                  <span>{getProductMake(product.name) ?? "GOLF CART"}</span>
+                  <span>
+                    {getPassengerCapacity(product.name)
+                      ? `${getPassengerCapacity(product.name)} PASSENGER`
+                      : "OUR COLLECTION"}
+                  </span>
+                </div>
                 <h3>
                   {product.slug ? (
                     <Link href={`/${product.slug}`}>{product.name}</Link>
@@ -123,7 +130,13 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
                     <span className="price-label">ZAR PRICE</span>
                     <strong>{formatZar(getCatalogPriceZar(product.price, product.currency))}</strong>
                   </div>
-                  <Link className="featured-enquire-link" href="/inventory">Enquire <span aria-hidden="true">→</span></Link>
+                  <Link
+                    className="featured-enquire-link"
+                    href={product.slug ? `/${product.slug}` : "/inventory"}
+                  >
+                    {product.slug ? "Ask about this cart" : "View inventory"}
+                    <span aria-hidden="true">→</span>
+                  </Link>
                 </div>
               </div>
             </article>
