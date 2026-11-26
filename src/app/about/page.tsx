@@ -91,8 +91,8 @@ export default function AboutPage() {
           <h2 id="about-transparency-title">Useful information. Clear next steps.</h2>
           <p>
             CartScout offers the golf carts shown in our collection. Listed prices are
-            displayed in whole-rand ZAR, converted from the catalogue USD price
-            using the rate shown on the inventory page.
+            displayed in South African rand as indicative amounts; final pricing,
+            specifications, availability, and delivery terms are confirmed directly.
           </p>
           <p>
             Review the daily, weekly, and monthly rental rates.

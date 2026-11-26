@@ -6,7 +6,12 @@ import { faqs, type FAQItem } from "@/lib/faqs";
 import { provinces, type Province } from "@/lib/provinces";
 import { rentalFaqs, rentalRates, type RentalRate } from "@/lib/rentals";
 import { createSupabasePublicClient } from "@/lib/supabase/public";
-import { createProductSlug, type CatalogProduct } from "@/lib/products";
+import {
+  createCatalogDescription,
+  createProductSlug,
+  createProductTitle,
+  type CatalogProduct,
+} from "@/lib/products";
 import {
   contactEmail,
   contactPhone,
@@ -69,14 +74,20 @@ function isProductAttributes(value: unknown): value is Record<string, string | n
 }
 
 function getFallbackProducts(): CatalogProduct[] {
-  return (inventory.products as CatalogProduct[]).map((product) => ({
-    ...product,
-    slug: createProductSlug(product.name, product.id),
-    description: "",
-    imageGallery: [],
-    seoTitle: null,
-    seoDescription: null,
-  }));
+  return (inventory.products as CatalogProduct[]).map((product) => {
+    const normalized = {
+      ...product,
+      slug: product.slug ?? createProductSlug(product.name),
+      description: "",
+      imageGallery: [],
+      seoTitle: product.name,
+      seoDescription: `Explore the ${product.name} in CartScout's collection. Contact us to confirm specifications, current availability, price, and delivery arrangements.`,
+    };
+    return {
+      ...normalized,
+      description: createCatalogDescription(normalized),
+    };
+  });
 }
 
 function mapPublicProduct(product: {
@@ -94,20 +105,41 @@ function mapPublicProduct(product: {
   seo_title: string | null;
   seo_description: string | null;
 }): CatalogProduct {
-  return {
+  const catalogEntry = product.source_product_id === null
+    ? undefined
+    : (inventory.products as CatalogProduct[]).find(
+        (item) => String(item.id) === String(product.source_product_id),
+      );
+  const name = catalogEntry?.name ?? createProductTitle(product.name);
+  const usesLocalCatalogImage = product.source_product_id !== null;
+  const slug = catalogEntry?.slug ?? createProductSlug(name);
+  const mappedProduct: CatalogProduct = {
     id: product.source_product_id ?? product.id,
-    slug: product.slug,
-    name: product.name,
-    description: product.description,
+    slug,
+    name,
+    description: usesLocalCatalogImage ? "" : product.description,
     price: Number(product.price_zar),
     currency: "ZAR",
-    url: product.source_url ?? "",
-    imageUrl: product.image_url,
-    imageGallery: isStringArray(product.image_gallery) ? product.image_gallery : [],
+    url: "",
+    imageUrl: usesLocalCatalogImage
+      ? catalogEntry?.imageUrl ?? `/images/carts/${slug}.webp`
+      : product.image_url,
+    imageGallery: usesLocalCatalogImage
+      ? []
+      : isStringArray(product.image_gallery)
+        ? product.image_gallery
+        : [],
     inStock: product.in_stock,
-    seoTitle: product.seo_title,
-    seoDescription: product.seo_description,
+    seoTitle: usesLocalCatalogImage ? name : product.seo_title,
+    seoDescription: usesLocalCatalogImage
+      ? `Explore the ${name} in CartScout's collection. Contact us to confirm specifications, current availability, price, and delivery arrangements.`
+      : product.seo_description,
     attributes: isProductAttributes(product.attributes) ? product.attributes : undefined,
+  };
+
+  return {
+    ...mappedProduct,
+    description: mappedProduct.description?.trim() || createCatalogDescription(mappedProduct),
   };
 }
 
@@ -187,7 +219,22 @@ export async function getPublicProduct(slug: string): Promise<CatalogProduct | n
     .maybeSingle();
 
   if (error) throwQueryError("load the product", error.message);
-  return data ? mapPublicProduct(data) : null;
+  if (data) return mapPublicProduct(data);
+
+  const catalogEntry = (inventory.products as CatalogProduct[]).find((item) => item.slug === slug);
+  const legacyId = Number(slug.match(/-(\d+)$/)?.[1]);
+  const sourceProductId = Number(catalogEntry?.id ?? legacyId);
+  if (!Number.isSafeInteger(sourceProductId)) return null;
+
+  const { data: sourceProduct, error: sourceError } = await client
+    .from("products")
+    .select("id, source_product_id, slug, name, description, price_zar, source_url, image_url, image_gallery, attributes, in_stock, seo_title, seo_description")
+    .eq("source_product_id", sourceProductId)
+    .eq("is_published", true)
+    .maybeSingle();
+
+  if (sourceError) throwQueryError("load the product", sourceError.message);
+  return sourceProduct ? mapPublicProduct(sourceProduct) : null;
 }
 
 export async function getPublicFaqs(category: "general" | "rental" = "general"): Promise<FAQItem[]> {
@@ -204,7 +251,16 @@ export async function getPublicFaqs(category: "general" | "rental" = "general"):
 
   if (error) throwQueryError("load FAQs", error.message);
   if (!data) throwQueryError("load FAQs", "The database returned no result.");
-  return data;
+  return data.map((faq) =>
+    faq.category === "general" && faq.question === "How are catalogue prices calculated?"
+      ? {
+          ...faq,
+          question: "How are catalogue prices shown?",
+          answer:
+            "Catalogue amounts are shown in South African rand for comparison only; they are estimates, not confirmed offers. Ask CartScout to confirm the final price, delivery charges, and availability.",
+        }
+      : faq,
+  );
 }
 
 export async function getPublicRentalRates(): Promise<RentalRate[]> {

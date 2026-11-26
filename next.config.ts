@@ -7,11 +7,6 @@ const supabaseImageHost = process.env.NEXT_PUBLIC_SUPABASE_URL
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "mullensgolfcarts.com",
-        pathname: "/wp-content/uploads/**",
-      },
       ...(supabaseImageHost
         ? [{
             protocol: "https" as const,

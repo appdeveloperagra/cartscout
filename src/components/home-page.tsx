@@ -4,7 +4,7 @@ import { getPassengerCapacity, getProductMake, type CatalogProduct } from "@/lib
 import { HomeFaq } from "@/components/home-faq";
 import { HomeHighlights } from "@/components/home-highlights";
 import { PriceGuide } from "@/components/price-guide";
-import { formatZar, getCatalogPriceZar, usdToZarRate, usdToZarRateAsOf } from "@/lib/pricing";
+import { formatZar, getCatalogPriceZar } from "@/lib/pricing";
 
 type HomePageProps = {
   products: CatalogProduct[];
@@ -60,9 +60,8 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
 
       <section className="trust-strip" aria-label="Catalog information">
         <div><strong>{totalProductCount}</strong><span>carts in our collection</span></div>
-        <div><strong>ZAR prices</strong><span>converted from USD</span></div>
+        <div><strong>Price estimates</strong><span>not confirmed quotes</span></div>
         <div><strong>Confirm first</strong><span>availability and delivery</span></div>
-        <p>Prices use R{usdToZarRate} per USD ({usdToZarRateAsOf}) and are rounded to whole rand.</p>
       </section>
 
       <section className="seat-categories" aria-labelledby="seat-categories-title">
@@ -127,7 +126,7 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
                 </h3>
                 <div className="product-footer">
                   <div>
-                    <span className="price-label">ZAR PRICE</span>
+                    <span className="price-label">INDICATIVE ZAR ESTIMATE</span>
                     <strong>{formatZar(getCatalogPriceZar(product.price, product.currency))}</strong>
                   </div>
                   <Link

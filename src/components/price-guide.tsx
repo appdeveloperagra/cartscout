@@ -1,5 +1,5 @@
 import { getPassengerCapacity, type CatalogProduct } from "@/lib/products";
-import { formatZar, getCatalogPriceZar, usdToZarRate, usdToZarRateAsOf } from "@/lib/pricing";
+import { formatZar, getCatalogPriceZar } from "@/lib/pricing";
 
 type PriceGuideProps = {
   products: CatalogProduct[];
@@ -34,10 +34,10 @@ export function PriceGuide({ products, compact = false }: PriceGuideProps) {
       aria-labelledby="price-guide-title"
     >
       <div className="price-guide-heading">
-        <div className="eyebrow"><span /> CURRENT LISTING PRICES</div>
+        <div className="eyebrow"><span /> PRICE ESTIMATES</div>
         <h2 id="price-guide-title">Golf cart prices by passenger capacity</h2>
         <p>
-          Current listing prices by passenger capacity, converted from USD at R{usdToZarRate} per USD ({usdToZarRateAsOf}) and rounded to whole rand.
+          These ranges are for comparison only, not confirmed CartScout offers. Ask us for current local pricing, availability, and delivery costs.
         </p>
       </div>
       <div className="price-guide-grid">

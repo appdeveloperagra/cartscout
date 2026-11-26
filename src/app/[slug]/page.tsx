@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { Suspense } from "react";
 import ProductGallery from "@/components/product-gallery";
 import { getPublicContactSettings, getPublicProduct, getPublicProducts } from "@/lib/cms";
@@ -56,6 +56,7 @@ async function ProductContent({ params }: ProductPageProps) {
     getPublicProducts(),
   ]);
   if (!product) notFound();
+  if (product.slug && product.slug !== slug) permanentRedirect(`/${product.slug}`);
 
   const images = [...new Set([product.imageUrl, ...(product.imageGallery ?? [])].filter(
     (image): image is string => Boolean(image),
@@ -65,22 +66,17 @@ async function ProductContent({ params }: ProductPageProps) {
   const priceZar = getCatalogPriceZar(product.price, product.currency);
   const attributes = Object.entries(product.attributes ?? {});
   const relatedProducts = getRelatedProducts(product, products);
+  const imageUrls = images.map((image) => new URL(image, siteOrigin).toString());
   const message = encodeURIComponent(
-    `Hi CartScout, I would like to enquire about ${product.name}. Listed price: ${formatZar(priceZar)}. Please confirm current availability and delivery arrangements.`,
+    `Hi CartScout, I would like to enquire about ${product.name}. The catalogue estimate is ${formatZar(priceZar)}. Please confirm current availability, final pricing, and delivery arrangements.`,
   );
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
     ...(product.description?.trim() ? { description: product.description.trim() } : {}),
-    ...(images.length ? { image: images } : {}),
+    ...(imageUrls.length ? { image: imageUrls } : {}),
     ...(productBrand ? { brand: { "@type": "Brand", name: productBrand } } : {}),
-    offers: {
-      "@type": "Offer",
-      url: new URL(`/${product.slug}`, siteOrigin).toString(),
-      price: priceZar,
-      priceCurrency: "ZAR",
-    },
   };
 
   return (
@@ -104,10 +100,10 @@ async function ProductContent({ params }: ProductPageProps) {
           <div className="eyebrow"><span /> CARTSCOUT COLLECTION</div>
           <h1>{product.name}</h1>
           <div className="product-detail-meta">
-            {capacity ? <span>{capacity} passenger</span> : <span>Golf cart</span>}
+            {capacity ? <span>{capacity}-seater</span> : <span>Golf cart</span>}
             <span>{product.inStock ? "Ask about availability" : "Ask about this cart"}</span>
           </div>
-          <p className="product-detail-price">{formatZar(priceZar)}</p>
+          <p className="product-detail-price">Indicative estimate: {formatZar(priceZar)}</p>
           <div className="page-actions">
             <a className="button button-dark" href={`${contact.whatsapp_href}?text=${message}`} rel="noreferrer" target="_blank">
               Enquire on WhatsApp <span aria-hidden="true">→</span>
@@ -170,7 +166,7 @@ async function ProductContent({ params }: ProductPageProps) {
                   <h3><Link href={`/${related.slug}`}>{related.name}</Link></h3>
                   <div className="product-footer">
                     <div>
-                      <span className="price-label">ZAR PRICE</span>
+                      <span className="price-label">INDICATIVE ZAR ESTIMATE</span>
                       <strong>{formatZar(getCatalogPriceZar(related.price, related.currency))}</strong>
                     </div>
                     <Link className="product-related-link" href={`/${related.slug}`}>View details <span aria-hidden="true">→</span></Link>

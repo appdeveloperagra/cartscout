@@ -20,7 +20,7 @@ async function TermsContent() {
       <section>
         <h2>Our catalogue and prices</h2>
         <p>
-          Catalogue prices are displayed in whole-rand ZAR after conversion from the listed USD price using the exchange rate shown on the inventory page. Prices and availability can change; the written sale quote will state the agreed price and any applicable delivery or other charges.
+          Catalogue prices are displayed in South African rand as indicative amounts. Prices and availability can change; the written sale quote will state the agreed price and any applicable delivery or other charges.
         </p>
       </section>
       <section>

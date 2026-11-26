@@ -11,13 +11,6 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-## Refresh the catalog
-
-```bash
-npm run import:inventory
-```
-
-The importer reads the current catalog source and writes product names, USD prices, stock status, links, and image URLs to `src/data/products.json`. The site displays those prices in whole ZAR using the fixed rate recorded in `src/lib/pricing.ts`.
 
 ## Supabase database
 
@@ -55,12 +48,14 @@ Sign in at `/admin`. **Admin → Admin access** creates accounts immediately fro
 
 Once Supabase is configured and migrations are applied, the public catalogue, FAQs, rental rates, location pages, and contact details read published records from the database. Blog articles publish at `/blog`. If Supabase is not configured in local development, catalogue, FAQs, rental rates, location pages, and contact details use the checked-in initial content.
 
+Catalog product photos are stored locally in `public/images/carts` and referenced by local paths. The current images are used with CartScout's authorization; replace them only with CartScout-owned or licensed images.
+
 Manage the public contact email, phone number, WhatsApp destination, and business address in **Admin → Site settings** by editing the `public_contact` record. Its value is JSON with `email`, `phone`, `phone_display`, and `address` (an array of address lines); keep **Available to public pages** enabled. The purchase and rental forms prepare a message in the customer's email app or WhatsApp, and customers must send it themselves. No enquiry is stored or sent automatically, and a request is not a confirmed sale or booking.
 
-The homepage highlights a small selection of carts; the complete searchable catalog is available at `/inventory`. Product detail URLs use a stable, descriptive slug based on the product name and source identifier. The site also includes About, Rentals, FAQs, Contact, Privacy, Terms, and Journal pages. Review the privacy and terms pages against the business's legal identity, location, and applicable laws before launch.
+The homepage highlights a small selection of carts; the complete searchable catalog is available at `/inventory`. Product detail URLs use a stable, descriptive slug based on the product title; duplicate model listings use meaningful variant details or lettered variants, never internal IDs. The site also includes About, Rentals, FAQs, Contact, Privacy, Terms, and Journal pages. Review the privacy and terms pages against the business's legal identity, location, and applicable laws before launch.
 
 The permanent site URL defaults to `https://cartscout.co.za`. Copy `.env.example` to `.env.local` for local builds, and set `NEXT_PUBLIC_SITE_URL=https://cartscout.co.za` in Hostinger's build environment so the deployment uses the same canonical domain. Do not use the temporary Hostinger URL as the canonical domain. Production builds allow search indexing; development builds disallow crawling and emit `noindex, nofollow`. After deploying the production domain, verify it in Google Search Console and submit `https://cartscout.co.za/sitemap.xml`.
 
 Google Search Console verification is included in the root metadata, and the Google Tag Manager container is loaded site-wide. Review the tags configured in that container and update the privacy notice and consent controls to match the actual tracking configuration and applicable laws.
 
-Rental availability is checked manually, and enquiries are not reservations. Fast Eddie's inventory page exposes a gallery rather than individual product details. Apex Golf Carts' `robots.txt` disallows crawling, so its product listings are not imported.
+Rental availability is checked manually, and enquiries are not reservations.

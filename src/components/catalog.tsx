@@ -13,7 +13,7 @@ import {
   type CatalogSort,
   type SeatFilter,
 } from "@/lib/products";
-import { formatZar, getCatalogPriceZar, usdToZarRate, usdToZarRateAsOf } from "@/lib/pricing";
+import { formatZar, getCatalogPriceZar } from "@/lib/pricing";
 
 type CatalogProps = {
   products: CatalogProduct[];
@@ -200,7 +200,7 @@ export default function Catalog({
       `Phone: ${phone || "Not provided"}`,
       `Town or province: ${location || "Not provided"}`,
       `Cart: ${inquiry.product.name}`,
-      `Listed price: ${formatZar(getCatalogPriceZar(inquiry.product.price, inquiry.product.currency))}`,
+      `Indicative catalogue estimate: ${formatZar(getCatalogPriceZar(inquiry.product.price, inquiry.product.currency))}`,
       "",
       message || "Please share the delivery arrangements for my location.",
     ].join("\n");
@@ -215,7 +215,7 @@ export default function Catalog({
           <div className="eyebrow"><span /> FULL CART INVENTORY</div>
           <h1>Golf carts for sale.</h1>
           <p>
-            CartScout deals in all makes and models, with sales and rentals throughout South Africa. Prices are converted from USD at R{usdToZarRate} per USD ({usdToZarRateAsOf}) and rounded to whole rand.
+            CartScout deals in all makes and models, with sales and rentals throughout South Africa. Catalogue amounts are estimates for comparison, not confirmed offers; ask us for current pricing and delivery costs.
           </p>
         </div>
         <PriceGuide products={products} compact />
@@ -327,7 +327,7 @@ export default function Catalog({
                         )}
                         <div className="product-footer">
                           <div>
-                            <span className="price-label">ZAR PRICE</span>
+                            <span className="price-label">INDICATIVE ZAR ESTIMATE</span>
                             <strong>{formatZar(getCatalogPriceZar(product.price, product.currency))}</strong>
                           </div>
                           <button type="button" onClick={(event) => openInquiry(product, event.currentTarget)} aria-label={`Enquire to buy ${product.name}`}>Enquire to buy <span aria-hidden="true">→</span></button>

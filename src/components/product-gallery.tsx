@@ -21,7 +21,7 @@ export default function ProductGallery({
     <div className="product-detail-gallery">
       <div className="product-detail-image">
         <Image
-          alt={`${productName} - image ${selectedIndex + 1}`}
+          alt={`${productName} product photo ${selectedIndex + 1}`}
           fill
           priority
           sizes="(max-width: 760px) 100vw, 55vw"

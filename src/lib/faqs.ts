@@ -9,14 +9,14 @@ export type FAQItem = {
 
 export const faqs: FAQItem[] = [
   {
-    question: "How are catalogue prices calculated?",
+    question: "How are catalogue prices shown?",
     answer:
-      "Each catalogue price is calculated from its source USD price using the exchange rate shown on the inventory page and rounded to whole rand.",
+      "Catalogue amounts are shown in South African rand for comparison only; they are estimates, not confirmed offers. Ask CartScout to confirm the final price, delivery charges, and availability.",
   },
   {
     question: "Are catalogue prices shown in South African rand?",
     answer:
-      "Yes. Catalogue prices and the passenger-capacity price guide are displayed in whole-rand South African rand (ZAR).",
+      "Yes. Catalogue estimates and passenger-capacity ranges are displayed in whole-rand South African rand (ZAR), but are not confirmed offers.",
   },
   {
     question: "Are the golf carts in CartScout's collection available in South Africa?",

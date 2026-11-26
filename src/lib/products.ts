@@ -17,6 +17,33 @@ export type CatalogProduct = {
 export type SeatFilter = "Any seats" | "2" | "4" | "6+ seats";
 export type CatalogSort = "featured" | "name" | "price-asc" | "price-desc";
 
+export function normalizeCatalogName(name: string) {
+  return name
+    .replace(/&#215;/gi, "x")
+    .replace(/\s+Golf Carts?.*$/gi, "")
+    .replace(/\s+Golf Cart.*$/gi, "")
+    .replace(/\s+/g, " ")
+    .replace(/\s*-\s*$/, "")
+    .trim();
+}
+
+export function createProductTitle(name: string, variant?: string) {
+  const capacity = getPassengerCapacity(name);
+  const model = normalizeCatalogName(name)
+    .replace(/\([^)]*\)/g, "")
+    .replace(/\b[2-8](?:\s*Passenger|-Seater)\b/gi, "")
+    .replace(/\b(Electric|Lithium(?:-Ion)?|Lifted|HP|Gas)\b/gi, "")
+    .replace(/\b(Special Edition|Limited Edition|Sunday Red|Forward-Facing|Plus)\b/gi, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return `${model}${capacity ? ` ${capacity}-Seater` : ""}${variant ? ` ${variant}` : ""} Golf Cart`;
+}
+
+export function createCatalogDescription(product: CatalogProduct) {
+  return `The ${product.name} is listed in CartScout's golf cart collection. Contact our team to confirm its condition, specifications, included equipment, current availability, final rand price, and delivery arrangements for your location.`;
+}
+
 export function getProductMake(name: string) {
   const match = name.match(
     /\b(Club Car|E-Z-GO|EZGO|Yamaha|Evolution|Icon|Tomberlin|Star EV|Denago|Advanced EV|Bintelli|Garia)\b/i,
@@ -25,17 +52,15 @@ export function getProductMake(name: string) {
   return /^ezgo$/i.test(match[0]) ? "E-Z-GO" : match[0];
 }
 
-export function createProductSlug(name: string, identifier: number | string) {
-  const baseSlug = name
+export function createProductSlug(name: string) {
+  return name
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-
-  return `${baseSlug || "golf-cart"}-${identifier}`;
+    .replace(/^-|-$/g, "") || "golf-cart";
 }
 
 export function getPassengerCapacity(name: string) {
-  const match = name.match(/\b([2-8])\s*Passenger/i);
+  const match = name.match(/\b([2-8])(?:\s*Passenger|-Seater)\b/i);
   return match ? Number(match[1]) : null;
 }
 

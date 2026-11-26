@@ -7,7 +7,6 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
-    "import:inventory": "node scripts/import-mullens.mjs",
     "db:push": "supabase db push --remote",
     "db:status": "supabase migration list --remote",
     "db:local:start": "supabase start",
