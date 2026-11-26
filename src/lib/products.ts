@@ -41,7 +41,27 @@ export function createProductTitle(name: string, variant?: string) {
 }
 
 export function createCatalogDescription(product: CatalogProduct) {
-  return `The ${product.name} is listed in CartScout's golf cart collection. Contact our team to confirm its condition, specifications, included equipment, current availability, final rand price, and delivery arrangements for your location.`;
+  const capacityAttribute = product.attributes?.passenger_capacity;
+  const capacityFromAttributes =
+    typeof capacityAttribute === "number"
+      ? capacityAttribute
+      : typeof capacityAttribute === "string" && /^\d+$/.test(capacityAttribute.trim())
+        ? Number(capacityAttribute)
+        : null;
+  const capacity = getPassengerCapacity(product.name) ?? capacityFromAttributes;
+  const hasValidCapacity = capacity !== null && Number.isSafeInteger(capacity) && capacity > 0;
+  const powertrainAttribute = product.attributes?.powertrain;
+  const powertrain =
+    typeof powertrainAttribute === "string" ? powertrainAttribute.trim().toLowerCase() : "";
+  const details = [
+    hasValidCapacity ? `${capacity}-passenger` : "",
+    powertrain,
+  ].filter(Boolean);
+  const description = details.length
+    ? `The ${product.name} is listed as a ${details.join(" ")} golf cart.`
+    : `The ${product.name} is part of CartScout's golf cart collection.`;
+
+  return `${description} Ask our team to confirm the specific cart's condition, included equipment, current availability, final price, and delivery arrangements for your location.`;
 }
 
 export function getProductMake(name: string) {

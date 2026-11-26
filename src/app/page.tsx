@@ -17,7 +17,13 @@ async function HomeContent() {
 
 export default function Home() {
   return (
-    <Suspense fallback={<main className="home-page-loading" role="status">Loading CartScout...</main>}>
+    <Suspense
+      fallback={
+        <main className="home-page-loading route-loading" role="status">
+          <span>Loading CartScout...</span>
+        </main>
+      }
+    >
       <HomeContent />
     </Suspense>
   );

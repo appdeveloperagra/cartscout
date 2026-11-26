@@ -68,7 +68,7 @@ async function ProductContent({ params }: ProductPageProps) {
   const relatedProducts = getRelatedProducts(product, products);
   const imageUrls = images.map((image) => new URL(image, siteOrigin).toString());
   const message = encodeURIComponent(
-    `Hi CartScout, I would like to enquire about ${product.name}. The catalogue estimate is ${formatZar(priceZar)}. Please confirm current availability, final pricing, and delivery arrangements.`,
+    `Hi CartScout, I am interested in ${product.name}. Please confirm its current availability, condition, included equipment, final price, and delivery arrangements for my location.`,
   );
   const productJsonLd = {
     "@context": "https://schema.org",
@@ -131,13 +131,43 @@ async function ProductContent({ params }: ProductPageProps) {
             </dl>
           </div>
         )}
-        <div className="product-detail-note">
-          <strong>We&apos;re here to help.</strong>
-          <span>Our team can answer your questions about specifications, availability, pricing, and delivery.</span>
-          <a className="inline-link" href={`${contact.whatsapp_href}?text=${message}`} rel="noreferrer" target="_blank">
-            Talk to our team <span aria-hidden="true">→</span>
-          </a>
+      </section>
+      <section className="product-enquiry-section" aria-labelledby="product-enquiry-heading">
+        <div className="product-enquiry-copy">
+          <div className="eyebrow"><span /> BEFORE YOU DECIDE</div>
+          <h2 id="product-enquiry-heading">Get the details before you decide.</h2>
+          <p>
+            Interested in the {product.name}? Our team can help confirm the cart&apos;s condition,
+            what&apos;s included, current availability, final price, and delivery arrangements for
+            your location.
+          </p>
+          <div className="product-enquiry-actions">
+            <a className="button button-dark" href={`${contact.whatsapp_href}?text=${message}`} rel="noreferrer" target="_blank">
+              Enquire about this cart <span aria-hidden="true">→</span>
+            </a>
+            <a className="text-link" href={contact.phone_href}>Call {contact.phone_display}</a>
+          </div>
         </div>
+        <ol className="product-enquiry-steps">
+          <li>
+            <span aria-hidden="true">01</span>
+            <strong>Confirm the listing</strong>
+            <p>Ask about condition, specifications, and included equipment.</p>
+          </li>
+          <li>
+            <span aria-hidden="true">02</span>
+            <strong>Understand the price</strong>
+            <p>Get the current final price and any applicable delivery costs.</p>
+          </li>
+          <li>
+            <span aria-hidden="true">03</span>
+            <strong>Plan delivery</strong>
+            <p>Discuss availability and delivery arrangements for your area.</p>
+          </li>
+        </ol>
+        <p className="product-enquiry-disclaimer">
+          An enquiry does not reserve a cart or confirm its availability or final price.
+        </p>
       </section>
       {relatedProducts.length > 0 && (
         <section className="product-related-section">

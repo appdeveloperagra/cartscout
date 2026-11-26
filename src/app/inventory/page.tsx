@@ -52,7 +52,13 @@ export default function InventoryPage({
   searchParams: Promise<InventorySearchParams>;
 }) {
   return (
-    <Suspense fallback={<div className="inventory-section" role="status">Loading inventory...</div>}>
+    <Suspense
+      fallback={
+        <main className="inventory-section route-loading" role="status">
+          <span>Loading inventory...</span>
+        </main>
+      }
+    >
       <InventoryContent searchParams={searchParams} />
     </Suspense>
   );
