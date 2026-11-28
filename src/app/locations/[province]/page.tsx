@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { getPublicContactSettings, getPublicServiceAreas } from "@/lib/cms";
 import { RequestTimeMarker } from "@/components/request-time-marker";
 import { createPageMetadata, siteOrigin } from "@/lib/site-seo";
+import { getCityLocation } from "@/lib/provinces";
 
 type ProvincePageProps = {
   params: Promise<{ province: string }>;
@@ -14,13 +15,24 @@ export async function generateMetadata({
   params,
 }: ProvincePageProps): Promise<Metadata> {
   const { province: slug } = await params;
+  const city = getCityLocation(slug);
+  if (city) {
+    return {
+      ...createPageMetadata({
+      title: `Golf Cart Enquiries in ${city.name}`,
+      description: `What to include when asking about golf cart purchase or rental options in ${city.name}. Availability and delivery are confirmed for each address.`,
+      path: `/locations/${city.slug}`,
+      }),
+      robots: { index: false, follow: true },
+    };
+  }
   const provinces = await getPublicServiceAreas();
   const province = provinces.find((item) => item.slug === slug);
   if (!province) return {};
 
   return createPageMetadata({
-    title: `Golf Carts in ${province.name} | Sales & Hire`,
-    description: `CartScout sells and rents golf carts in ${province.name} and throughout South Africa, with delivery and collection nationwide.`,
+    title: `Golf Cart Enquiries in ${province.name}`,
+    description: `Golf cart purchase and rental considerations for ${province.name}. Ask CartScout to confirm availability and delivery for your address.`,
     path: `/locations/${province.slug}`,
   });
 }
@@ -28,33 +40,15 @@ export async function generateMetadata({
 function ProvinceStructuredData({
   provinceSlug,
   provinceName,
-  towns,
 }: {
   provinceSlug: string;
   provinceName: string;
-  towns: string[];
 }) {
   const origin = siteOrigin;
   const pageUrl = origin
     ? new URL(`/locations/${provinceSlug}`, origin).toString()
     : undefined;
   const breadcrumbId = pageUrl ? `${pageUrl}#breadcrumb` : undefined;
-  const questions = [
-    {
-      question: `Can I buy a golf cart in ${provinceName}?`,
-      answer:
-        "CartScout sells all makes and models throughout South Africa. Contact us about your preferred cart and we will arrange delivery to your location.",
-    },
-    {
-      question: `Can I request a golf cart rental in ${provinceName}?`,
-      answer:
-        "You can send a rental request with your location, preferred dates, and passenger count. Availability is checked manually, and an enquiry is not a confirmed booking.",
-    },
-    {
-      question: `Which areas are included in this ${provinceName} guide?`,
-      answer: `CartScout serves customers throughout ${provinceName} and all of South Africa, including ${towns.join(", ")}. Contact us with your address to arrange delivery or collection.`,
-    },
-  ];
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -89,14 +83,6 @@ function ProvinceStructuredData({
             },
           ]
         : []),
-      {
-        "@type": "FAQPage",
-        mainEntity: questions.map(({ question, answer }) => ({
-          "@type": "Question",
-          name: question,
-          acceptedAnswer: { "@type": "Answer", text: answer },
-        })),
-      },
     ],
   };
 
@@ -110,6 +96,103 @@ function ProvinceStructuredData({
 
 async function ProvinceContent({ params }: ProvincePageProps) {
   const { province: slug } = await params;
+  const city = getCityLocation(slug);
+  if (city) {
+    const contact = await getPublicContactSettings();
+    const pageUrl = siteOrigin ? new URL(`/locations/${city.slug}`, siteOrigin).toString() : undefined;
+    const rentalMessage = encodeURIComponent(
+      `Hi CartScout, I am based in ${city.name} and would like to ask about golf cart availability for a purchase or rental.`,
+    );
+    const jsonLd = {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebPage",
+          ...(pageUrl ? { "@id": pageUrl, url: pageUrl } : {}),
+          name: `Golf Carts in ${city.name}`,
+          description: `Golf cart sales and rental enquiries in ${city.name}, South Africa.`,
+          inLanguage: "en-ZA",
+        },
+      ],
+    };
+
+    return (
+      <main className="content-page location-page">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
+        />
+        <nav className="breadcrumbs" aria-label="Breadcrumb">
+          <ol>
+            <li><Link href="/">Home</Link></li>
+            <li><Link href="/locations">Locations</Link></li>
+            <li aria-current="page">{city.name}</li>
+          </ol>
+        </nav>
+        <div className="eyebrow"><span /> GOLF CARTS · {city.name.toUpperCase()}</div>
+        <h1>Golf carts in {city.name}</h1>
+        <p className="page-intro">{city.overview}</p>
+
+        <section className="location-section">
+          <h2>Buying or renting a golf cart in {city.name}</h2>
+          <p>
+            Share your suburb or exact address, passenger count, intended use and
+            preferred dates. CartScout must confirm whether the requested cart,
+            rental and transport arrangements are available for that location.
+          </p>
+        </section>
+
+        <section className="location-section">
+          <h2>Information to include in a {city.name} enquiry</h2>
+          <ul className="location-use-list">
+            {city.useCases.map((useCase) => <li key={useCase}>{useCase}</li>)}
+          </ul>
+        </section>
+
+        <section className="location-section location-faq" aria-labelledby="city-faq-title">
+          <h2 id="city-faq-title">Golf cart questions for {city.name}</h2>
+          <details className="home-faq-item">
+            <summary>Can I buy a golf cart for delivery in {city.name}?</summary>
+            <p>
+              Browse the <Link href="/shop">CartScout inventory</Link>, then ask
+              whether the specific cart and delivery to your address are available.
+            </p>
+          </details>
+          <details className="home-faq-item">
+            <summary>Can I hire a golf cart in {city.name}?</summary>
+            <p>
+              Send a <Link href="/rent">rental request</Link> with your dates,
+              address, passenger count and number of carts. Availability must be confirmed.
+            </p>
+          </details>
+        </section>
+
+        <section className="location-cta">
+          <div>
+            <h2>Enquiring from {city.name}?</h2>
+            <p>Tell us the suburb, cart capacity, intended use and whether you want to buy or rent. We will confirm whether the request can be accommodated.</p>
+          </div>
+          <div className="page-actions">
+            <Link className="button button-dark" href="/shop">Browse inventory <span aria-hidden="true">→</span></Link>
+            <a className="text-link" href={`${contact.whatsapp_href}?text=${rentalMessage}`} target="_blank" rel="noreferrer">
+              Ask on WhatsApp <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </section>
+
+        <nav className="other-provinces" aria-label="Other location guides">
+          <h2>Explore nearby location guides</h2>
+          <div>
+            <Link href={`/locations/${city.provinceSlug}`}>{city.provinceName}</Link>
+            <Link href="/locations/gauteng">Gauteng</Link>
+            <Link href="/locations/western-cape">Western Cape</Link>
+            <Link href="/locations/kwazulu-natal">KwaZulu-Natal</Link>
+          </div>
+        </nav>
+      </main>
+    );
+  }
+
   const [provinces, contact] = await Promise.all([
     getPublicServiceAreas(),
     getPublicContactSettings(),
@@ -123,7 +206,7 @@ async function ProvinceContent({ params }: ProvincePageProps) {
 
   return (
     <main className="content-page location-page">
-      <ProvinceStructuredData provinceSlug={province.slug} provinceName={province.name} towns={province.towns} />
+      <ProvinceStructuredData provinceSlug={province.slug} provinceName={province.name} />
       <nav className="breadcrumbs" aria-label="Breadcrumb">
         <ol>
           <li><Link href="/">Home</Link></li>
@@ -138,9 +221,9 @@ async function ProvinceContent({ params }: ProvincePageProps) {
       <section className="location-section">
         <h2>Areas in this {province.name} guide</h2>
         <p>
-          These towns are examples of areas we serve. CartScout sells and rents
-          golf carts throughout South Africa, with delivery and collection
-          arranged nationwide.
+          These towns are examples of destinations in the province, not a
+          guarantee of delivery or rental coverage. Confirm arrangements for
+          your exact address before proceeding.
         </p>
         <ul className="town-list">
           {province.towns.map((town) => <li key={town}>{town}</li>)}
@@ -162,9 +245,10 @@ async function ProvinceContent({ params }: ProvincePageProps) {
         <h2>Check location and suitability before proceeding</h2>
         <p>{province.considerations}</p>
         <p>
-          CartScout serves customers throughout South Africa. Contact us to
-          arrange sales, rentals, delivery, or collection in your province.
-          Rental bookings are confirmed after terms are agreed.
+          Send your town or full address with the request. CartScout will
+          confirm whether sales, rentals, delivery or collection can be
+          arranged for that destination. Rental bookings require confirmed
+          availability and agreed terms.
         </p>
       </section>
 
@@ -173,25 +257,24 @@ async function ProvinceContent({ params }: ProvincePageProps) {
         <details className="home-faq-item">
           <summary>Can I buy a golf cart in {province.name}?</summary>
           <p>
-            Browse the <Link href="/inventory">current inventory</Link> and
-            contact CartScout about any make or model. We sell and rent
-            throughout South Africa and arrange delivery nationwide.
+            Browse the <Link href="/shop">current inventory</Link> and contact
+            CartScout about a specific cart. Availability and any delivery
+            arrangement must be confirmed for your address.
           </p>
         </details>
         <details className="home-faq-item">
           <summary>Can I request a golf cart rental in {province.name}?</summary>
           <p>
-            You can send a <Link href="/rentals">rental request</Link> with your
-            location, preferred dates, and passenger count. Availability is
-            checked manually, and an enquiry is not a confirmed booking.
+            Send a <Link href="/rent">rental request</Link> with your location,
+            dates and passenger count. Coverage and availability must be
+            confirmed; an enquiry is not a booking.
           </p>
         </details>
         <details className="home-faq-item">
           <summary>Which areas are included in this guide?</summary>
           <p>
-            Examples include {province.towns.join(", ")}. CartScout serves
-            customers throughout South Africa; contact us to arrange delivery
-            to your exact address.
+            Examples include {province.towns.join(", ")}. These are geographic
+            examples, not confirmation of delivery coverage.
           </p>
         </details>
       </section>
@@ -199,10 +282,10 @@ async function ProvinceContent({ params }: ProvincePageProps) {
       <section className="location-cta">
         <div>
           <h2>Enquiring from {province.name}?</h2>
-          <p>Share your town, intended use, dates, and passenger needs so the relevant arrangements can be checked.</p>
+          <p>Share your town, intended use, dates and passenger needs so CartScout can confirm whether the request can be accommodated.</p>
         </div>
         <div className="page-actions">
-          <Link className="button button-dark" href="/inventory">Browse inventory <span aria-hidden="true">→</span></Link>
+          <Link className="button button-dark" href="/shop">Browse inventory <span aria-hidden="true">→</span></Link>
           <a className="text-link" href={`${contact.whatsapp_href}?text=${rentalMessage}`} target="_blank" rel="noreferrer">
             Ask on WhatsApp <span aria-hidden="true">↗</span>
           </a>

@@ -6,10 +6,16 @@ import { faqs, type FAQItem } from "@/lib/faqs";
 import { provinces, type Province } from "@/lib/provinces";
 import { rentalFaqs, rentalRates, type RentalRate } from "@/lib/rentals";
 import { createSupabasePublicClient } from "@/lib/supabase/public";
+import { getFallbackProductCategories, type ProductCategory } from "@/lib/shop-categories";
 import {
   createCatalogDescription,
   createProductSlug,
   createProductTitle,
+  getCatalogBatteryType,
+  getCatalogPassengerCapacity,
+  getCatalogPowertrain,
+  getDerivedCategorySlugs,
+  getPassengerCapacity,
   type CatalogProduct,
 } from "@/lib/products";
 import {
@@ -82,10 +88,17 @@ function getFallbackProducts(): CatalogProduct[] {
       imageGallery: [],
       seoTitle: product.name,
       seoDescription: `Explore the ${product.name} in CartScout's collection. Contact us to confirm specifications, current availability, price, and delivery arrangements.`,
+      passengerCapacity: getPassengerCapacity(product.name),
     };
-    return {
+    const withSpecifications = {
       ...normalized,
       description: createCatalogDescription(normalized),
+    };
+    return {
+      ...withSpecifications,
+      powertrain: getCatalogPowertrain(withSpecifications),
+      batteryType: getCatalogBatteryType(withSpecifications),
+      categorySlugs: getDerivedCategorySlugs(withSpecifications),
     };
   });
 }
@@ -101,6 +114,12 @@ function mapPublicProduct(product: {
   image_url: string | null;
   image_gallery: unknown;
   attributes: unknown;
+  passenger_capacity: number | null;
+  powertrain: string | null;
+  battery_type: string | null;
+  product_category_assignments: {
+    category: { slug: string } | { slug: string }[] | null;
+  }[] | null;
   in_stock: boolean;
   seo_title: string | null;
   seo_description: string | null;
@@ -130,6 +149,19 @@ function mapPublicProduct(product: {
         ? product.image_gallery
         : [],
     inStock: product.in_stock,
+    passengerCapacity: product.passenger_capacity,
+    powertrain: product.powertrain === "electric" || product.powertrain === "gas" || product.powertrain === "other"
+      ? product.powertrain
+      : null,
+    batteryType: product.battery_type === "lithium" || product.battery_type === "lead-acid" || product.battery_type === "other"
+      ? product.battery_type
+      : null,
+    categorySlugs: (product.product_category_assignments ?? [])
+      .flatMap(({ category }) =>
+        Array.isArray(category)
+          ? category.flatMap(({ slug }) => slug ? [slug] : [])
+          : category?.slug ? [category.slug] : [],
+      ),
     seoTitle: usesLocalCatalogImage ? name : product.seo_title,
     seoDescription: usesLocalCatalogImage
       ? `Explore the ${name} in CartScout's collection. Contact us to confirm specifications, current availability, price, and delivery arrangements.`
@@ -137,9 +169,15 @@ function mapPublicProduct(product: {
     attributes: isProductAttributes(product.attributes) ? product.attributes : undefined,
   };
 
-  return {
+  const withSpecifications = {
     ...mappedProduct,
     description: mappedProduct.description?.trim() || createCatalogDescription(mappedProduct),
+  };
+  return {
+    ...withSpecifications,
+    passengerCapacity: getCatalogPassengerCapacity(withSpecifications),
+    powertrain: getCatalogPowertrain(withSpecifications),
+    batteryType: getCatalogBatteryType(withSpecifications),
   };
 }
 
@@ -194,7 +232,7 @@ export async function getPublicProducts(): Promise<CatalogProduct[]> {
   await connection();
   const { data, error } = await client
     .from("products")
-    .select("id, source_product_id, slug, name, description, price_zar, source_url, image_url, image_gallery, attributes, in_stock, seo_title, seo_description")
+    .select("id, source_product_id, slug, name, description, price_zar, source_url, image_url, image_gallery, attributes, passenger_capacity, powertrain, battery_type, product_category_assignments(category:product_categories(slug)), in_stock, seo_title, seo_description")
     .eq("is_published", true)
     .order("is_featured", { ascending: false })
     .order("display_order", { ascending: true })
@@ -206,6 +244,30 @@ export async function getPublicProducts(): Promise<CatalogProduct[]> {
   return data.map(mapPublicProduct);
 }
 
+export async function getPublicProductCategories(): Promise<ProductCategory[]> {
+  const client = createSupabasePublicClient();
+  if (!client) return getFallbackProductCategories();
+
+  await connection();
+  const { data, error } = await client
+    .from("product_categories")
+    .select("slug, name, description, display_order, is_rule_based")
+    .eq("is_active", true)
+    .order("display_order", { ascending: true })
+    .order("name", { ascending: true });
+
+  if (error) throwQueryError("load product categories", error.message);
+  if (!data) throwQueryError("load product categories", "The database returned no result.");
+
+  return data.map((category) => ({
+    slug: category.slug,
+    name: category.name,
+    description: category.description,
+    displayOrder: category.display_order,
+    isRuleBased: category.is_rule_based,
+  }));
+}
+
 export async function getPublicProduct(slug: string): Promise<CatalogProduct | null> {
   const client = createSupabasePublicClient();
   if (!client) return getFallbackProducts().find((product) => product.slug === slug) ?? null;
@@ -213,7 +275,7 @@ export async function getPublicProduct(slug: string): Promise<CatalogProduct | n
   await connection();
   const { data, error } = await client
     .from("products")
-    .select("id, source_product_id, slug, name, description, price_zar, source_url, image_url, image_gallery, attributes, in_stock, seo_title, seo_description")
+    .select("id, source_product_id, slug, name, description, price_zar, source_url, image_url, image_gallery, attributes, passenger_capacity, powertrain, battery_type, product_category_assignments(category:product_categories(slug)), in_stock, seo_title, seo_description")
     .eq("slug", slug)
     .eq("is_published", true)
     .maybeSingle();
@@ -228,7 +290,7 @@ export async function getPublicProduct(slug: string): Promise<CatalogProduct | n
 
   const { data: sourceProduct, error: sourceError } = await client
     .from("products")
-    .select("id, source_product_id, slug, name, description, price_zar, source_url, image_url, image_gallery, attributes, in_stock, seo_title, seo_description")
+    .select("id, source_product_id, slug, name, description, price_zar, source_url, image_url, image_gallery, attributes, passenger_capacity, powertrain, battery_type, product_category_assignments(category:product_categories(slug)), in_stock, seo_title, seo_description")
     .eq("source_product_id", sourceProductId)
     .eq("is_published", true)
     .maybeSingle();

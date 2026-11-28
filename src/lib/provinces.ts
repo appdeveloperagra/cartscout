@@ -136,6 +136,62 @@ export const provinces: Province[] = [
   },
 ];
 
+export type CityLocation = {
+  slug: string;
+  name: string;
+  provinceSlug: string;
+  provinceName: string;
+  overview: string;
+  useCases: string[];
+};
+
+export const cityLocations: CityLocation[] = [
+  {
+    slug: "johannesburg",
+    name: "Johannesburg",
+    provinceSlug: "gauteng",
+    provinceName: "Gauteng",
+    overview: "For a golf cart enquiry in Johannesburg, start with the suburb, intended route, passenger count and whether you are considering a purchase or rental. Availability and delivery must be confirmed for the exact address.",
+    useCases: ["Golf courses and residential estates", "Hotels, event venues and guest transport", "Campuses and managed properties"],
+  },
+  {
+    slug: "cape-town",
+    name: "Cape Town",
+    provinceSlug: "western-cape",
+    provinceName: "Western Cape",
+    overview: "For a Cape Town golf cart enquiry, include the suburb, intended setting, passenger count and whether you need a purchase or rental. Ask CartScout to confirm availability and transport for the exact address.",
+    useCases: ["Golf and residential properties", "Wine estates and hospitality venues", "Events and managed sites"],
+  },
+  {
+    slug: "pretoria",
+    name: "Pretoria",
+    provinceSlug: "gauteng",
+    provinceName: "Gauteng",
+    overview: "When enquiring from Pretoria, share the intended setting, route, passenger count and preferred purchase or rental dates. CartScout must confirm current options and arrangements for your address.",
+    useCases: ["Estates and golf facilities", "Campuses and large private properties", "Hospitality and event venues"],
+  },
+  {
+    slug: "durban",
+    name: "Durban",
+    provinceSlug: "kwazulu-natal",
+    provinceName: "KwaZulu-Natal",
+    overview: "A Durban golf cart enquiry should include the intended property, route, passenger count and dates. Discuss coastal storage conditions and access, and confirm whether the cart and delivery can be arranged for the address.",
+    useCases: ["Resorts and coastal hospitality properties", "Golf venues and estates", "Events and private properties"],
+  },
+  {
+    slug: "ballito",
+    name: "Ballito",
+    provinceSlug: "kwazulu-natal",
+    provinceName: "KwaZulu-Natal",
+    overview: "For a Ballito enquiry, share the property address, passenger capacity, intended use and whether you are considering a purchase or rental. Confirm availability, delivery access and any storage requirements.",
+    useCases: ["Residential estates and holiday properties", "Golf and leisure facilities", "Accommodation and event transport"],
+  },
+];
+
 export function getProvince(slug: string) {
   return provinces.find((province) => province.slug === slug);
+}
+
+export function getCityLocation(slug: string) {
+  return cityLocations.find((city) => city.slug === slug);
 }

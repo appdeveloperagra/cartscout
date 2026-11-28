@@ -1,4 +1,4 @@
-import { getPassengerCapacity, type CatalogProduct } from "@/lib/products";
+import { getCatalogPassengerCapacity, type CatalogProduct } from "@/lib/products";
 import { formatZar, getCatalogPriceZar } from "@/lib/pricing";
 
 type PriceGuideProps = {
@@ -16,7 +16,7 @@ export function PriceGuide({ products, compact = false }: PriceGuideProps) {
   const priceRanges = capacityGroups
     .map(({ label, matches }) => {
       const prices = products
-        .filter((product) => matches(getPassengerCapacity(product.name)))
+        .filter((product) => matches(getCatalogPassengerCapacity(product)))
         .map((product) => getCatalogPriceZar(product.price, product.currency));
       if (prices.length === 0) return null;
 

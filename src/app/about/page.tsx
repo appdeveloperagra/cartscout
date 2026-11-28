@@ -3,8 +3,7 @@ import { createPageMetadata } from "@/lib/site-seo";
 
 export const metadata = createPageMetadata({
   title: "About CartScout",
-  description:
-    "CartScout is a golf cart dealership for all makes and models, selling and renting throughout South Africa.",
+  description: "Learn how CartScout helps customers compare golf carts and enquire about purchase, rental and delivery options.",
   path: "/about",
 });
 
@@ -14,15 +13,15 @@ export default function AboutPage() {
       <section className="about-hero" aria-labelledby="about-title">
         <div className="about-hero-copy">
           <div className="eyebrow"><span /> ABOUT CARTSCOUT</div>
-          <h1 id="about-title">Your nationwide golf cart dealership.</h1>
+          <h1 id="about-title">A clearer way to find a golf cart.</h1>
           <p>
-            We deal in all makes and models of golf carts. CartScout sells and
-            rents throughout South Africa, helping you find a cart for your
-            business, venue, or personal use.
+            CartScout brings golf cart listings, rental information and practical
+            buying guidance together in one place. Start with your intended use,
+            passenger needs and location.
           </p>
           <div className="about-hero-actions">
-            <Link className="button button-dark" href="/inventory">Explore carts <span aria-hidden="true">→</span></Link>
-            <Link className="text-link" href="/rentals">Explore rental options</Link>
+            <Link className="button button-dark" href="/shop">Explore carts <span aria-hidden="true">→</span></Link>
+            <Link className="text-link" href="/rent">Explore rental options</Link>
           </div>
         </div>
         <aside className="about-hero-card">
@@ -43,14 +42,12 @@ export default function AboutPage() {
         </div>
         <div className="about-purpose-copy">
           <p>
-            As a golf cart dealership, we offer a wide range of makes and
-            models for sale and rent. Tell us where in South Africa you are
-            and how you plan to use the cart so our team can help.
+            Browse the listed makes and models, then tell us where and how you
+            plan to use the cart so the team can check which options are relevant.
           </p>
           <p>
-            We aim to make the next steps clear. Contact us to confirm current
-            availability, final pricing, delivery, and rental arrangements for
-            your needs.
+            Availability, final pricing, specifications, delivery and rental
+            arrangements are confirmed for each specific request.
           </p>
         </div>
       </section>
@@ -70,7 +67,7 @@ export default function AboutPage() {
               its listed price, specifications, availability, and delivery
               arrangements.
             </p>
-            <Link href="/inventory">Browse the inventory <span aria-hidden="true">→</span></Link>
+            <Link href="/shop">Browse the inventory <span aria-hidden="true">→</span></Link>
           </article>
           <article className="about-option-card">
             <span className="about-option-number">02 / RENTAL</span>
@@ -80,7 +77,7 @@ export default function AboutPage() {
               dates, group size, and location. Availability and arrangements
               must be checked for each request.
             </p>
-            <Link href="/rentals">View rental rates <span aria-hidden="true">→</span></Link>
+            <Link href="/rent">View rental rates <span aria-hidden="true">→</span></Link>
           </article>
         </div>
       </section>

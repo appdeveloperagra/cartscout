@@ -11,9 +11,15 @@ export type CatalogProduct = {
   inStock: boolean;
   seoTitle?: string | null;
   seoDescription?: string | null;
+  passengerCapacity?: number | null;
+  powertrain?: Powertrain | null;
+  batteryType?: BatteryType | null;
+  categorySlugs?: string[];
   attributes?: Record<string, string | number>;
 };
 
+export type Powertrain = "electric" | "gas" | "other";
+export type BatteryType = "lithium" | "lead-acid" | "other";
 export type SeatFilter = "Any seats" | "2" | "4" | "6+ seats";
 export type CatalogSort = "featured" | "name" | "price-asc" | "price-desc";
 
@@ -41,20 +47,10 @@ export function createProductTitle(name: string, variant?: string) {
 }
 
 export function createCatalogDescription(product: CatalogProduct) {
-  const capacityAttribute = product.attributes?.passenger_capacity;
-  const capacityFromAttributes =
-    typeof capacityAttribute === "number"
-      ? capacityAttribute
-      : typeof capacityAttribute === "string" && /^\d+$/.test(capacityAttribute.trim())
-        ? Number(capacityAttribute)
-        : null;
-  const capacity = getPassengerCapacity(product.name) ?? capacityFromAttributes;
-  const hasValidCapacity = capacity !== null && Number.isSafeInteger(capacity) && capacity > 0;
-  const powertrainAttribute = product.attributes?.powertrain;
-  const powertrain =
-    typeof powertrainAttribute === "string" ? powertrainAttribute.trim().toLowerCase() : "";
+  const capacity = getCatalogPassengerCapacity(product);
+  const powertrain = getCatalogPowertrain(product);
   const details = [
-    hasValidCapacity ? `${capacity}-passenger` : "",
+    capacity ? `${capacity}-passenger` : "",
     powertrain,
   ].filter(Boolean);
   const description = details.length
@@ -82,6 +78,65 @@ export function createProductSlug(name: string) {
 export function getPassengerCapacity(name: string) {
   const match = name.match(/\b([2-8])(?:\s*Passenger|-Seater)\b/i);
   return match ? Number(match[1]) : null;
+}
+
+function getAttributeValue(product: CatalogProduct, key: string) {
+  const value = product.attributes?.[key];
+  return typeof value === "string" ? value.trim().toLowerCase() : "";
+}
+
+export function getCatalogPassengerCapacity(product: CatalogProduct) {
+  const attribute = product.attributes?.passenger_capacity;
+  const capacityFromAttribute =
+    typeof attribute === "number"
+      ? attribute
+      : typeof attribute === "string" && /^\d+$/.test(attribute.trim())
+        ? Number(attribute)
+        : null;
+  const capacity = product.passengerCapacity ?? capacityFromAttribute ?? getPassengerCapacity(product.name);
+  return capacity !== null && Number.isSafeInteger(capacity) && capacity > 0 ? capacity : null;
+}
+
+export function getCatalogPowertrain(product: CatalogProduct): Powertrain | null {
+  const value = product.powertrain ?? getAttributeValue(product, "powertrain");
+  if (value === "electric" || value === "gas" || value === "other") return value;
+  if (/\b(gas|petrol)\b/i.test(value)) return "gas";
+  if (/\b(electric)\b/i.test(value)) return "electric";
+  if (/\b(gas|petrol)\b/i.test(product.name)) return "gas";
+  if (/\b(electric|lithium)\b|\bli[- ]?ion\b/i.test(product.name)) return "electric";
+  return null;
+}
+
+export function getCatalogBatteryType(product: CatalogProduct): BatteryType | null {
+  const value = product.batteryType ?? getAttributeValue(product, "battery_type");
+  if (value === "lithium" || value === "lead-acid" || value === "other") return value;
+  if (/\b(lithium)\b|\bli[- ]?ion\b/i.test(value)) return "lithium";
+  if (/\blead[- ]?acid\b/i.test(value)) return "lead-acid";
+  if (/\b(lithium)\b|\bli[- ]?ion\b/i.test(product.name)) return "lithium";
+  if (/\blead[- ]?acid\b/i.test(product.name)) return "lead-acid";
+  return null;
+}
+
+export function getDerivedCategorySlugs(product: CatalogProduct) {
+  const categories: string[] = [];
+  const capacity = getCatalogPassengerCapacity(product);
+  const powertrain = getCatalogPowertrain(product);
+  const batteryType = getCatalogBatteryType(product);
+  const make = getProductMake(product.name)?.toLowerCase();
+
+  if (powertrain === "electric") categories.push("electric-golf-carts");
+  if (powertrain === "gas") categories.push("gas-golf-carts");
+  if (batteryType === "lithium") categories.push("lithium-golf-carts");
+  if (capacity === 2) categories.push("2-seater-golf-carts");
+  if (capacity === 4) categories.push("4-seater-golf-carts");
+  if (capacity === 6) categories.push("6-seater-golf-carts");
+  if (make === "club car") categories.push("club-car");
+  if (make === "e-z-go") categories.push("e-z-go");
+  if (make === "yamaha") categories.push("yamaha");
+  if (make === "denago") categories.push("denago");
+  if (make === "evolution") categories.push("evolution");
+
+  return categories;
 }
 
 export function parseSeatFilter(value: string | string[] | undefined): SeatFilter {

@@ -4,9 +4,9 @@ import HomePage from "@/components/home-page";
 import { getPublicProducts } from "@/lib/cms";
 
 export const metadata = createPageMetadata({
-  title: "Golf Cart Dealership | Sales & Rentals Nationwide",
+  title: "Electric Golf Carts for Sale & Hire in South Africa",
   description:
-    "CartScout is a golf cart dealership for all makes and models, selling and renting throughout South Africa. Contact our team for sales, rentals, and delivery.",
+    "Browse electric golf carts by make, passenger capacity and recorded battery type. Confirm product specifications, availability, pricing, rentals and delivery with CartScout.",
   path: "/",
 });
 

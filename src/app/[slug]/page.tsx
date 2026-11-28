@@ -6,7 +6,12 @@ import { Suspense } from "react";
 import ProductGallery from "@/components/product-gallery";
 import { getPublicContactSettings, getPublicProduct, getPublicProducts } from "@/lib/cms";
 import { formatZar, getCatalogPriceZar } from "@/lib/pricing";
-import { getPassengerCapacity, getProductMake } from "@/lib/products";
+import {
+  getCatalogBatteryType,
+  getCatalogPassengerCapacity,
+  getCatalogPowertrain,
+  getProductMake,
+} from "@/lib/products";
 import { createPageMetadata, siteOrigin } from "@/lib/site-seo";
 import type { CatalogProduct } from "@/lib/products";
 
@@ -16,7 +21,7 @@ type ProductPageProps = {
 
 function getRelatedProducts(product: CatalogProduct, products: CatalogProduct[]) {
   const make = getProductMake(product.name);
-  const capacity = getPassengerCapacity(product.name);
+  const capacity = getCatalogPassengerCapacity(product);
 
   return products
     .filter((candidate) => candidate.id !== product.id)
@@ -24,7 +29,7 @@ function getRelatedProducts(product: CatalogProduct, products: CatalogProduct[])
       product: candidate,
       relevance:
         (make && getProductMake(candidate.name)?.toLowerCase() === make.toLowerCase() ? 2 : 0) +
-        (capacity && getPassengerCapacity(candidate.name) === capacity ? 1 : 0),
+        (capacity && getCatalogPassengerCapacity(candidate) === capacity ? 1 : 0),
     }))
     .sort((a, b) => b.relevance - a.relevance)
     .slice(0, 4)
@@ -61,10 +66,19 @@ async function ProductContent({ params }: ProductPageProps) {
   const images = [...new Set([product.imageUrl, ...(product.imageGallery ?? [])].filter(
     (image): image is string => Boolean(image),
   ))];
-  const capacity = getPassengerCapacity(product.name);
+  const capacity = getCatalogPassengerCapacity(product);
+  const powertrain = getCatalogPowertrain(product);
+  const batteryType = getCatalogBatteryType(product);
   const productBrand = getProductMake(product.name);
   const priceZar = getCatalogPriceZar(product.price, product.currency);
-  const attributes = Object.entries(product.attributes ?? {});
+  const attributes = [
+    ...(capacity ? [["Passenger capacity", `${capacity} passengers`] as const] : []),
+    ...(powertrain ? [["Powertrain", powertrain === "other" ? "Other / not specified" : powertrain] as const] : []),
+    ...(batteryType ? [["Battery type", batteryType === "other" ? "Other / not specified" : batteryType] as const] : []),
+    ...Object.entries(product.attributes ?? {}).filter(
+      ([key]) => !["passenger_capacity", "powertrain", "battery_type"].includes(key),
+    ),
+  ];
   const relatedProducts = getRelatedProducts(product, products);
   const imageUrls = images.map((image) => new URL(image, siteOrigin).toString());
   const message = encodeURIComponent(
@@ -74,6 +88,7 @@ async function ProductContent({ params }: ProductPageProps) {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
+    ...(product.slug && siteOrigin ? { "@id": new URL(`/${product.slug}`, siteOrigin).toString(), url: new URL(`/${product.slug}`, siteOrigin).toString() } : {}),
     ...(product.description?.trim() ? { description: product.description.trim() } : {}),
     ...(imageUrls.length ? { image: imageUrls } : {}),
     ...(productBrand ? { brand: { "@type": "Brand", name: productBrand } } : {}),
@@ -90,7 +105,7 @@ async function ProductContent({ params }: ProductPageProps) {
       <nav className="breadcrumbs" aria-label="Breadcrumb">
         <ol>
           <li><Link href="/">Home</Link></li>
-          <li><Link href="/inventory">Inventory</Link></li>
+          <li><Link href="/shop">Shop</Link></li>
           <li aria-current="page">{product.name}</li>
         </ol>
       </nav>
@@ -101,6 +116,8 @@ async function ProductContent({ params }: ProductPageProps) {
           <h1>{product.name}</h1>
           <div className="product-detail-meta">
             {capacity ? <span>{capacity}-seater</span> : <span>Golf cart</span>}
+            {powertrain && <span>{powertrain === "other" ? "Other powertrain" : powertrain}</span>}
+            {batteryType && <span>{batteryType === "other" ? "Other battery" : `${batteryType} battery`}</span>}
             <span>{product.inStock ? "Ask about availability" : "Ask about this cart"}</span>
           </div>
           <p className="product-detail-price">Indicative estimate: {formatZar(priceZar)}</p>
@@ -191,7 +208,7 @@ async function ProductContent({ params }: ProductPageProps) {
                 <div className="product-info">
                   <div className="product-meta">
                     <span>{getProductMake(related.name) ?? "GOLF CART"}</span>
-                    <span>{getPassengerCapacity(related.name) ? `${getPassengerCapacity(related.name)} PASSENGER` : "OUR COLLECTION"}</span>
+                    <span>{getCatalogPassengerCapacity(related) ? `${getCatalogPassengerCapacity(related)} PASSENGER` : "OUR COLLECTION"}</span>
                   </div>
                   <h3><Link href={`/${related.slug}`}>{related.name}</Link></h3>
                   <div className="product-footer">

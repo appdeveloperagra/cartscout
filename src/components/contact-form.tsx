@@ -1,6 +1,7 @@
 "use client";
 
 import type { FormEvent } from "react";
+import { trackEvent } from "@/lib/analytics";
 
 export default function ContactForm({ whatsappHref }: { whatsappHref: string }) {
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -21,6 +22,7 @@ export default function ContactForm({ whatsappHref }: { whatsappHref: string }) 
     ].join("\n");
 
     window.open(`${whatsappHref}?text=${encodeURIComponent(body)}`, "_blank", "noopener,noreferrer");
+    trackEvent("contact_enquiry_started", { channel: "whatsapp" });
   }
 
   return (

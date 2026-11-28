@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import LocationsMenu from "@/components/locations-menu";
+import { PhoneIcon, WhatsAppIcon } from "@/components/contact-icons";
 
 type LocationLink = {
   slug: string;
@@ -22,6 +24,7 @@ export default function MainNavigation({
   phoneDisplay,
   whatsappHref,
 }: MainNavigationProps) {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const navigationRef = useRef<HTMLElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -67,21 +70,25 @@ export default function MainNavigation({
         type="button"
       >
         <span className="main-nav-toggle-icon" aria-hidden="true"><span /><span /><span /></span>
-        <span>{isOpen ? "Close" : "Menu"}</span>
       </button>
       <div className={`main-nav-links${isOpen ? " is-open" : ""}`} id="main-navigation-links">
-        <Link href="/" onClick={closeNavigation}>Home</Link>
-        <Link href="/inventory" onClick={closeNavigation}>Buy</Link>
-        <Link href="/rentals" onClick={closeNavigation}>Rentals</Link>
-        <Link href="/blog" onClick={closeNavigation}>Journal</Link>
+        <Link href="/shop" aria-current={pathname === "/shop" || pathname.startsWith("/shop/") ? "page" : undefined} onClick={closeNavigation}>Shop</Link>
+        <Link href="/rent" aria-current={pathname === "/rent" || pathname === "/rentals" ? "page" : undefined} onClick={closeNavigation}>Rent</Link>
+        <Link href="/guides" aria-current={pathname === "/guides" || pathname.startsWith("/guides/") ? "page" : undefined} onClick={closeNavigation}>Guides</Link>
         <LocationsMenu
           locations={locations}
           onNavigate={closeNavigation}
         />
-        <Link href="/about" onClick={closeNavigation}>About</Link>
-        <Link href="/contact" onClick={closeNavigation}>Contact</Link>
-        <a className="mobile-nav-contact" href={phoneHref} onClick={closeNavigation}>
-          Call {phoneDisplay}
+        <Link href="/contact" aria-current={pathname === "/contact" ? "page" : undefined} onClick={closeNavigation}>Contact</Link>
+        <a
+          className="mobile-nav-contact"
+          href={phoneHref}
+          onClick={closeNavigation}
+          aria-label={`Call CartScout at ${phoneDisplay}`}
+          title={`Call ${phoneDisplay}`}
+        >
+          <PhoneIcon />
+          <span>{phoneDisplay}</span>
         </a>
         <a
           className="mobile-nav-contact"
@@ -89,8 +96,11 @@ export default function MainNavigation({
           onClick={closeNavigation}
           rel="noreferrer"
           target="_blank"
+          aria-label={`Chat with CartScout on WhatsApp at ${phoneDisplay}`}
+          title={`WhatsApp ${phoneDisplay}`}
         >
-          WhatsApp us
+          <WhatsAppIcon />
+          <span>{phoneDisplay}</span>
         </a>
       </div>
     </nav>

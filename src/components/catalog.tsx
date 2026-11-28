@@ -5,7 +5,9 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { PriceGuide } from "@/components/price-guide";
 import {
-  getPassengerCapacity,
+  getCatalogBatteryType,
+  getCatalogPassengerCapacity,
+  getCatalogPowertrain,
   getProductMake,
   parseCatalogSort,
   parseSeatFilter,
@@ -14,6 +16,7 @@ import {
   type SeatFilter,
 } from "@/lib/products";
 import { formatZar, getCatalogPriceZar } from "@/lib/pricing";
+import { trackEvent } from "@/lib/analytics";
 
 type CatalogProps = {
   products: CatalogProduct[];
@@ -22,6 +25,10 @@ type CatalogProps = {
   initialSeats: SeatFilter;
   initialSort: CatalogSort;
   whatsappHref: string;
+  initialCategorySlug?: string;
+  categoryLinks?: { slug: string; name: string }[];
+  pageHeading?: string;
+  pageIntro?: string;
 };
 
 type Inquiry = {
@@ -37,6 +44,8 @@ function updateCatalogUrl(
   make: string,
   seats: SeatFilter,
   sort: CatalogSort,
+  powertrain: string,
+  batteryType: string,
 ) {
   const params = new URLSearchParams(window.location.search);
   const values = {
@@ -44,6 +53,8 @@ function updateCatalogUrl(
     make: make === "All makes" ? "" : make,
     seats: seats === "Any seats" ? "" : seats === "6+ seats" ? "6plus" : seats,
     sort: sort === "featured" ? "" : sort,
+    powertrain,
+    battery: batteryType,
   };
 
   Object.entries(values).forEach(([key, value]) => {
@@ -86,6 +97,10 @@ export default function Catalog({
   initialSeats,
   initialSort,
   whatsappHref,
+  initialCategorySlug,
+  categoryLinks = [],
+  pageHeading,
+  pageIntro,
 }: CatalogProps) {
   const [query, setQuery] = useState(initialQuery);
   const [make, setMake] = useState(() =>
@@ -95,6 +110,9 @@ export default function Catalog({
   );
   const [seats, setSeats] = useState<SeatFilter>(initialSeats);
   const [sort, setSort] = useState<CatalogSort>(initialSort);
+  const [powertrain, setPowertrain] = useState("");
+  const [batteryType, setBatteryType] = useState("");
+  const [availability, setAvailability] = useState("");
   const [inquiry, setInquiry] = useState<Inquiry | null>(null);
   const inquiryTrigger = useRef<HTMLButtonElement | null>(null);
   const inquiryDialog = useRef<HTMLElement | null>(null);
@@ -111,6 +129,8 @@ export default function Catalog({
       return;
     }
     wasInquiryOpen.current = true;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
 
     const dialog = inquiryDialog.current;
     const focusableElements = dialog
@@ -141,7 +161,10 @@ export default function Catalog({
     }
 
     document.addEventListener("keydown", handleDialogKeydown);
-    return () => document.removeEventListener("keydown", handleDialogKeydown);
+    return () => {
+      document.removeEventListener("keydown", handleDialogKeydown);
+      document.body.style.overflow = previousOverflow;
+    };
   }, [closeInquiry, inquiry]);
 
   const makes = useMemo(
@@ -156,11 +179,22 @@ export default function Catalog({
         !normalizedQuery ||
         `${product.name} ${getCatalogMake(product.name)}`.toLowerCase().includes(normalizedQuery);
       const matchesMake = make === "All makes" || getCatalogMake(product.name) === make;
-      const productSeats = getPassengerCapacity(product.name);
+      const matchesCategory =
+        !initialCategorySlug || product.categorySlugs?.includes(initialCategorySlug);
+      const productSeats = getCatalogPassengerCapacity(product);
       const matchesSeats =
         seats === "Any seats" ||
         (seats === "6+ seats" ? (productSeats ?? 0) >= 6 : productSeats === Number(seats));
-      return matchesQuery && matchesMake && matchesSeats;
+      const productPowertrain = getCatalogPowertrain(product);
+      const matchesPowertrain = !powertrain
+        || (powertrain === "unclassified" ? productPowertrain === null : productPowertrain === powertrain);
+      const productBatteryType = getCatalogBatteryType(product);
+      const matchesBatteryType = !batteryType
+        || (batteryType === "unclassified" ? productBatteryType === null : productBatteryType === batteryType);
+      const matchesAvailability =
+        !availability ||
+        (availability === "Available" ? product.inStock : !product.inStock);
+      return matchesQuery && matchesMake && matchesCategory && matchesSeats && matchesPowertrain && matchesBatteryType && matchesAvailability;
     });
 
     if (sort === "name") filtered.sort((a, b) => a.name.localeCompare(b.name));
@@ -175,7 +209,7 @@ export default function Catalog({
       );
     }
     return filtered;
-  }, [make, products, query, seats, sort]);
+  }, [availability, batteryType, initialCategorySlug, make, powertrain, products, query, seats, sort]);
 
   function openInquiry(product: CatalogProduct, trigger: HTMLButtonElement) {
     inquiryTrigger.current = trigger;
@@ -206,6 +240,11 @@ export default function Catalog({
     ].join("\n");
 
     window.open(`${whatsappHref}?text=${encodeURIComponent(body)}`, "_blank", "noopener,noreferrer");
+    trackEvent("purchase_enquiry_started", {
+      product_name: inquiry.product.name,
+      passenger_capacity: getCatalogPassengerCapacity(inquiry.product) ?? 0,
+      channel: "whatsapp",
+    });
   }
 
   return (
@@ -213,16 +252,23 @@ export default function Catalog({
       <section className="inventory-section">
         <div className="inventory-page-heading">
           <div className="eyebrow"><span /> FULL CART INVENTORY</div>
-          <h1>Golf carts for sale.</h1>
-          <p>
-            CartScout deals in all makes and models, with sales and rentals throughout South Africa. Catalogue amounts are estimates for comparison, not confirmed offers; ask us for current pricing and delivery costs.
-          </p>
+          <h1>{pageHeading ?? "Golf carts for sale."}</h1>
+          <p>{pageIntro ?? "Compare listed golf carts by make and passenger capacity. Catalogue amounts are estimates, not confirmed offers; ask CartScout to verify specifications, price, availability and delivery for your location."}</p>
         </div>
+        {pageHeading ? null : (
+          <nav className="seo-collection-links" aria-label="Popular golf cart searches">
+            {categoryLinks.map((category) => (
+              <Link key={category.slug} href={`/shop/${category.slug}`}>
+                {category.name}
+              </Link>
+            ))}
+          </nav>
+        )}
         <PriceGuide products={products} compact />
         <div className="section-heading">
           <div>
             <div className="eyebrow"><span /> THE CART COLLECTION</div>
-            <h2>Choose your next <em>ride.</em> <span className="inventory-count">{products.length} carts</span></h2>
+            <h2>Choose your next <em>ride.</em> <span className="inventory-count">{filteredProducts.length} carts</span></h2>
           </div>
           <p>Search by make or passenger capacity, then ask us to confirm the details.</p>
         </div>
@@ -237,7 +283,7 @@ export default function Catalog({
                   onChange={(event) => {
                     const nextQuery = event.target.value;
                     setQuery(nextQuery);
-                    updateCatalogUrl(nextQuery, make, seats, sort);
+                    updateCatalogUrl(nextQuery, make, seats, sort, powertrain, batteryType);
                   }}
                   aria-label="Search golf carts"
                   placeholder="Search by make or model"
@@ -250,7 +296,7 @@ export default function Catalog({
                   onChange={(event) => {
                     const nextMake = event.target.value;
                     setMake(nextMake);
-                    updateCatalogUrl(query, nextMake, seats, sort);
+                    updateCatalogUrl(query, nextMake, seats, sort, powertrain, batteryType);
                   }}
                 >
                   <option>All makes</option>
@@ -264,7 +310,7 @@ export default function Catalog({
                   onChange={(event) => {
                     const nextSeats = parseSeatFilter(event.target.value);
                     setSeats(nextSeats);
-                    updateCatalogUrl(query, make, nextSeats, sort);
+                    updateCatalogUrl(query, make, nextSeats, sort, powertrain, batteryType);
                   }}
                 >
                   <option>Any seats</option>
@@ -280,13 +326,58 @@ export default function Catalog({
                   onChange={(event) => {
                     const nextSort = parseCatalogSort(event.target.value);
                     setSort(nextSort);
-                    updateCatalogUrl(query, make, seats, nextSort);
+                    updateCatalogUrl(query, make, seats, nextSort, powertrain, batteryType);
                   }}
                 >
                   <option value="featured">Featured</option>
                   <option value="name">Name: A to Z</option>
                   <option value="price-asc">Price: Low to high</option>
                   <option value="price-desc">Price: High to low</option>
+                </select>
+              </label>
+              <label className="select-wrap">
+                <span className="sr-only">Filter by powertrain</span>
+                <select
+                  value={powertrain}
+                  onChange={(event) => {
+                    const nextPowertrain = event.target.value;
+                    setPowertrain(nextPowertrain);
+                    updateCatalogUrl(query, make, seats, sort, nextPowertrain, batteryType);
+                  }}
+                >
+                  <option value="">All powertrains</option>
+                  <option value="electric">Electric</option>
+                  <option value="gas">Gas</option>
+                  <option value="other">Other</option>
+                  <option value="unclassified">Unclassified</option>
+                </select>
+              </label>
+              <label className="select-wrap">
+                <span className="sr-only">Filter by battery type</span>
+                <select
+                  value={batteryType}
+                  onChange={(event) => {
+                    const nextBatteryType = event.target.value;
+                    setBatteryType(nextBatteryType);
+                    updateCatalogUrl(query, make, seats, sort, powertrain, nextBatteryType);
+                  }}
+                >
+                  <option value="">All battery types</option>
+                  <option value="lithium">Lithium</option>
+                  <option value="lead-acid">Lead-acid</option>
+                  <option value="other">Other</option>
+                  <option value="unclassified">Unclassified</option>
+                </select>
+              </label>
+              <label className="select-wrap">
+                <span className="sr-only">Filter by availability</span>
+                <select
+                  value={availability}
+                  onChange={(event) => setAvailability(event.target.value)}
+                >
+                  <option value="">All availability</option>
+                  <option value="Available">Available</option>
+                  <option value="Enquire">Enquire</option>
                 </select>
               </label>
           </div>
@@ -296,7 +387,7 @@ export default function Catalog({
           <>
             <div className="results-line">
               <span><strong>{filteredProducts.length}</strong> carts found</span>
-              <span>Sales and rentals available nationwide</span>
+              <span>Confirm availability and delivery for your location</span>
             </div>
             <div className="product-grid">
                   {filteredProducts.map((product, index) => (
@@ -311,10 +402,10 @@ export default function Catalog({
                             sizes="(max-width: 680px) 90vw, (max-width: 1050px) 45vw, 30vw"
                           />
                                 ) : <div className="product-image-empty" aria-hidden="true" />}
-                        <span className="product-tag">ASK ABOUT AVAILABILITY</span>
+                        <span className="product-tag">{product.inStock ? "AVAILABLE - CONFIRM FIRST" : "ENQUIRE ABOUT AVAILABILITY"}</span>
                       </div>
                       <div className="product-info">
-                        <div className="product-meta"><span>{getCatalogMake(product.name)}</span><span>{getPassengerCapacity(product.name) ? `${getPassengerCapacity(product.name)} PASSENGER` : "GOLF CART"}</span></div>
+                        <div className="product-meta"><span>{getCatalogMake(product.name)}</span><span>{getCatalogPassengerCapacity(product) ? `${getCatalogPassengerCapacity(product)} PASSENGER` : "GOLF CART"}</span></div>
                         <h3>
                           {product.slug ? (
                             <Link href={`/${product.slug}`}>{product.name}</Link>
@@ -351,7 +442,10 @@ export default function Catalog({
                 setMake("All makes");
                 setSeats("Any seats");
                 setSort("featured");
-                updateCatalogUrl("", "All makes", "Any seats", "featured");
+                setPowertrain("");
+                setBatteryType("");
+                setAvailability("");
+                updateCatalogUrl("", "All makes", "Any seats", "featured", "", "");
               }}
             >Clear filters</button>
           </div>
@@ -362,9 +456,9 @@ export default function Catalog({
           <div className="rental-copy">
             <span className="eyebrow"><span /> LOOKING TO RENT?</span>
             <h3>Need a golf cart for rent?</h3>
-            <p>We rent throughout South Africa. Share your dates, passenger count, and location to get started.</p>
+            <p>Share your dates, passenger count and location so CartScout can confirm rental availability and delivery arrangements.</p>
           </div>
-          <Link className="button button-dark" href="/rentals">Explore rental options <span aria-hidden="true">→</span></Link>
+          <Link className="button button-dark" href="/rent">Explore rental options <span aria-hidden="true">→</span></Link>
         </section>
       </section>
 

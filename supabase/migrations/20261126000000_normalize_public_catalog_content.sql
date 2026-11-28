@@ -22,26 +22,29 @@ WITH cleaned AS (
   SELECT
     cleaned.id,
     cleaned.source_product_id,
-    btrim(regexp_replace(
+    btrim(
       regexp_replace(
         regexp_replace(
-          regexp_replace(cleaned.base_name, '\([^)]*\)', '', 'g'),
-          '\m[2-8]\s*Passenger\M',
+          regexp_replace(
+            regexp_replace(
+              regexp_replace(cleaned.base_name, '\([^)]*\)', '', 'g'),
+              '\m[2-8]\s*Passenger\M',
+              '',
+              'gi'
+            ),
+            '\m(Electric|Lithium(-Ion)?|Lifted|HP|Gas)\M',
+            '',
+            'gi'
+          ),
+          '\m(Special Edition|Limited Edition|Sunday Red|Forward-Facing|Plus)\M',
           '',
           'gi'
         ),
-        '\m(Electric|Lithium(-Ion)?|Lifted|HP|Gas)\M',
-        '',
-        'gi'
-      ),
-      '\m(Special Edition|Limited Edition|Sunday Red|Forward-Facing|Plus)\M',
-      '',
-      'gi'
-    ),
-      '\s+',
-      ' ',
-      'g'
-    )) || CASE
+        '\s+',
+        ' ',
+        'g'
+      )
+    ) || CASE
       WHEN cleaned.capacity IS NOT NULL THEN ' ' || cleaned.capacity || '-Seater'
       ELSE ''
     END || ' Golf Cart' AS title

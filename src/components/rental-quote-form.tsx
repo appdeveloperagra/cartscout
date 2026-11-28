@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, type ChangeEvent } from "react";
+import { trackEvent } from "@/lib/analytics";
 
 export default function RentalQuoteForm({
   contactEmail,
@@ -80,7 +81,15 @@ export default function RentalQuoteForm({
         className="button button-dark"
         href={`${whatsappHref}?text=${encodeURIComponent(message)}`}
         onClick={(event) => {
-          if (!formRef.current?.reportValidity()) event.preventDefault();
+          if (!formRef.current?.reportValidity()) {
+            event.preventDefault();
+          } else {
+            trackEvent("rental_enquiry_started", {
+              channel: "whatsapp",
+              passenger_count: Number(request.passengers) || 0,
+              cart_count: Number(request.cartCount) || 0,
+            });
+          }
         }}
         rel="noreferrer"
         target="_blank"
@@ -91,7 +100,15 @@ export default function RentalQuoteForm({
         className="text-link"
         href={emailHref}
         onClick={(event) => {
-          if (!formRef.current?.reportValidity()) event.preventDefault();
+          if (!formRef.current?.reportValidity()) {
+            event.preventDefault();
+          } else {
+            trackEvent("rental_enquiry_started", {
+              channel: "email",
+              passenger_count: Number(request.passengers) || 0,
+              cart_count: Number(request.cartCount) || 0,
+            });
+          }
         }}
       >
         Prefer email? Send the request by email <span aria-hidden="true">↗</span>

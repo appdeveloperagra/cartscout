@@ -8,7 +8,7 @@ import { getPublicFaqs } from "@/lib/cms";
 export const metadata: Metadata = createPageMetadata({
   title: "Golf Cart FAQs: Prices, Buying & Hire",
   description:
-    "Answers about buying and renting golf carts from CartScout throughout South Africa.",
+    "Answers about golf cart prices, specifications, purchase and rental enquiries.",
   path: "/faq",
 });
 
@@ -27,7 +27,7 @@ async function FAQContent() {
       <div className="eyebrow"><span /> BUYING, PRICES & RENTALS</div>
       <h1>Golf cart questions answered</h1>
       <p className="page-intro">
-        Practical answers about CartScout&apos;s golf cart sales, rentals, and nationwide delivery.
+        Practical answers about comparing golf carts and confirming purchase, rental and delivery details.
       </p>
       <section className="faq-page-list" aria-label="Golf cart frequently asked questions">
         {faqs.map(({ question, answer }, index) => (
@@ -39,8 +39,8 @@ async function FAQContent() {
       </section>
       <div className="faq-page-cta">
         <p>Need details for a specific cart or rental request?</p>
-        <Link className="button button-dark" href="/inventory">Browse our golf carts <span aria-hidden="true">→</span></Link>
-        <Link className="text-link" href="/rentals">Ask about a rental <span aria-hidden="true">↗</span></Link>
+        <Link className="button button-dark" href="/shop">Browse our golf carts <span aria-hidden="true">→</span></Link>
+        <Link className="text-link" href="/rent">Ask about a rental <span aria-hidden="true">↗</span></Link>
       </div>
     </main>
   );

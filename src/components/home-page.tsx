@@ -1,6 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getPassengerCapacity, getProductMake, type CatalogProduct } from "@/lib/products";
+import {
+  getCatalogPassengerCapacity,
+  getCatalogPowertrain,
+  getProductMake,
+  type CatalogProduct,
+} from "@/lib/products";
 import { HomeFaq } from "@/components/home-faq";
 import { HomeHighlights } from "@/components/home-highlights";
 import { PriceGuide } from "@/components/price-guide";
@@ -12,25 +17,26 @@ type HomePageProps = {
 };
 
 export default function HomePage({ products, totalProductCount }: HomePageProps) {
-  const heroProduct = products[0];
-  const featuredProducts = products.slice(1, 7);
+  const electricProducts = products.filter((product) => getCatalogPowertrain(product) === "electric");
+  const heroProduct = electricProducts[0] ?? products[0];
+  const featuredProducts = (electricProducts.length ? electricProducts : products).slice(1, 7);
 
   return (
     <main>
       <div className="announcement">
         <span className="announcement-dot" />
-        All makes and models. Sales and rentals across South Africa.
-        <Link href="/inventory">Shop carts <span aria-hidden="true">→</span></Link>
+        Golf cart sales and rental enquiries.
+        <Link href="/shop">Shop carts <span aria-hidden="true">→</span></Link>
       </div>
 
       <section className="hero">
         <div className="hero-copy">
-          <div className="eyebrow"><span /> YOUR SOUTH AFRICAN GOLF CART DEALERSHIP</div>
-          <h1>All makes. All models.<br /><em>Buy or rent nationwide.</em></h1>
-          <p>CartScout is your golf cart dealership for all makes and models. Shop or rent anywhere in South Africa, with a team ready to help you choose the right cart.</p>
+          <div className="eyebrow"><span /> ELECTRIC GOLF CARTS · SOUTH AFRICA</div>
+          <h1>Electric golf carts.<br /><em>Buy or rent with confidence.</em></h1>
+          <p>Explore electric golf carts and compare listings by passenger capacity, make and recorded battery type. Ask CartScout to confirm each cart&apos;s specifications, availability and delivery options for your location.</p>
           <div className="hero-actions">
-            <Link className="button button-dark" href="/inventory">Browse carts <span aria-hidden="true">→</span></Link>
-            <Link className="text-link" href="/rentals">Need a rental? <span aria-hidden="true">↗</span></Link>
+            <Link className="button button-dark" href="/shop/electric-golf-carts">Browse electric carts <span aria-hidden="true">→</span></Link>
+            <Link className="text-link" href="/rent">Need a rental? <span aria-hidden="true">↗</span></Link>
           </div>
           <div className="hero-proof">
             <span className="proof-stars" aria-hidden="true">✓</span>
@@ -68,21 +74,31 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
         <div className="eyebrow"><span /> FIND THE RIGHT SIZE</div>
         <h2 id="seat-categories-title">How many passengers?</h2>
         <div className="seat-category-grid">
-          <Link className="seat-category" href="/inventory?seats=2">
+          <Link className="seat-category" href="/shop/2-seater-golf-carts">
             <span className="seat-category-count">02</span>
             <strong>2 passengers</strong>
             <span>Browse compact carts <span aria-hidden="true">→</span></span>
           </Link>
-          <Link className="seat-category" href="/inventory?seats=4">
+          <Link className="seat-category" href="/shop/4-seater-golf-carts">
             <span className="seat-category-count">04</span>
             <strong>4 passengers</strong>
             <span>Find room for more <span aria-hidden="true">→</span></span>
           </Link>
-          <Link className="seat-category" href="/inventory?seats=6plus">
-            <span className="seat-category-count">06+</span>
-            <strong>6+ passengers</strong>
+          <Link className="seat-category" href="/shop/6-seater-golf-carts">
+            <span className="seat-category-count">06</span>
+            <strong>6 passengers</strong>
             <span>Explore group carts <span aria-hidden="true">→</span></span>
           </Link>
+        </div>
+      </section>
+
+      <section className="seat-categories" aria-labelledby="shop-by-brand-title">
+        <div className="eyebrow"><span /> SHOP BY BRAND</div>
+        <h2 id="shop-by-brand-title">Choose a trusted make.</h2>
+        <div className="seat-category-grid">
+          <Link className="seat-category" href="/shop/club-car"><span className="seat-category-count">01</span><strong>Club Car</strong><span>Explore Club Car carts <span aria-hidden="true">→</span></span></Link>
+          <Link className="seat-category" href="/shop/e-z-go"><span className="seat-category-count">02</span><strong>E-Z-GO</strong><span>Explore E-Z-GO carts <span aria-hidden="true">→</span></span></Link>
+          <Link className="seat-category" href="/shop/yamaha"><span className="seat-category-count">03</span><strong>Yamaha</strong><span>Explore Yamaha carts <span aria-hidden="true">→</span></span></Link>
         </div>
       </section>
 
@@ -94,7 +110,7 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
             <div className="eyebrow"><span /> A FEW FROM THE COLLECTION</div>
             <h2>Find a cart that fits <em>your day.</em></h2>
           </div>
-          <p>We deal in all makes and models, with sales and rentals available nationwide. Explore the collection by make and passenger capacity.</p>
+          <p>Compare the listed makes and passenger capacities, then contact CartScout to confirm product details, availability and delivery options.</p>
         </div>
         <div className="product-grid">
           {featuredProducts.map((product) => (
@@ -108,14 +124,14 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
                     sizes="(max-width: 680px) 90vw, (max-width: 1050px) 45vw, 30vw"
                   />
                 ) : <div className="product-image-empty" aria-hidden="true" />}
-                <span className="product-tag">ASK ABOUT AVAILABILITY</span>
+                <span className="product-tag">{product.inStock ? "AVAILABLE - CONFIRM FIRST" : "ENQUIRE ABOUT AVAILABILITY"}</span>
               </div>
               <div className="product-info">
                 <div className="product-meta">
                   <span>{getProductMake(product.name) ?? "GOLF CART"}</span>
                   <span>
-                    {getPassengerCapacity(product.name)
-                      ? `${getPassengerCapacity(product.name)} PASSENGER`
+                    {getCatalogPassengerCapacity(product)
+                      ? `${getCatalogPassengerCapacity(product)} PASSENGER`
                       : "OUR COLLECTION"}
                   </span>
                 </div>
@@ -131,7 +147,7 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
                   </div>
                   <Link
                     className="featured-enquire-link"
-                    href={product.slug ? `/${product.slug}` : "/inventory"}
+                    href={product.slug ? `/${product.slug}` : "/shop"}
                   >
                     {product.slug ? "Ask about this cart" : "View inventory"}
                     <span aria-hidden="true">→</span>
@@ -142,7 +158,7 @@ export default function HomePage({ products, totalProductCount }: HomePageProps)
           ))}
         </div>
         <div className="featured-cta">
-          <Link className="button button-dark" href="/inventory">View full inventory <span aria-hidden="true">→</span></Link>
+          <Link className="button button-dark" href="/shop">View full inventory <span aria-hidden="true">→</span></Link>
         </div>
       </section>
 

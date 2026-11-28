@@ -2,10 +2,11 @@ import { Suspense } from "react";
 import ContactForm from "@/components/contact-form";
 import { getPublicContactSettings } from "@/lib/cms";
 import { createPageMetadata } from "@/lib/site-seo";
+import { EmailIcon, PhoneIcon, WhatsAppIcon } from "@/components/contact-icons";
 
 export const metadata = createPageMetadata({
   title: "Contact",
-  description: "Contact CartScout, a South African golf cart dealership selling and renting all makes and models nationwide.",
+  description: "Contact CartScout about a golf cart listing, rental request, product details or delivery to your location.",
   path: "/contact",
 });
 
@@ -17,21 +18,24 @@ async function ContactContent() {
       <div className="eyebrow"><span /> CONTACT</div>
       <h1>Let&apos;s talk carts.</h1>
       <p className="page-intro">
-        We sell and rent all makes and models of golf carts throughout South Africa. Call, WhatsApp, email, or tell us what you need using the form below.
+        Ask about a listed golf cart, product specifications, a rental or delivery to your address. Availability and arrangements are confirmed for each request.
       </p>
 
       <section className="contact-card-grid" aria-label="Contact options">
         <a className="contact-card" href={contact.phone_href}>
+          <span className="contact-card-icon"><PhoneIcon /></span>
           <span className="contact-card-label">CALL</span>
           <strong>{contact.phone_display}</strong>
           <span>Call CartScout</span>
         </a>
         <a className="contact-card" href={contact.whatsapp_href} target="_blank" rel="noreferrer">
+          <span className="contact-card-icon contact-card-icon-whatsapp"><WhatsAppIcon /></span>
           <span className="contact-card-label">WHATSAPP</span>
           <strong>Chat with us</strong>
           <span>Opens WhatsApp in a new tab</span>
         </a>
         <a className="contact-card" href={`mailto:${contact.email}`}>
+          <span className="contact-card-icon"><EmailIcon /></span>
           <span className="contact-card-label">EMAIL</span>
           <strong>{contact.email}</strong>
           <span>Send a purchase or rental enquiry</span>

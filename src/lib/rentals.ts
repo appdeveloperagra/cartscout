@@ -58,7 +58,7 @@ export const rentalFaqs: RentalFAQ[] = [
   {
     question: "Which areas can I request golf cart hire in?",
     answer:
-      "CartScout rents golf carts throughout South Africa. Share your town or delivery address, dates, and passenger requirements so we can arrange availability, delivery, and collection.",
+      "Share your town or full delivery address, dates and passenger requirements. CartScout will confirm whether a rental can be arranged for that location, along with delivery, collection and any related costs.",
   },
   {
     question: "How much does golf cart hire cost?",

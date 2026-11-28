@@ -4,8 +4,8 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 
 const highlights = [
   {
-    title: "A golf cart dealership for all makes and models.",
-    description: "CartScout sells and rents golf carts throughout South Africa. Contact us for the current details.",
+    title: "Compare listed golf carts.",
+    description: "Browse the current catalogue and ask about a specific cart, its specifications and availability.",
   },
   {
     title: "Confirm the details before you decide.",
@@ -16,8 +16,8 @@ const highlights = [
     description: "An email or WhatsApp message does not reserve a cart or confirm a rental.",
   },
   {
-    title: "Sales and rentals across South Africa.",
-    description: "Share your preferred model, dates, passenger count, and location with our team.",
+    title: "Delivery and rental options vary by request.",
+    description: "Share your address, dates, passenger count and intended use so CartScout can confirm what is available.",
   },
 ];
 

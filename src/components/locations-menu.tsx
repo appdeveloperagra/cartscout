@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 type LocationLink = {
@@ -15,6 +16,7 @@ export default function LocationsMenu({
   locations: LocationLink[];
   onNavigate?: () => void;
 }) {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -75,11 +77,11 @@ export default function LocationsMenu({
         id="locations-menu"
         role="group"
       >
-        <Link className="locations-menu-index" href="/locations" onClick={closeMenu}>
+        <Link className="locations-menu-index" href="/locations" aria-current={pathname === "/locations" ? "page" : undefined} onClick={closeMenu}>
           All locations
         </Link>
         {locations.map(({ slug, name }) => (
-          <Link href={`/locations/${slug}`} key={slug} onClick={closeMenu}>
+          <Link href={`/locations/${slug}`} key={slug} aria-current={pathname === `/locations/${slug}` ? "page" : undefined} onClick={closeMenu}>
             {name}
           </Link>
         ))}

@@ -7,10 +7,10 @@ import { formatZar } from "@/lib/pricing";
 import { createPageMetadata, siteOrigin } from "@/lib/site-seo";
 
 export const metadata: Metadata = createPageMetadata({
-  title: "Golf Cart Hire in South Africa",
+  title: "Golf Cart Hire Enquiries in South Africa",
   description:
-    "Rent golf carts from CartScout throughout South Africa. We deal in all makes and models, with nationwide delivery and collection.",
-  path: "/rentals",
+    "Request a golf cart rental quote. CartScout confirms availability, delivery, collection and terms for each location and rental period.",
+  path: "/rent",
 });
 
 function RentalStructuredData({
@@ -18,7 +18,7 @@ function RentalStructuredData({
 }: {
   questions: { question: string; answer: string }[];
 }) {
-  const pageUrl = siteOrigin ? new URL("/rentals", siteOrigin).toString() : undefined;
+  const pageUrl = siteOrigin ? new URL("/rent", siteOrigin).toString() : undefined;
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -27,7 +27,7 @@ function RentalStructuredData({
         ...(pageUrl ? { "@id": pageUrl, url: pageUrl } : {}),
         name: "Golf Cart Hire & Rental Enquiries",
         description:
-          "CartScout rents all makes and models of golf carts throughout South Africa, with delivery and collection arranged nationwide.",
+          "Request a golf cart rental quote and confirm availability, delivery, collection and terms for your location.",
         inLanguage: "en-ZA",
       },
       {
@@ -61,13 +61,12 @@ async function RentalsContent() {
       <RentalStructuredData questions={rentalQuestions} />
       <section className="rental-hero" aria-labelledby="rental-title">
         <div className="rental-hero-copy">
-          <div className="eyebrow"><span /> RENTALS NATIONWIDE</div>
-          <h1 id="rental-title">Rent a golf cart anywhere in South Africa.</h1>
+          <div className="eyebrow"><span /> RENTAL ENQUIRIES</div>
+          <h1 id="rental-title">Request a golf cart rental quote.</h1>
           <p>
-            CartScout rents all makes and models throughout South Africa. Tell
-            us when and where you need a cart, how many people will ride, and
-            how many carts you need. We&apos;ll arrange delivery and confirm
-            your request details.
+            Tell CartScout when and where you need a cart, how many people will
+            ride, and how many carts you need. The team will check whether the
+            request can be accommodated and confirm delivery or collection details.
           </p>
           <div className="rental-hero-actions">
             <a className="button button-dark" href="#rental-quote">
@@ -97,9 +96,8 @@ async function RentalsContent() {
           <div className="eyebrow"><span /> START WITH YOUR GROUP</div>
           <h2 id="rental-capacities-title">How many passengers?</h2>
           <p>
-            Choose the passenger capacity that fits your group. We rent golf
-            carts throughout South Africa; share your group size and location
-            so we can help find the right option.
+            Choose the passenger capacity that fits your group. Share your
+            group size and location so CartScout can check suitable options.
           </p>
         </div>
         <div className="rental-capacity-grid">
@@ -254,7 +252,7 @@ async function RentalsContent() {
       <section className="rental-faq" aria-labelledby="rental-faq-title">
         <div className="eyebrow"><span /> RENTAL FAQ</div>
         <h2 id="rental-faq-title">Rental questions answered.</h2>
-        <p className="rental-faq-intro">We serve rental customers nationwide. Include your location and request details so we can arrange delivery and collection.</p>
+        <p className="rental-faq-intro">Include your address and request details so CartScout can confirm availability, delivery and collection for your dates.</p>
         <div className="home-faq-list">
           {rentalQuestions.map(({ question, answer }, index) => (
             <details className="home-faq-item" key={question} open={index === 0}>

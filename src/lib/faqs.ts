@@ -21,7 +21,7 @@ export const faqs: FAQItem[] = [
   {
     question: "Are the golf carts in CartScout's collection available in South Africa?",
     answer:
-      "CartScout sells and rents golf carts throughout South Africa. Contact us about your preferred make and model, and we will arrange delivery to your location.",
+      "The catalogue lists golf carts for enquiry. Contact CartScout about a specific make or model and confirm current availability, sales or rental options, and any delivery arrangements for your address.",
   },
   {
     question: "How do I request a golf cart price in rand?",
@@ -61,7 +61,7 @@ export const faqs: FAQItem[] = [
   {
     question: "Can a golf cart be delivered to my province?",
     answer:
-      "Yes. CartScout serves customers across South Africa. Share your full address and preferred timing so we can arrange delivery and confirm the details for your purchase.",
+      "Share your full address and preferred timing. CartScout will confirm whether delivery can be arranged, its cost and timing, and current availability for your purchase.",
   },
   {
     question: "Can I drive a golf cart on public roads in South Africa?",
@@ -71,7 +71,7 @@ export const faqs: FAQItem[] = [
   {
     question: "Can I request carts for an event or group?",
     answer:
-      "Yes. CartScout rents golf carts throughout South Africa. Share the event location, dates, passenger count, and number of carts so we can arrange delivery and confirm availability.",
+      "Send the event location, dates, passenger count and number of carts. CartScout will check whether the request can be accommodated and confirm availability, delivery, collection and rental terms.",
   },
   {
     question: "How can I check a cart before buying it?",
